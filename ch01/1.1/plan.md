@@ -166,6 +166,18 @@ legend says so. The readout was a bare count ("1 electrons go round 1
 protons"); it is now a sentence in the book's voice. The page still binds
 no type: the element palette is not a type hue.
 
+Figure re-examination, 2026-11-16 (Claude Fable 5.2): `sim-atom-model` is
+reverted to the book's image, a kept photograph under the same id and
+number. The sim swapped the book's planetary picture (a nucleus of
+protons and neutrons, three electrons on tilted elliptical orbits) for a
+shell diagram with circular orbits filling two, eight and eight and a
+nucleus of protons only. Its one slider chose an element from hydrogen
+to argon, which the section never discusses, and it said nothing about
+what a model is, which is the book's point here. The section introduces
+no quantity, so the page now has no drawn figure and `figures.js` is
+gone. The lines above on the sim and the "Colour" section describe the
+figure as it was.
+
 ## Exercises
 
 - 1 Check Your Understanding (`cyu1`, fs-id2634383), open, inline after
