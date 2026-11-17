@@ -43,7 +43,7 @@ function crate(ctx, x, y, w, h, col) {
     for (let i = 0; i < n; i++) { const q = ((((s - i) % n) + 1.5 * n) % n - n / 2) / 0.95; if (Math.abs(q) < 1) v = Math.max(v, hs[i] * (1 - q * q)); }
     return v;
   };
-  const A = 78, NX = 360, PERIOD = 760;            /* peak height, samples and length of one period of profile, in units */
+  const A = 78, NX = 360, PERIOD = 600;            /* peak height, samples and length of one period of profile, in units */
   const low = []; for (let i = 0; i < NX; i++) low.push(bumpy(LOW, i / NX) * A);
   let hits = [];
   function draw() {
@@ -59,16 +59,16 @@ function crate(ctx, x, y, w, h, col) {
     const SF = 0.12, floorY = 350, cw = 200, ch = 150, cx = 300;
     strip(ctx, 30, 660, floorY + 16, 30);
     crate(ctx, cx, floorY - ch / 2, cw, ch, cc);
-    text(ctx, fmt(m.v, 0) + ' kg', cx - 20, floorY - ch / 2, C('mass'), { size: 20, weight: 600, align: 'center', base: 'middle', bg: PAL.panel });
+    text(ctx, fmt(m.v, 0) + ' kg', cx + 30, floorY - ch / 2, C('mass'), { size: 20, weight: 600, align: 'center', base: 'middle', bg: PAL.panel });
     const lx = cx - cw / 2;
     /* the way it moves, or would move: the book's black arrow */
-    arrow(ctx, cx + cw / 2 + 24, floorY - ch + 30, cx + cw / 2 + 150, floorY - ch + 30, PAL.ink, 3);
-    text(ctx, sliding ? 'motion' : 'attempted motion', cx + cw / 2 + 24, floorY - ch + 4, PAL.ink, { size: 19 });
+    arrow(ctx, cx + 10, floorY - ch - 26, cx + 150, floorY - ch - 26, PAL.ink, 3);
+    text(ctx, sliding ? 'motion' : 'attempted motion', cx + 10, floorY - ch - 52, PAL.ink, { size: 19 });
     /* friction acts at the surface, against that arrow: the most it can be at rest, its one value sliding */
     arrow(ctx, lx, floorY - 3, lx - fr * SF, floorY - 3, cf, 5);
     text(ctx, sliding ? 'f_k = ' + fmt(fk, 0) + ' N' : 'f_s ≤ ' + fmt(fmax, 0) + ' N', lx - 8, floorY - 32, cf, { size: 20, weight: 600, align: 'right', bg: PAL.panel });
-    arrow(ctx, cx + 62, floorY - 2, cx + 62, floorY - 2 - N * SF, cf, 5);
-    text(ctx, 'N = ' + fmt(N, 0) + ' N', cx + cw / 2 + 12, floorY - 60, cf, { size: 20, weight: 600 });
+    arrow(ctx, cx - 50, floorY - 2, cx - 50, floorY - 2 - N * SF, cf, 5);
+    text(ctx, 'N = ' + fmt(N, 0) + ' N', lx - 8, floorY - ch + 14, cf, { size: 20, weight: 600, align: 'right' });
     /* ---- the lens on its near corner ---- */
     const LX = 1040, LY = 372, LR = 250, corner = { x: cx + cw / 2 - 16, y: floorY };
     ctx.save(); ctx.strokeStyle = PAL.muted; ctx.lineWidth = 2;
@@ -85,7 +85,7 @@ function crate(ctx, x, y, w, h, col) {
     /* The share of the surface in actual contact is drawn in proportion to the friction: it follows
        the normal force, and falls by μ_k/μ_s once the crate slides. The surfaces are set as far apart
        as leaves exactly that share touching. */
-    const share = 0.2 * (m.v / 200) * (1 - (1 - MU_K / MU_S) * e);
+    const share = 0.34 * (m.v / 200) * (1 - (1 - MU_K / MU_S) * e);
     const sums = low.map((v, i) => v + up[i]).sort((p, q) => q - p);
     const D = sums[Math.max(0, Math.min(NX - 1, Math.round(share * NX) - 1))];
     const LOWBASE = LY + 96, UPBASE = LOWBASE - D;
@@ -244,9 +244,11 @@ function crate(ctx, x, y, w, h, col) {
 (function () {
   const d = sim('sim-skier', 740);
   const atanDeg = (x) => Math.atan(x) / RAD;
+  /* three decimals, or the four that 0.0817 and a value caught on its dashed circle need */
+  const muf = (q) => (Math.abs(q * 1000 - Math.round(q * 1000)) < 1e-6 ? fmt(q, 3) : fmt(q, 4));
   const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 45, step: 1, value: 25, unit: '°', dec: 0, onInput: reset, aria: 'angle of the slope',
     specials: [{ at: () => atanDeg(mu.v), label: 'steady speed' }] });
-  const mu = ctl(d.controls, { label: '\\mu_{\\text{k}}', cls: '', key: 'mu-k', min: 0, max: 0.3, step: 0.001, value: 0.082, unit: '', dec: 4, onInput: reset, aria: 'coefficient of kinetic friction',
+  const mu = ctl(d.controls, { label: '\\mu_{\\text{k}}', cls: '', key: 'mu-k', min: 0, max: 0.3, step: 0.001, value: 0.082, unit: '', fmt: (q) => muf(q), onInput: reset, aria: 'coefficient of kinetic friction',
     specials: [{ at: () => Math.tan(th.v * RAD), label: 'steady speed' }] });
   const m = ctl(d.controls, { label: '\\km', cls: 'mass', min: 40, max: 90, step: 1, value: 62, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skier' });
   /* Example 5.1 gives the friction as 45.0 N, which is a coefficient of 0.0817; the book rounds it to 0.082 */
@@ -363,7 +365,7 @@ function crate(ctx, x, y, w, h, col) {
     F.legend(ctx, ax, [{ s: 'w_{∥} down the slope', color: cf, w: 5 }, { s: 'f up the slope', color: cf, w: 4, dash: [10, 10] }, { s: 'they balance', color: cf, kind: 'dot', hollow: true }], { corner: 'tl' });
     lb.flush();
     const an = fmt(th.v, th.v % 1 ? 1 : 0);
-    tex(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = \\mu_{\\text{k}}\\km\\kg\\cos\\ktheta = (${fmt(mu.v, 4)})(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(\\cos ${an}^\\circ) = ${fmt(f, 1)}\\ \\text{N} \\\\ `
+    tex(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = \\mu_{\\text{k}}\\km\\kg\\cos\\ktheta = (${muf(mu.v)})(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(\\cos ${an}^\\circ) = ${fmt(f, 1)}\\ \\text{N} \\\\ `
       + `\\ka = \\frac{\\kwpar - \\kfk}{\\km} = \\frac{${fmt(wx, 0)}\\ \\text{N} - ${fmt(f, 1)}\\ \\text{N}}{${fmt(m.v, 0)}\\ \\text{kg}} = ${fmt(a, 2)}\\ \\text{m/s}^2`);
   }
   hover(d.stage, () => hits);

@@ -26,8 +26,8 @@ const RAD = Math.PI / 180;
   const K = 0.15, K2 = 0.21;          /* units per newton: on the man (1230 N draws 185) and in the two diagrams (258) */
   const S = 3.4, FEET = 616, CX = 300;  /* the man's scale, the height of his feet and the line of the vine */
   const GRIP = FEET - 104 * S, STOM = FEET - 55 * S;
-  const FX = 800, FY = 380;           /* the dot of the free-body diagram */
-  const SX = 1120, BASE = 570;        /* the head-to-tail sum and the level it starts from */
+  const FX = 770, FY = 380;           /* the dot of the free-body diagram */
+  const SX = 1070, BASE = 570;        /* the head-to-tail sum and the level it starts from */
   const num = (v) => fmt(v, 0);
   const lead = (ctx, x1, y, x2) => line(ctx, x1, y, x2, y, alpha(C('force'), 0.5), 2, [4, 5]);
   function draw() {
@@ -82,7 +82,7 @@ const RAD = Math.PI / 180;
     else {
       if (Math.abs(end - BASE) >= 16) arrow(ctx, x2, BASE, x2, end, force, 7);
       else line(ctx, x2, BASE, x2, end, force, 7);
-      text(ctx, 'F_{net} = ma = ' + num(Math.abs(gap)) + ' N ' + way, x2 + 30, (BASE + end) / 2, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
+      text(ctx, 'F_{net} = ' + num(Math.abs(gap)) + ' N ' + way, x2 + 30, (BASE + end) / 2, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
     }
 
     [[CX, '(a) to (c)', 'the sketch, the forces and the system of interest'], [FX, '(c)', 'the free-body diagram'], [SX, '(d)', still ? 'head to tail, the sum closes' : 'head to tail, the sum stays open']].forEach(([x, a1, a2]) => {
