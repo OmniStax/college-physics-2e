@@ -106,14 +106,14 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
    and protractor that measure it.
 ===================================================================== */
 (function () {
-  const HH = 790;
+  const HH = 815;
   const d = sim('sim-head-to-tail', HH);
   const E = ctl(d.controls, { label: '\\text{blocks east}', cls: 'position', key: 'east', min: 1, max: 12, step: 1, value: 9, unit: '', dec: 0, aria: 'blocks east' });
   const N = ctl(d.controls, { label: '\\text{blocks north}', cls: 'position', key: 'north', min: 1, max: 8, step: 1, value: 5, unit: '', dec: 0, aria: 'blocks north' });
   const K = ctl(d.controls, { label: '\\text{step}', cls: '', key: 'step', min: 0, max: 4, step: 0.01, value: 4, unit: '', dec: 2, aria: 'step of the head-to-tail method' });
   F.story(d, K, { stops: [{ v: 0, label: 'start' }, { v: 1, label: 'Step 1' }, { v: 2, label: 'Step 2' }, { v: 3, label: 'Step 4' }, { v: 4, label: 'Steps 5, 6' }] });
   /* 72 units to a block, fixed: the grid holds the longest walk the sliders allow, 12 blocks east and 8 north */
-  const ox = 240, oy = 700, b = 72;
+  const ox = 240, oy = 725, b = 72;
   function draw() {
     const { ctx } = begin(d.c);
     const e = E.v, n = N.v, k = K.v, p1 = clamp01(k), p2 = clamp01(k - 1), p3 = clamp01(k - 2), p4 = clamp01(k - 3);

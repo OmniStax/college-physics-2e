@@ -23,7 +23,7 @@ function sciTex(x, d) { const p = Math.floor(Math.log10(Math.abs(x))); return `$
    airfoil travels to the right along the road, (x, y) on the road line; a skydiver falls down the page, (x, y) her
    centre. It returns the box the body fills and the height its arrows act at. */
 function bluff(ctx, x, y, name, col) {
-  if (name === 'a skydiver lying horizontal') { F.skydiver(ctx, x, y, 1, col); return { l: x - 50, r: x + 50, t: y - 58, b: y + 60 }; }
+  if (name === 'a skydiver lying horizontal') { faller(ctx, x, y, 0.9, 'spread', col); return { l: x - 70, r: x + 70, t: y - 50, b: y + 30 }; }
   if (name === 'a skydiver feet first') { F.silhouette(ctx, { x, y: y + 66, s: 0.9, pose: 'stand', color: col, hip: { x: 0, y: -77 }, feet: [{ x: 4, y: 0 }, { x: -4, y: 0 }], hands: [{ x: 8, y: -60 }, { x: 2, y: -60 }] }); return { l: x - 22, r: x + 22, t: y - 72, b: y + 68 }; }
   const cy = y - 26, at = (l, r, t, b, ay) => ({ l, r, t, b, ay });
   if (name === 'a sphere') { dot(ctx, x, cy, col, true, 44); return at(x - 44, x + 44, cy - 44, cy + 44, cy); }
@@ -219,7 +219,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     arrow(ctx, bx, by + half, bx, by + half + Lw, cf, 5);
     text(ctx, 'w = ' + wN + ' N', bx, by + half + Lw + 24, cf, { size: 21, weight: 600, align: 'center' });
     if (Ld > 16) arrow(ctx, bx, by - half, bx, by - half - Ld, cf, 5);
-    text(ctx, 'F_D = ' + fN + ' N', bx, by - half - Math.max(Ld, 4) - 24, cf, { size: 21, weight: 600, align: 'center' });
+    text(ctx, 'F_D = ' + fN + ' N', bx, by - half - Math.max(Ld, 30) - 24, cf, { size: 21, weight: 600, align: 'center' });
     const xv = bx - 195, xa = bx + 195, y0 = by - 50;
     if (v > 6) arrow(ctx, xv, y0, xv, y0 + 1.7 * v, cv, 5); else dot(ctx, xv, y0, cv, true, 5);
     text(ctx, 'v = ' + fmt(v, 1) + ' m/s', xv, y0 - 28, cv, { size: 21, weight: 600, align: 'center' });
