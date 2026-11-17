@@ -267,7 +267,7 @@ function tower(ctx, x, y, h, color) {
     dot(ctx, g.X(tp), g.Y(yl.v), C('time'), true, 10); dot(ctx, g.X(tn), g.Y(yl.v), PAL.muted, false, 10);
     dot(ctx, g.X(tau), g.Y(y), PAL.ink, true, 9);
     text(ctx, 't = ' + fmt(tp, 2) + ' s', g.X(tp) + 16, g.Y(yl.v) - 22, C('time'), { size: 18, weight: 600, bg: PAL.panel });
-    text(ctx, 't = −' + fmt(-tn, 2) + ' s', g.X(tn) + 16, g.Y(yl.v) + 24, PAL.muted, { size: 18, weight: 600 });
+    text(ctx, 't = −' + fmt(-tn, 2) + ' s', g.X(tn) + 20, g.Y(yl.v) + 24, PAL.muted, { size: 18, weight: 600, bg: PAL.panel });
     topline(ctx, done ? 'After ' + fmt(tp, 2) + ' s the rock lands ' + fmt(-yl.v, 1) + ' m below the rim at ' + fmt(vS, 1) + ' m/s, ' + fmt(-thS, 1) + '° below the horizontal.'
       : 'After ' + fmt(tau, 2) + ' s the rock is ' + fmt(Math.abs(y), 1) + ' m ' + (y >= 0 ? 'above' : 'below') + ' the rim and ' + fmt(x, 1) + ' m along, moving at ' + fmt(v, 1) + ' m/s.');
     tex(d.readout, `(${fmt(G / 2, 2)}\\ \\text{m/s}^2)\\kt^2 - (${fmt(f.vy0, 1)}\\ \\text{m/s})\\kt - (${fmt(-yl.v, 1)}\\ \\text{m}) = 0 \\;\\Rightarrow\\; \\kt = ${fmt(tp, 2)}\\ \\text{s}\\ \\text{or}\\ -${fmt(-tn, 2)}\\ \\text{s} \\\\ `
@@ -369,9 +369,9 @@ function tower(ctx, x, y, h, color) {
    readout turns from the level-ground range into the orbit condition.
 ===================================================================== */
 (function () {
-  const H = 770, d = sim('sim-orbit', H);
+  const H = 800, d = sim('sim-orbit', H);
   const RE = 6.37e6, GM = G * RE * RE, HT = 1.5e6, VC = Math.sqrt(GM / (RE + HT)) / 1000;   /* a 1,500 km tower: circular orbit at 7.11 km/s */
-  const v0 = ctl(d.controls, { label: '\\kvo', cls: 'velocity', min: 1, max: 7.6, step: 0.1, value: 6, unit: 'km/s', dec: 1, onInput: reset, aria: 'launch speed',
+  const v0 = ctl(d.controls, { label: '\\kvo', cls: 'velocity', min: 1, max: 7.4, step: 0.1, value: 6, unit: 'km/s', dec: 1, onInput: reset, aria: 'launch speed',
     specials: [{ at: () => VC, label: 'circular orbit' }] });
   v0.refresh();
   const ro = F.readout(d);
@@ -396,9 +396,9 @@ function tower(ctx, x, y, h, color) {
     }
     return out(false);
   }
-  /* one fixed view: the Earth's radius is 200 units, its centre at (700, 387), so the tower's top is at
-     y = 140 and the longest ellipse the slider allows (7.6 km/s, 10,500 km from the centre at its far end) ends at y = 717 */
-  const S = 200 / RE, OX = 700, OY = 387, RPX = 200;
+  /* one fixed view: the Earth's radius is 232 units, its centre at (700, 437), so the tower's top is at
+     y = 150 and the longest ellipse the slider allows (7.4 km/s, 9,310 km from the centre at its far end) ends at y = 776 */
+  const S = 232 / RE, OX = 700, OY = 437, RPX = 232;
   const X = (m) => OX + m * S, Y = (m) => OY - m * S;
   const GHOSTS = [2, 4, 6].map((v) => ({ v, run: integrate(v) }));
   let run = null, key = '';
@@ -459,8 +459,8 @@ function tower(ctx, x, y, h, color) {
     F.legend(ctx, { l: 20, r: 1380, t: 100, b: H - 10 }, [{ s: 'launches at 2, 4 and 6 km/s', color: faint, w: 2.5 }, { s: 'circular orbit, ' + fmt(VC, 2) + ' km/s', color: faint, w: 2.5, dash: [10, 10] }], { corner: 'bl' });
     const min = (q) => fmt(q / 60, 1) + ' min';
     const circ = Math.abs(v0.v - VC) <= 1e-9 * 7;
-    topline(ctx, done && run.landed ? 'After ' + min(run.T) + ' it lands ' + sig3(along) + ' km along the curved surface. On level ground it would land ' + sig3(flat) + ' km away.'
-      : done ? 'At ' + fmt(v0.v, 2) + ' km/s the Earth curves away as fast as the projectile falls, so after ' + min(run.T) + ' it is back at the tower, in orbit.'
+    topline(ctx, done && run.landed ? 'After ' + min(run.T) + ' it lands ' + sig3(along) + ' km round the curved Earth, not ' + sig3(flat) + ' km as on level ground.'
+      : done ? 'At ' + fmt(v0.v, 2) + ' km/s the projectile never lands: after ' + min(run.T) + ' it is back at the tower, in orbit.'
       : 'After ' + min(tau) + ' the projectile is ' + sig3((r - RE) / 1000) + ' km up and has passed over ' + sig3(sofar) + ' km of the surface.');
     /* the level-ground range, or the orbit condition: v₀, g and h are the same quantities in both */
     const gv = '\\mk{gval}{(9.80\\ \\text{m/s}^2)}', hv = `\\mk{hval}{${texc(commas(fmt(HT, 0)))}\\ \\text{m}}`, re = '6.37 \\times 10^6\\ \\text{m}';

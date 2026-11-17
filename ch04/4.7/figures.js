@@ -159,7 +159,7 @@ function trafficLight(ctx, x, y, color) {
    light hangs at rest, so there is no time in the idea.
 ===================================================================== */
 (function () {
-  const H = 735;
+  const H = 765;
   const d = sim('sim-traffic-light', H);
   const t1 = ctl(d.controls, { label: '\\ktheta_1', cls: 'angle', min: 20, max: 50, step: 0.5, value: 30, unit: '°', dec: 1, specials: [{ at: () => t2.v, label: 'equal angles' }], aria: 'angle of the left wire above the horizontal' });
   const t2 = ctl(d.controls, { label: '\\ktheta_2', cls: 'angle', min: 20, max: 50, step: 0.5, value: 45, unit: '°', dec: 1, specials: [{ at: () => t1.v, label: 'equal angles' }], aria: 'angle of the right wire above the horizontal' });
@@ -168,7 +168,7 @@ function trafficLight(ctx, x, y, color) {
      inside the 266 units of wire) and each horizontal part 1.37 w, and at 50°, where the knot
      hangs lowest */
   const M = 15, W = M * G, S = 170 / W;
-  const XL = 100, XR = 600, YT = 130, GY = 708;
+  const XL = 100, XR = 600, YT = 160, GY = 738;
   function draw() {
     const { ctx } = begin(d.c);
     const fc = C('force'), ang = C('angle'), th1 = t1.v * RAD, th2 = t2.v * RAD;
@@ -184,13 +184,13 @@ function trafficLight(ctx, x, y, color) {
     strip(ctx, 40, 660, GY, 24);
     [XL, XR].forEach((x) => { line(ctx, x, YT, x, GY - 12, PAL.muted, 9); ctx.save(); ctx.fillStyle = PAL.muted; ctx.fillRect(x - 20, GY - 40, 40, 28); ctx.restore(); });
     line(ctx, XL, YT, kx, ky, F.ref('wire-1'), 4); line(ctx, kx, ky, XR, YT, F.ref('wire-2'), 4);
-    line(ctx, kx - 190, ky, kx + 190, ky, alpha(PAL.ink, 0.35), 2, [10, 10]);
+    line(ctx, Math.max(XL + 8, kx - 190), ky, Math.min(XR - 8, kx + 190), ky, alpha(PAL.ink, 0.35), 2, [10, 10]);
     trafficLight(ctx, kx, ky, F.ref('light'));
     F.angleArc(ctx, { x: kx, y: ky }, 62, Math.PI - th1, Math.PI, '', null, ang);
     F.angleArc(ctx, { x: kx, y: ky }, 62, 0, th2, '', null, ang);
-    text(ctx, fmt(t1.v, 1) + '°', kx - 104, ky + 22, ang, { size: 20, weight: 600, align: 'center' });
-    text(ctx, fmt(t2.v, 1) + '°', kx + 104, ky + 22, ang, { size: 20, weight: 600, align: 'center' });
-    lab.block(kx - 140, ky + 8, kx + 140, ky + 36); lab.block(kx - 24, ky, kx + 24, ky + 90);
+    text(ctx, fmt(t1.v, 1) + '°', kx - 80, ky + 22, ang, { size: 20, weight: 600, align: 'center' });
+    text(ctx, fmt(t2.v, 1) + '°', kx + 80, ky + 22, ang, { size: 20, weight: 600, align: 'center' });
+    lab.block(kx - 116, ky + 8, kx + 116, ky + 36); lab.block(kx - 24, ky, kx + 24, ky + 90);
     /* the tensions leave the knot along their wires, each with its two parts dashed */
     const h1x = kx - T1 * S * Math.cos(th1), h1y = ky - T1 * S * Math.sin(th1);
     const h2x = kx + T2 * S * Math.cos(th2), h2y = ky - T2 * S * Math.sin(th2);
@@ -204,7 +204,7 @@ function trafficLight(ctx, x, y, color) {
     lab.add('T_2 = ' + fmt(T2, 0) + ' N', h2x, h2y, -0.35, -0.94, fc, 20, 26);
     lab.add('w = ' + fmt(W, 0) + ' N', kx, wy1 - 16, 1, 0, fc, 20, 18);
     /* the book's part (e): the same forces as their parts along x and y, on the same scale */
-    const cx = 1050, cy = 410;
+    const cx = 1050, cy = 440;
     text(ctx, 'the same forces, as their horizontal and vertical parts', cx, 132, PAL.muted, { size: 19, align: 'center' });
     const lx = Tx * S, y1 = cy - T1y * S, y2 = cy - W * S;
     arrow(ctx, cx, cy, cx - lx, cy, fc, 5); arrow(ctx, cx, cy, cx + lx, cy, fc, 5);
@@ -371,7 +371,7 @@ function trafficLight(ctx, x, y, color) {
     line(ctx, 80, GYS - 23, 1340, GYS - 23, F.ref('ground'), 3); line(ctx, 80, GYS + 23, 1340, GYS + 23, F.ref('ground'), 3);
     F.scale(ctx, X, 0, 30, 5, GYS + 45, 'm', 1);
     line(ctx, X(stot), GYS - 60, X(stot), GYS + 23, alpha(PAL.ink, 0.4), 2, [4, 8]);
-    F.rich(ctx, ['top speed after ', [fmt(stot, 1) + ' m', C('position')]], Math.max(X(stot), 230), GYS + 96, { size: 19, align: 'center' });
+    F.rich(ctx, ['top speed after ', [fmt(stot, 1) + ' m', C('position')]], Math.min(Math.max(X(stot), 230), 1230), GYS + 96, { size: 19, align: 'center' });
     const px = X(s);
     F.person(ctx, px, GYS, F.ref('player'), { s: 1.35, lean: 0.2, phase: t > 0 && t < el1.v ? t * 8 : 0 });
     const late = px > 900, fl = 70 + 130 * (Fn / 1200), vl = 180 * (v / 12);
@@ -385,18 +385,20 @@ function trafficLight(ctx, x, y, color) {
       text(ctx, 'v = ' + fmt(v, 2) + ' m/s', late ? px - 30 : px + 42 + vl, GYS - 110, vc, { size: 20, weight: 600, align: late ? 'right' : 'left', bg: PAL.panel });
     }
     /* the graph: the velocity against time, whose slope is the average acceleration */
-    /* fixed axes: the two sliders stop at 5 s and 12 m/s, so the graph is always 0 to 5 s by
-       0 to 12 m/s, ticked every second and every 3 m/s, and it never rescales as a slider moves */
-    const TR = 5, VR = 12, box = { l: 210, r: 1300, t: 420, b: 610 };
-    const g = axes(ctx, box, [0, TR], [0, VR], { xl: 'time t (s)', xc: tc, yl: 'v (m/s)', yc: vc, nx: 5, ny: 4, fx: (u) => fmt(u, 0), fy: (u) => fmt(u, 0) });
+    /* fixed axes: the two sliders stop at 5 s and 12 m/s, so the graph is always 0 to 6 s by
+       0 to 12 m/s, ticked every second and every 3 m/s, and it never rescales as a slider moves;
+       the sixth second leaves room beside the longest run for the names of its rise and run */
+    const TR = 6, VR = 12, box = { l: 210, r: 1300, t: 420, b: 610 };
+    const g = axes(ctx, box, [0, TR], [0, VR], { xl: 'time t (s)', xc: tc, yl: 'v (m/s)', yc: vc, nx: 6, ny: 4, fx: (u) => fmt(u, 0), fy: (u) => fmt(u, 0) });
     /* the rise and the run of the whole line: Δv over Δt */
     const xe = g.X(el1.v), ye = g.Y(vf.v);
     line(ctx, g.X(0), box.b - 2, xe, box.b - 2, tc, 4);
     line(ctx, xe, box.b, xe, ye, vc, 3, [8, 8]);
     line(ctx, g.X(0), g.Y(0), xe, ye, acc, 5);
-    text(ctx, 'Δt = ' + fmt(el1.v, 2) + ' s', (g.X(0) + xe) / 2 + 30, box.b - 22, tc, { size: 20, weight: 600, align: 'center', bg: PAL.panel });
-    text(ctx, 'Δv = ' + fmt(vf.v, 2) + ' m/s', xe + 16, (box.b + ye) / 2 + 14, vc, { size: 20, weight: 600, bg: PAL.panel });
-    text(ctx, 'slope a = ' + fmt(a, 2) + ' m/s²', xe + 16, ye - 4, acc, { size: 20, weight: 600, bg: PAL.panel });
+    const yv = Math.min((box.b + ye) / 2, box.b - 46), ya = Math.min(ye - 4, yv - 30);
+    text(ctx, 'Δt = ' + fmt(el1.v, 2) + ' s', xe + 16, box.b - 17, tc, { size: 20, weight: 600 });
+    text(ctx, 'Δv = ' + fmt(vf.v, 2) + ' m/s', xe + 16, yv, vc, { size: 20, weight: 600 });
+    text(ctx, 'slope a = ' + fmt(a, 2) + ' m/s²', xe + 16, ya, acc, { size: 20, weight: 600 });
     dot(ctx, g.X(t), g.Y(v), vc, true, 9);
     headline(ctx, 'After ' + fmt(t, 2) + ' s he is at ' + fmt(v, 2) + ' m/s, and the ground has pushed him forward with ' + fmt(Fn, 0) + ' N all the way');
     tex(d.readout, `\\kFnet = \\km\\ka = \\km\\frac{\\kdv}{\\kdt} = (${fmt(mm.v, 1)}\\ \\text{kg})\\frac{${fmt(vf.v, 2)}\\ \\text{m/s}}{${fmt(el1.v, 2)}\\ \\text{s}} = (${fmt(mm.v, 1)}\\ \\text{kg})(${fmt(a, 2)}\\ \\text{m/s}^2) = ${fmt(Fn, 0)}\\ \\text{N}`);

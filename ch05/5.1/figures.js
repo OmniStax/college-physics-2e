@@ -101,13 +101,14 @@ function crate(ctx, x, y, w, h, col) {
     ctx.lineWidth = 3; ctx.lineJoin = 'round';
     ctx.strokeStyle = cfl; ctx.beginPath(); for (let i = 0; i <= n0; i++) (i ? ctx.lineTo(xAt(i), yLow(i)) : ctx.moveTo(xAt(i), yLow(i))); ctx.stroke();
     ctx.strokeStyle = cc; ctx.beginPath(); for (let i = 0; i <= n0; i++) (i ? ctx.lineTo(xAt(i), yUp(i)) : ctx.moveTo(xAt(i), yUp(i))); ctx.stroke();
-    /* the high spots that touch, drawn heavy and counted where the lens shows them */
+    /* the high spots that touch, drawn heavy, and how much of the lens's width they add up to */
     let touching = 0, on = false;
     ctx.strokeStyle = car; ctx.lineWidth = 11; ctx.lineCap = 'round';
     for (let i = 0; i <= n0; i++) {
       const inside = Math.hypot(xAt(i) - LX, yLow(i) - LY) < LR - 6;
       const hit = inside && UPBASE + up[i % NX] >= yLow(i) - 0.01;
-      if (hit && !on) { ctx.beginPath(); ctx.moveTo(xAt(i), yLow(i)); on = true; touching++; }
+      if (hit) touching += PERIOD / NX;
+      if (hit && !on) { ctx.beginPath(); ctx.moveTo(xAt(i), yLow(i)); on = true; }
       else if (hit) ctx.lineTo(xAt(i), yLow(i));
       else if (on) { ctx.lineTo(xAt(i - 1) + 0.1, yLow(i - 1)); ctx.stroke(); on = false; }
     }
@@ -116,7 +117,8 @@ function crate(ctx, x, y, w, h, col) {
     ctx.save(); ctx.strokeStyle = PAL.muted; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(LX, LY, LR, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
     text(ctx, 'the crate', LX, LY - LR + 64, cc, { size: 20, weight: 600, align: 'center' });
     text(ctx, 'the floor', LX, LY + LR - 56, cfl, { size: 20, weight: 600, align: 'center' });
-    F.rich(ctx, ['touching at ', [touching === 1 ? '1 high spot' : touching + ' high spots', car]], LX, LY + LR + 40, { size: 22, weight: 600, align: 'center' });
+    text(ctx, 'what touches, end to end', LX - 70, LY + LR + 44, PAL.ink, { size: 20, align: 'right', base: 'middle' });
+    line(ctx, LX - 50, LY + LR + 44, LX - 50 + Math.max(2, touching), LY + LR + 44, car, 11);
     /* ---- the friction against the normal force. Fixed axes: 0 to 2000 N across, which holds the
        1960 N of the heaviest crate, and 0 to 1000 N up, which holds its 882 N of static friction ---- */
     const box = { l: 130, r: 600, t: 452, b: 640 };

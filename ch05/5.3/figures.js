@@ -238,16 +238,18 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     if (grow > 8) hbracket(ctx, x0 + base, xe, y + 78, cp, 'ΔL', { side: 'below' });
     /* the graph: the stress against the strain, with the three regions the book names */
     const box = { l: 200, r: 1280, t: 370, b: 650 };
-    const ax = axes(ctx, box, [0, 0.1], [0, 60], { xl: 'strain ΔL/L₀', xc: PAL.ink, yl: 'tensile stress (MN/m²)', yc: cs, nx: 5, ny: 3, fx: (v) => fmt(v, 2) });
+    const ax = axes(ctx, box, [0, 0.1], [0, 80], { xl: 'strain ΔL/L₀', xc: PAL.ink, yl: 'tensile stress (MN/m²)', yc: cs, nx: 5, ny: 4, fx: (v) => fmt(v, 2) });
     const { X, Y: Yg } = ax;
-    [TOE, LIN].forEach((v) => line(ctx, X(v), Yg(stress(v)), X(v), box.b, alpha(PAL.ink, 0.4), 2, [6, 6]));
+    [TOE, LIN].forEach((v) => line(ctx, X(v), box.t, X(v), box.b, alpha(PAL.ink, 0.4), 2, [6, 6]));
     F.plot(ctx, ax, stress, cs, { w: 5 });
-    text(ctx, 'toe region', X(TOE / 2), box.b - 20, PAL.muted, { size: 19, align: 'center' });
-    text(ctx, 'linear region', X((TOE + LIN) / 2), box.b - 20, PAL.muted, { size: 19, align: 'center' });
-    text(ctx, 'failure region', X((LIN + 0.1) / 2), box.b - 20, PAL.muted, { size: 19, align: 'center' });
+    text(ctx, 'toe region', X(TOE / 2), box.t + 22, PAL.muted, { size: 19, align: 'center' });
+    text(ctx, 'linear region', X((TOE + LIN) / 2), box.t + 22, PAL.muted, { size: 19, align: 'center' });
+    text(ctx, 'failure region', X((LIN + 0.1) / 2), box.t + 22, PAL.muted, { size: 19, align: 'center' });
     /* the tangent at the point: its slope is what the tendon's stiffness is at this strain */
     const half = 0.011, ea = Math.max(0, e - half), eb = Math.min(0.1, e + half);
+    ctx.save(); ctx.beginPath(); ctx.rect(box.l, box.t, box.r - box.l, box.b - box.t); ctx.clip();
     line(ctx, X(ea), Yg(s + m * (ea - e)), X(eb), Yg(s + m * (eb - e)), C('elastic-modulus'), 3, [10, 10]);
+    ctx.restore();
     line(ctx, box.l, Yg(s), X(e), Yg(s), cs, 2, [4, 8]);
     dot(ctx, X(e), Yg(s), PAL.ink, true, 10);
     const at = 'At a strain of ' + fmt(e, 3) + ' the stress is ' + fmt(s, 1) + ' MN/m²';
@@ -270,7 +272,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
   const d = sim('sim-nail', 640);
   const mm = ctl(d.controls, { label: '\\km', cls: 'mass', min: 1, max: 15, step: 0.1, value: 5.2, unit: 'kg', dec: 1, aria: 'mass of the picture' });
   const rr = ctl(d.controls, { label: '\\krad', cls: 'position', min: 0.5, max: 1.25, step: 0.05, value: 0.75, unit: 'mm', dec: 2, aria: 'radius of the nail' });
-  const L0 = ctl(d.controls, { label: '\\kLo', cls: 'position', min: 2, max: 12, step: 0.25, value: 5, unit: 'mm', dec: 2, aria: 'length of nail outside the wall' });
+  const L0 = ctl(d.controls, { label: '\\kLo', cls: 'position', min: 2, max: 10, step: 0.25, value: 5, unit: 'mm', dec: 2, aria: 'length of nail outside the wall' });
   const S = 80e9;                                                     /* steel, from Table 5.3, as Example 5.5 takes it */
   const area = () => Math.PI * Math.pow(rr.v / 1000, 2);
   const force = () => mm.v * G;
@@ -304,29 +306,31 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     ctx.fillStyle = PAL.panel; ctx.strokeStyle = cn; ctx.lineWidth = 3;
     path(x0, hx, true); ctx.fill(); ctx.stroke();
     /* a band of shading along the underside, for the roundness of the shank */
-    ctx.strokeStyle = alpha(cn, 0.2); ctx.lineWidth = half * 0.36;
-    ctx.beginPath(); for (let i = 0; i <= 60; i++) { const xx = x0 + taper + ((hx - x0 - taper) * i) / 60; if (i) ctx.lineTo(xx, cen(xx) + half * 0.55); else ctx.moveTo(xx, cen(xx) + half * 0.55); } ctx.stroke();
+    ctx.strokeStyle = alpha(cn, 0.22); ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); for (let i = 0; i <= 60; i++) { const xx = x0 + taper + 10 + ((hx - x0 - taper - 20) * i) / 60; if (i) ctx.lineTo(xx, cen(xx) + half * 0.6); else ctx.moveTo(xx, cen(xx) + half * 0.6); } ctx.stroke();
     const hy = cen(hx), hh = half + 34;
     ctx.fillStyle = alpha(cn, 0.3); ctx.strokeStyle = cn; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.roundRect(hx - 2, hy - hh, 26, 2 * hh, 9); ctx.fill(); ctx.stroke();
     ctx.restore();
     /* where the nail lay before the picture was hung */
     if (flex > 3) { line(ctx, wallR, y - half, hx + 80, y - half, PAL.muted, 2, [8, 8]); line(ctx, wallR, y + half, px, y + half, PAL.muted, 2, [8, 8]); }
-    text(ctx, 'steel nail', x0 + taper + 10, y - half - 22, cn, { size: 20, weight: 600 });
+    text(ctx, 'steel nail', wallL - 16, y - half - 24, cn, { size: 20, weight: 600, align: 'right' });
     text(ctx, 'picture', px + pw / 2, pBot - 28, cpic, { size: 20, weight: 600, align: 'center', bg: PAL.panel });
     /* the two equal and opposite forces across the nail: the wall's push up on the buried part, the picture's weight down */
-    const aL = 46 + 4 * mm.v;
+    const aL = 30 + 3 * mm.v;
     const ux = (wallL + wallR) / 2;
     arrow(ctx, ux, y + half + 12 + aL, ux, y + half + 12, cf, 5);
     text(ctx, 'w', ux - 22, y + half + 16 + aL / 2, cf, { weight: 600, size: 24, align: 'right' });
     arrow(ctx, px + pw / 2, pBot + 8, px + pw / 2, pBot + 8 + aL, cf, 5);
-    text(ctx, 'w = ' + fmt(w, 1) + ' N', px + pw / 2 + 18, pBot + 12 + aL / 2, cf, { weight: 600, size: 22 });
+    text(ctx, 'w = ' + fmt(w, 1) + ' N', px + pw / 2 - 16, pBot + 12 + aL / 2, cf, { weight: 600, size: 22, align: 'right' });
     /* the measures */
-    vbracket(ctx, wallL - 40, y - half, y + half, cp, '2r = ' + fmt(2 * rr.v, 2) + ' mm', -1);
+    vbracket(ctx, wallL - 30, y - half, y + half, cp, '', -1);
+    text(ctx, '2r = ' + fmt(2 * rr.v, 2) + ' mm', wallL - 16, y + half + 26, cp, { size: 20, weight: 600, align: 'right' });
     hbracket(ctx, wallR, px, y - half - 86, cp, 'L₀ = ' + fmt(L0.v, 2) + ' mm');
     line(ctx, px, y - half - 86, px, pTop, alpha(PAL.ink, 0.4), 2, [4, 8]);
-    if (flex > 3) vbracket(ctx, hx + 70, y - half, hy - half, cp, 'Δx = ' + fmt(x * 1e6, 2) + ' µm', 1);
-    text(ctx, 'The flex is drawn ' + plain(MAG / (SC * 1000), 1) + ' times larger than it is.', 1340, 610, PAL.muted, { size: 18, align: 'right' });
+    if (flex > 3) vbracket(ctx, hx + 56, y - half, hy - half, cp, '', 1);
+    text(ctx, 'Δx = ' + fmt(x * 1e6, 2) + ' µm', hx + 80, y - half - 26, cp, { size: 22, weight: 600, align: 'right' });
+    text(ctx, 'The flex is drawn ' + plain(MAG / (SC * 1000), 1) + ' times larger than it is.', wallR + 24, 616, PAL.muted, { size: 18 });
     headline(ctx, 'A ' + fmt(mm.v, 1) + ' kg picture weighs ' + fmt(w, 0) + ' N and bends the nail ' + fmt(x * 1e6, 2) + ' µm.');
     readout(d.readout, `\\kdx = \\frac{1}{\\kS}\\frac{\\kF}{\\karea}\\kLo = \\frac{(${fmt(w, 1)}\\ \\text{N})(${sci(L0.v / 1000, 2)}\\ \\text{m})}{(${sci(S, 0)}\\ \\text{N/m}^2)(${sci(area(), 2)}\\ \\text{m}^2)} = ${sci(x, 2)}\\ \\text{m}`);
   }

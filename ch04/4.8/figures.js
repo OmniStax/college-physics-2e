@@ -66,9 +66,9 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       const wide = hi - lo > F.measure(ctx, lab, { size: 21, weight: 600 }) + 40;
       text(ctx, lab, wide ? (lo + hi) / 2 : lo - 18, wide ? YB - 20 : YB, PAL.ink, { size: 21, weight: 600, align: wide ? 'center' : 'right', bg: PAL.panel });
     }
-    const n = Math.abs(e), words = WORD[n] ? ', ' + WORD[n] + (e < 0 ? 'th' : ' times') + ' as strong' : n > 6 ? ': a 1 followed by ' + n + ' zeros' : '';
+    const n = Math.abs(e), words = ': a 1 followed by ' + n + ' zeros';
     headline(ctx, a === b ? 'Pick two different forces to compare them'
-      : e > 0 ? 'The ' + fa.name + ' force is ' + pow10(e) + ' times the ' + fb.name + ' force' + (n > 6 ? words : '')
+      : e > 0 ? 'The ' + fa.name + ' force is ' + pow10(e) + ' times the ' + fb.name + ' force' + (n > 6 ? words : WORD[n] ? ', or ' + WORD[n] + ' times' : '')
         : 'The ' + fa.name + ' force is ' + pow10(e) + ' of the ' + fb.name + ' force' + (n > 6 ? ', ' + n + ' powers of ten weaker' : ''));
     readout(d.readout, `\\frac{\\text{${fa.name}}}{\\text{${fb.name}}} = \\frac{${fa.tex}}{${fb.tex}} = 10^{${fa.p} - (${fb.p})} = 10^{${e}}`);
   }
@@ -136,7 +136,8 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     const { ctx } = begin(d.c);
     const x = TX.v, y = TY.v, q = TQ.v;
     const d1 = Math.hypot(x + SEP, y), d2 = Math.hypot(x - SEP, y), near = Math.min(d1, d2) < 0.16;
-    const [ex, ey] = field(x, y), E = Math.hypot(ex, ey), Fm = q * E;
+    /* the field is rounded as the readout shows it, so the product on the line is the product of the numbers on it */
+    const [ex, ey] = field(x, y), E0 = Math.hypot(ex, ey), E = +E0.toFixed(E0 < 100 ? 1 : 0), Fm = q * E;
     const guide = alpha(PAL.ink, 0.4);
     ctx.save();
     ctx.beginPath(); ctx.rect(BOX.l, BOX.t, BOX.r - BOX.l, BOX.b - BOX.t); ctx.clip();
@@ -158,7 +159,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     text(ctx, '+1.0 nC', px(-SEP), py(0) + below, F.ref('positive-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     text(ctx, '−1.0 nC', px(SEP), py(0) + below, F.ref('negative-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     /* the force on the test charge, 6 units to the nanonewton, cut short past 300 units */
-    const ux = ex / (E || 1), uy = ey / (E || 1), sg = Math.sign(q);
+    const ux = ex / (E0 || 1), uy = ey / (E0 || 1), sg = Math.sign(q);
     let tip = [px(x), py(y)];
     if (!near && q !== 0) {
       const full = 6 * Math.abs(Fm), len = Math.min(300, full);
@@ -179,7 +180,9 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     dot(ctx, px(x), py(y), F.ref('test-charge'), true, 14);
     if (q !== 0) text(ctx, q > 0 ? '+' : '−', px(x), py(y) - 1, PAL.panel, { size: 22, weight: 600, align: 'center' });
     /* the charge's name sits on the side the force does not point to */
-    const side = (sg || 1) * uy >= 0 ? 1 : -1;
+    let side = (sg || 1) * uy >= 0 ? 1 : -1;
+    const clear = (sd) => [-SEP, SEP].every((cx) => Math.abs(px(x) - px(cx)) > 110 || Math.abs(py(y) + sd * 38 - (py(0) + below / 2)) > 52);
+    if (!clear(side) && clear(-side)) side = -side;
     const ny = Math.max(BOX.t + 14, Math.min(BOX.b - 14, py(y) + side * 38));
     text(ctx, 'q = ' + (q > 0 ? '+' : '') + fmt(q, 1).replace('-', '−') + ' nC', Math.max(110, Math.min(1290, px(x))), ny, C('charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     spots = [
@@ -206,7 +209,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
    and gets the transport.
 ===================================================================== */
 (function () {
-  const d = sim('sim-exchange', 530);
+  const d = sim('sim-exchange', 570);
   const MODE = choice(d.controls, { label: '\\text{the ball is}', aria: 'how the ball is exchanged', value: 'throw', onInput: reset,
     options: [{ value: 'throw', label: 'thrown and caught' }, { value: 'pull', label: 'pulled away' }] });
   const FA = ctl(d.controls, { label: '\\kF', cls: 'force', min: 50, max: 200, step: 10, value: 100, unit: 'N', dec: 0, onInput: reset, aria: 'the force of the exchange' });
@@ -214,7 +217,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
   const T = 4.6, T1 = 0.3, T2 = 1.1, T3 = 2.9, T4 = 3.7;
   const cy = cycle(() => T, 1.2);
   function reset() { cy.reset(); }
-  const PS = 1.25, GY = 304, NY = 452, BR = 20;
+  const PS = 1.25, GY = 340, NY = 490, BR = 20;
   const u01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
   /* a basketball centred on (x, y) */
   function ball(ctx, x, y, color) {
@@ -247,9 +250,9 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       const back = 0.5 * f;                                    /* how far one push carries a person, in units */
       xa = x0a - back * ease(u01(t, T1, T1 + 1.4)); xb = x0b + back * ease(u01(t, T3, T3 + 1.4));
       const rel = xa + 78, got = xb - 78;                      /* where the ball leaves the hands and where it is met */
-      if (t < T2) { const k = u01(t, T1, T2); bx = xa + 44 + 34 * k * k; hold1 = [bx - BR, by]; }
+      if (t < T2) { const k = u01(t, T1, T2); bx = xa + 54 + 24 * k * k; hold1 = [bx - BR, by]; }
       else if (t < T3) { const k = u01(t, T2, T3); bx = rel + (got - rel) * k; by = HY - 46 * Math.sin(Math.PI * k); }
-      else { const k = u01(t, T3, T4); bx = got + 34 * (1 - (1 - k) * (1 - k)); hold2 = [bx + BR, by]; }
+      else { const k = u01(t, T3, T4); bx = got + 24 * (1 - (1 - k) * (1 - k)); hold2 = [bx + BR, by]; }
       mx = xa + 34 + (xb - xa - 68) * u01(t, T2, T3);
       said = t < T1 ? 'Person 1 is about to throw the ball to person 2'
         : t < T2 ? 'Pushing the ball forward with ' + fmt(f, 0) + ' N, person 1 is pushed back with ' + fmt(f, 0) + ' N'
@@ -267,7 +270,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
           : 'One exchange has drawn the two together';
     }
     /* the people on their ground line, a hollow mark where each began */
-    text(ctx, pull ? 'A basketball pulled from one person by the other' : 'A basketball thrown by one person and caught by the other', 50, 112, PAL.muted, { size: 19 });
+    text(ctx, pull ? 'A basketball pulled from one person by the other' : 'A basketball thrown by one person and caught by the other', 50, 104, PAL.muted, { size: 19 });
     line(ctx, 60, GY, 1340, GY, PAL.rule, 3);
     dot(ctx, x0a, GY, PAL.muted, false, 7); dot(ctx, x0b, GY, PAL.muted, false, 7);
     body(ctx, xa, 1, F.ref('thrower'), hold1);

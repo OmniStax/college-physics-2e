@@ -81,7 +81,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     const dist = fmt(Math.abs(drift), 1) + ' m ' + (drift > 0 ? 'downstream' : 'upstream');
     if (off) { const ex = lx > R ? R - 16 : L + 16, dir = lx > R ? 1 : -1; arrow(ctx, ex - dir * 60, YF - 30, ex, YF - 30, PAL.ink, 3); text(ctx, 'lands ' + dist, ex - dir * 72, YF - 30, PAL.ink, { size: 22, weight: 600, align: dir > 0 ? 'right' : 'left' }); }
     else if (Math.abs(drift) >= 0.3) hbracket(ctx, Math.min(X0, lx), Math.max(X0, lx), YF - 22, PAL.ink, dist, { H: 700 });
-    else text(ctx, 'lands straight across', X0, YF - 34, PAL.ink, { size: 22, weight: 600, align: 'center' });
+    else text(ctx, 'lands straight across', X0 + 80, YF - 34, PAL.ink, { size: 22, weight: 600 });
     if (Math.abs(drift) >= 0.3) dot(ctx, X0, YF, PAL.ink, false, 8);
     /* names on the triangle, which stands still while the boat moves */
     const up = { x1: X0, y1: YN, x2: hx, y2: hy }, rv = { x1: hx, y1: hy, x2: tx, y2: ty }, tot = { x1: X0, y1: YN, x2: tx, y2: ty };

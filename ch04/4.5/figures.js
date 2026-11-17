@@ -217,7 +217,7 @@ const deg = (v, d) => fmt(v, d) + '°';
     dot(ctx, FX, FY, F.ref('skier'), true, 8);
     lab.add('w = ' + num(w, 0) + ' N', hw[0], hw[1], -0.5, 0.87, col, 21, 26);
     lab.add('N = ' + num(wperp, 0) + ' N', hN[0], hN[1], 0.3, -0.95, col, 21, 26);
-    lab.add('w∥ = ' + num(wpar, 0) + ' N', hpar[0], hpar[1], -1, 0.2, col, 21, 26);
+    lab.add('w∥ = ' + num(wpar, 0) + ' N', hpar[0], hpar[1], -0.8, -0.6, col, 21, 26);
     lab.add('w⊥ = ' + num(wperp, 0) + ' N', hperp[0], hperp[1], 1, 0.1, col, 21, 26);
     if (fL > 3) lab.add('f = ' + num(f, 0) + ' N', hf[0], hf[1], 0.9, -0.45, col, 21, 26);
     /* ---------- the graph: the speed she has reached against the time ---------- */
@@ -304,8 +304,8 @@ const deg = (v, d) => fmt(v, d) + '°';
     lab.add('w = ' + num(W, 0) + ' N', CX, sagY + U, 0, 1, col, 21, 18);
     if (reach > 330) {
       /* long arrows: each tension named over its shaft, its upward part under the arrow's head */
-      lab.beside({ x1: CX, y1: sagY, x2: hL[0], y2: hL[1] }, 'right', 'T_L = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
-      lab.beside({ x1: CX, y1: sagY, x2: hR[0], y2: hR[1] }, 'left', 'T_R = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
+      lab.beside({ x1: CX, y1: sagY, x2: hL[0], y2: hL[1] }, 'right', 'T_L = ' + num(T, 0) + ' N', col, 21, { offset: 0.45, gap: 30 });
+      lab.beside({ x1: CX, y1: sagY, x2: hR[0], y2: hR[1] }, 'left', 'T_R = ' + num(T, 0) + ' N', col, 21, { offset: 0.45, gap: 30 });
       lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, 0.35, 0.94, col, 21, 26);
       lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, -0.35, 0.94, col, 21, 26);
     } else {

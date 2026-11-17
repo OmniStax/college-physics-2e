@@ -238,7 +238,7 @@ function walk(id, sign) {
     arrow(ctx, lft - 18, OY, X(xR), OY, PAL.muted, 2.5); arrow(ctx, OX, Y(yB), OX, Y(yT), PAL.muted, 2.5);
     text(ctx, 'x', X(xR) + 16, OY + 4, PAL.muted, { size: 24, weight: 600, align: 'center' });
     text(ctx, 'y', OX + 22, Y(yT) + 10, PAL.muted, { size: 24, weight: 600, align: 'center' });
-    compass(ctx, 104, H - 100, 30); lab.block(40, H - 164, 168, H - 36);
+    compass(ctx, 110, 170, 30); lab.block(46, 106, 174, 234);
     /* faint guides from the points of the walk to the rows and columns that carry their components */
     [[O, r3, c3], [P, r2, c2], [Q, r3, c3]].forEach(([p, row, col]) => { line(ctx, p.x, p.y, p.x, row, guide, 2, [4, 8]); line(ctx, p.x, p.y, col, p.y, guide, 2, [4, 8]); });
     /* the names of the legs and the resultant, queued first so they have the first pick of the slots */

@@ -100,7 +100,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
    clock runs in it, so the figure is still and carries no transport.
 ===================================================================== */
 (function () {
-  const d = sim('sim-drag', 770);
+  const d = sim('sim-drag', 740);
   const TABLE = [['an airfoil', 0.05], ['a Toyota Camry', 0.28], ['a Ford Focus', 0.32], ['a Honda Civic', 0.36], ['a Ferrari Testarossa', 0.37],
     ['a Dodge Ram pickup', 0.43], ['a sphere', 0.45], ['a Hummer H2 SUV', 0.64], ['a skydiver feet first', 0.70], ['a bicycle', 0.90],
     ['a skydiver lying horizontal', 1.0], ['a circular flat plate', 1.12]];
@@ -119,25 +119,25 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     const cf = C('force'), cv = C('velocity'), cb = F.ref('body');
     const Fnow = drag(V.v), Fhalf = drag(V.v / 2), who = named();
     const n = headline(ctx, 'At ' + fmt(V.v, 0) + ' km/h the drag is ' + sig3(Fnow) + ' N, four times the ' + sig3(Fhalf) + ' N it would be at half that speed');
-    const lab = F.labeller(ctx, 770, { headline: n }), top = n === 2 ? 106 : 80;
+    const lab = F.labeller(ctx, 740, { headline: n }), top = n === 2 ? 106 : 80;
     const name = who === null ? 'a bluff body with C = ' + fmt(Cd.v, 2) : who + ', C = ' + fmt(Cd.v, 2) + ' in Table 5.2';
     /* the scene. Arrows are to one scale within each scene: along the road 1.2 units a newton and 380 units for
        150 km/h, down the column of air, which is shorter, 0.45 units a newton and 115 units for 150 km/h. A drag
        longer than the room left is cut short with two slashes, and its label still gives its size. */
     let dseg, vseg, box, cutD = false;
     if (who && who.indexOf('skydiver') >= 0) {
-      const cx = 700, cy = 280;
-      ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(cx - 25, top, 50, 470 - top); ctx.restore();
-      line(ctx, cx, top, cx, 470, PAL.panel, 3, [22, 18]);
+      const cx = 700, cy = 270;
+      ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(cx - 25, top, 50, 450 - top); ctx.restore();
+      line(ctx, cx, top, cx, 450, PAL.panel, 3, [22, 18]);
       box = bluff(ctx, cx, cy, who, cb);
       const room = box.t - 6 - top, Ld = Math.min(0.45 * Fnow, room);
       cutD = 0.45 * Fnow > room;
       dseg = { x1: cx, y1: box.t - 6, x2: cx, y2: box.t - 6 - Ld };
       vseg = { x1: cx, y1: box.b + 6, x2: cx, y2: box.b + 6 + (115 * V.v) / VMAX };
-      lab.place(box); lab.place({ l: cx - 25, r: cx + 25, t: top, b: 470 });
+      lab.place(box); lab.place({ l: cx - 25, r: cx + 25, t: top, b: 450 });
       lab.add(name, box.l - 30, cy, -1, 0, cb, 17, 10);
     } else {
-      const yl = 330, cx = 760;
+      const yl = 305, cx = 760;
       strip(ctx, 90, 1340, yl, 50);
       box = big(ctx, cx, yl, who, cb, 1.3);
       const room = box.l - 6 - 100, Ld = Math.min(1.2 * Fnow, room);
@@ -159,7 +159,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
        206 N, in a seventeenth of the height. So the drag axis is fixed at 0 to 250 N, which holds
        that car comfortably, and a bluffer body climbs off the top as a pinned marker. Neither range
        changes as a slider moves. */
-    const FR = 250, g0 = { l: 200, r: 1300, t: 500, b: 700 };
+    const FR = 250, g0 = { l: 200, r: 1300, t: 470, b: 670 };
     const g = axes(ctx, g0, [0, VMAX], [0, FR],
       { xl: 'v (km/h)', xc: cv, yl: 'F_D (N)', yc: cf, nx: 5, ny: 5, fy: (y) => fmt(y, 0) });
     inbox(ctx, g0, () => {
