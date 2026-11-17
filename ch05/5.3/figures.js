@@ -97,7 +97,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
         arrow(ctx, sx, yEnd - 10, sx, yEnd - 10 - aL, cf, 5);
         text(ctx, 'F', sx + 18, yEnd - 14 - aL / 2, cf, { weight: 600, size: 24 });
       }
-      if (Y(0) - yEnd > 10) vbracket(ctx, sx + 78, yEnd, Y(0), cp, 'ΔL', 1);
+      if (Y(0) - yEnd > 26) vbracket(ctx, sx + 78, yEnd, Y(0), cp, 'ΔL', 1);
     } else {
       spring(ctx, sx, floor, sx, floor - 120, 5, 26, csp, 4);
       spring(ctx, sx, Y(0) - 60, sx, Y(0) - 180, 5, 26, csp, 4);
@@ -120,7 +120,8 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
           : reg === 1 ? 'A force of ' + fmt(f, 1) + ' N stretches the spring ' + nx + ': off the straight segment, but still elastic.'
             : 'A force of ' + fmt(f, 1) + ' N stretches the spring ' + nx + ', past the elastic region.');
     const pred = (100 * f) / KK, rel = reg === 0 ? '=' : Math.abs(x - pred) < 0.005 ? '\\approx' : x < pred ? '<' : '>';
-    ro.set(`\\mk{dL}{\\kdL} = \\mk{nx}{${fmt(x, 2)}}\\ \\text{cm} \\mk{rel}{${rel}} \\mk{Fk}{\\frac{\\kF}{\\kk}} = \\mk{fk}{\\frac{${fmt(f, 1)}\\ \\text{N}}{${KK}\\ \\text{N/m}}} = \\mk{nfk}{${fmt(pred, 2)}}\\ \\text{cm}`, undefined, { form: rel });
+    if (off && !broken) ro.set(`\\kF = 0\\ \\text{N}:\\quad \\mk{dL}{\\kdL} = \\mk{nx}{${fmt(left, 2)}}\\ \\text{cm}`, undefined, { form: 'off' });
+    else ro.set(`\\mk{dL}{\\kdL} = \\mk{nx}{${fmt(x, 2)}}\\ \\text{cm} \\mk{rel}{${rel}} \\mk{Fk}{\\frac{\\kF}{\\kk}} = \\mk{fk}{\\frac{${fmt(f, 1)}\\ \\text{N}}{${KK}\\ \\text{N/m}}} = \\mk{nfk}{${fmt(pred, 2)}}\\ \\text{cm}`, undefined, { form: rel });
   }
   register(d.fig, { update: () => {}, draw });
 })();
@@ -390,7 +391,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     FACES.filter((g) => seen(g.n)).forEach((g) => rface(ctx, g.q.map(pt(h2)), V.shade(g.n), 3, ccu));
     const tops = FACES.filter((g) => seen(g.n)).map((g) => push(g.n, 0));
     const topTail = tops[0];
-    text(ctx, 'F/A on every surface', topTail[0], topTail[1] - 34, C('stress'), { size: 20, align: 'center', weight: 600 });
+    text(ctx, 'F/A on every surface', topTail[0], Math.min(topTail[1] - 34, pt(h0)([0, 1, -1])[1] - 26), C('stress'), { size: 20, align: 'center', weight: 600 });
     const lo = pt(h0)([-1, -1, 1]), ctr = pt(h2)([0, 0, 1]);   /* the ghost's front bottom left corner, whose foot has room for the volume label */
     const aq = pt(h0)([-0.55, 1, -0.55]);
     text(ctx, 'A', aq[0], aq[1] + 2, C('area'), { size: 20, align: 'center', weight: 600 });
