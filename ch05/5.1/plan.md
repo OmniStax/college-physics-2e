@@ -88,125 +88,106 @@ characteristics to. It leans on `normal-force` and
 id · replaces or Sim · concepts · what moves, or still and why · sliders ·
 headline · graph · 3D
 
+Re-examined on 2026-11-17 (claude-fable-5-2), each figure judged against the
+book's image; the lines below are the figures as they now stand, and the
+dated notes further down are the history of the earlier builds.
+
 1. `sim-interface` · **replaces Figure 5.2 and Figure 5.5**, folded (rule
-   14): both draw two rough surfaces pressed together, 5.2 to say that
-   friction is parallel to the surface and opposes motion and 5.5 to say
-   that the actual area of contact is a tiny fraction of the total and
-   grows with the normal force. One magnified interface that the reader can
-   press together says both, and it is the same drawing twice in the book.
-   The eyebrow reads "Figure 5.2 + 5.5", both images are its `originals`,
-   and the reference to Figure 5.5 in `atomic` links back to it ·
-   kinetic-friction, static-friction, atomic-origin-of-friction ·
-   arrows: kinematic (the book's "direction of motion or attempted
-   motion"), symbolic (F, f and N) · **moving**, a 5 s loop with a 1.2 s
-   hold: below the breakaway the crate's underside creeps a little against
-   the floor's peaks in the magnified view and checks, with no motion of
-   the crate itself; past it the crate slides off from rest, its underside
-   rising until only the tips skip along, so fewer high spots touch. The
-   static direction arrow is drawn faint only under reduced motion · the mass $m$ on the crate (20 to 200 kg, default 100, ink, since
-   a mass is untyped) and the applied force $\kF$ (0 to 800 N, default 300,
-   force) · "N = 980 N presses the surfaces together, and your 300 N push
-   is answered by 300 N of friction" · none: the magnified interface is the
-   picture, drawn beneath the crate · no. Readout: $\kN = m\kg$ with the
-   numbers; small line saying that the actual
-   contact area, and the friction with it, grows in the same proportion as
-   the normal force. Draws force.
-   Revised in the figure-audit pass of 2026-09-12: the coefficients the
-   section's own passage gives for this crate on this concrete floor, 0.45
-   while it holds and 0.30 once it slides, are named on the drawing and
-   carried in the readout, so the branch between holding and sliding is
-   never decided by a hidden number. The headline is one capitalized
-   sentence.
-2. `sim-breakaway` · **Sim** (extra simulation, rule 15; it replaces no
-   book figure) · static-friction, kinetic-friction,
+   14): both draw two rough surfaces pressed together · kinetic-friction,
+   static-friction, atomic-origin-of-friction, coefficient-of-friction ·
+   value add: variation (the load, and rest against sliding) and the
+   proportionality made a graph · arrows: the book's black "direction of
+   motion or attempted motion" is notation and stays still; f and N are
+   symbolic · **still**: it answers its two controls, and the surfaces ease
+   from one state to the other on the choice · a choice, the crate at rest
+   or sliding, and the mass m (20 to 200 kg, default 100, mass) · "At rest
+   the high spots lock together, and friction can hold any push up to
+   441 N" · graph below the crate: friction against the normal force, the
+   line μ_s N with the region under it shaded (at rest the friction is
+   anywhere up to it) and the line μ_k N dashed · 2D.
+   works: parts: the crate on the floor; a lens on its bottom corner joined
+   to it by two leaders; in the lens the crate's underside above and the
+   floor below, each a rough profile; the stretches that touch drawn heavy
+   and laid end to end as one bar under the lens; f along the floor at the
+   crate's foot, against the black arrow; N up from the floor · flow:
+   nothing flows · must hold: f points against the motion arrow and lies
+   along the floor; the surfaces touch only at high spots; the heavy bar
+   grows in proportion to m and falls by μ_k/μ_s (a third) on sliding, as
+   the two friction values do; sliding, the crate's underside sits higher;
+   the graph's point is on the μ_s N line at rest and on the μ_k N line
+   sliding, above the crate's own N · read off the image and the text:
+   "Direction of motion or attempted motion", f (5.2); "Small normal force",
+   "Large normal force", N (5.5); 100 kg, 980 N, μ_s 0.45, μ_k 0.30 (the
+   text prints 440 N and 290 N to two figures; the figure writes 441 N and
+   294 N). The push itself is left to `sim-breakaway`.
+2. `sim-breakaway` · **Sim** (rule 15) · static-friction, kinetic-friction,
    static-friction-magnitude, kinetic-friction-magnitude,
-   coefficient-of-friction · **moves**: the push on the crate grows from
-   zero through one loop, which is the book's "you may push harder and
-   harder on the crate and not move it at all", and the crate breaks away
-   the moment the push passes $\kfsmax$ and then slides. The idea has a
-   time in it, so the figure loops in about 5 s and carries the scrubber ·
-   the mass $m$ (20 to 200 kg, default 100, ink), $\mu_{\text{s}}$ (0.05 to
-   1.0, default 0.45, ink) and $\mu_{\text{k}}$ (0.02 to 0.9, default 0.30,
-   ink) · "the push has reached 300 N and the friction answers with 300 N,
-   so nothing moves until 441 N" · graph
-   below the strip: the friction force against the applied force, the
-   responsive line at 45º up to $\kfsmax$, the drop at breakaway, and the
-   flat kinetic line at $\mu_{\text{k}}\kN$ afterwards, with the moving
-   point on it · no. Readout: $\kfsmax = \mu_{\text{s}}\kN$ and $\kfk =
-   \mu_{\text{k}}\kN$ with the book's own numbers, 440 N and 290 N at the
-   defaults. Draws force.
-   Revised in the figure-audit pass of 2026-09-12: both axes are fixed at 0
-   to 800 N from the default state rather than from the slider maxima, with
-   the live point drawn by pinned() and the lines clipped to the frame, and
-   the arrows on the scene are drawn against that same 800 N cap. The floor
-   is ruled 0 to 7 m at a fixed scale. The coefficient of kinetic friction
-   is never taken larger than the coefficient of static friction, and the
-   readout says so when the slider is set past it. The headline is one
-   capitalized sentence.
+   coefficient-of-friction · value add: flow by animation, the friction
+   following a growing push and dropping at the break · arrows: symbolic
+   forces; the speed arrow is kinematic · **moves**: the push grows through
+   one 6 s loop, the crate breaks away at f_s(max) and slides · m (20 to
+   200 kg, default 100), μ_s (0.05 to 1.0, default 0.45), μ_k (0.02 to 0.9,
+   default 0.30) · "The push has reached 300 N and the friction answers with
+   300 N, so nothing moves until 441 N" · graph below: friction against the
+   push, fixed 0 to 800 N on both axes · 2D. Kept and fixed in the
+   re-examination: the readout is the two laws, one a line, each with its
+   substitution; the words in the corner became a speed arrow on the crate.
 3. `fig-knee` · **photograph, Figure 5.3, kept**: the text points the
    reader at it ("A damaged or arthritic joint can be replaced by an
    artificial joint"), and it shows the thing the passage is about. The
    book's caption and its credit clause are kept, and its width is 250.
-4. `sim-skier` · Figure 5.4 · friction-on-an-incline, kinetic-friction-
-   magnitude, coefficient-of-friction · variation by slider and flow by
-   animation: she slides and gains speed, the free-body diagram answers the
-   sliders · moving, one run down the slope per loop with the transport · m
-   (40 to 120 kg, mass), θ (5 to 45°, angle), f_k (0 to 200 N, force) · 'On
-   a 25° slope her 608 N weight gives 257 N along the slope and 551 N into
-   it, so $\mu_{\text{k}}$ = 0.082', typeset · free-body diagram beside the
-   slope · 2D, a relation between forces. The skier is F.silhouette in pose
-   'crouch', standing plumb over skis laid along the slope (not rotated with
-   it), poles in her hands; the weight leaves her hips through a
-   labeller.halo where it crosses her; the note goes through the macros. No
-   fold or split. Rebuilt 2026-10-05 (claude-opus-5-5, high).
-5. `sim-probe` · **replaces Figure 5.6** (the probe tip deformed as it is
-   dragged) · atomic-origin-of-friction, kinetic-friction-magnitude ·
-   **moves**: the probe is dragged across the substrate, so the idea has a
-   time in it; the tip leans back under the friction on it, and the lattice
-   behind it is left vibrating, which is the book's explanation of why
-   surfaces get warmer when rubbed. One pass across the surface per loop,
-   with the scrubber · the normal force $\kN$ pressing the tip into the
-   surface (2 to 40 nN, default 12, force) and $\mu_{\text{k}}$ between the
-   two materials (0.02 to 1.0, default 0.3, ink) · "pressed on with N = 12
-   nN, the tip is dragged back by f = 3.60 nN and leans 2.2º behind its
-   base" · none: the atoms are the picture · no. Readout: $\kfk = \mu_{\text{k}}\kN$ at the scale
-   of the tip; small line on the more than a factor of $10^{12}$ by which
-   the shear stress varies between materials, which the book leaves to 5.3.
-   Draws force.
-   Revised in the figure-audit pass of 2026-09-12: how many of the atoms
-   along the foot of the tip adhere follows the normal force one at a time,
-   so every step of the slider changes the count as well as the arrow and
-   the lean, and the headline and the small line say that the lean is drawn
-   in proportion to the friction rather than measured. The headline is one
-   capitalized sentence.
-6. `fig-ice` · faithful copy of the unnumbered figure of problem 18 (eyebrow
-   Figure) · kinetic-friction-magnitude · standardisation · still, a
-   faithful copy, no sliders · none · 'The same 45.0 kg block of ice is
-   pushed at 25° below the horizontal and pulled at 25° above it' · none ·
-   2D. The contestant is F.silhouette: (a) pose 'push', leaning in with his
-   hands on the block's upper face where the arrow begins; (b) pose 'walk'
-   or 'pull' striding away, the rope from the block over his shoulder to his
-   hands; the 25° angles drawn with F.angleArc so their names sit clear of
-   the arrows. No fold or split. The push begins at his hands on the top
-   face and runs into the block; (b) labels the pull F′ as the book does.
-   Rebuilt 2026-10-05 (claude-opus-5-5, high).
-
-   Figure pass of 2026-09-14 (Claude Fable 5.1): the crate is now a framed box
-   of planks rather than an X-braced square, and in both `sim-interface` and
-   `sim-breakaway` the friction arrow leaves the crate's bottom corner along
-   the floor, where the surfaces touch, with the normal-force label clear of
-   its arrow (todolist 13); `sim-breakaway` names f_k under its line so the
-   pinned point never sits on it, and its off-graph note sits in the corner
-   the sloping line never crosses. `sim-skier` and `fig-ice` draw people as
-   filled silhouettes drawn in this file (round head, solid torso, limbs bent
-   at knee and elbow), not the library's stick figure: the skier crouches over
-   her skis with poles, her weight and its parts leave her hips and the normal
-   force and the friction leave the skis, and the free-body labels step out
-   through `labeller()` so a short arrow on a shallow slope is still named
-   beside its head; the contestant pushes leaning into the block with both
-   hands high on its face, and drags it with the rope tied round the block,
-   over his shoulder and into his hands as he strides away (todolist 14).
-   `sim-probe` names the probe beside its top row, off the normal-force arrow.
+4. `sim-skier` · **replaces Figure 5.4** · friction-on-an-incline,
+   kinetic-friction-magnitude, coefficient-of-friction · value add:
+   variation (the angle and the coefficient) and the comparison the book
+   only states, the weight along the slope against the friction, with the
+   angle where they balance · arrows: forces symbolic, the velocity arrow
+   kinematic · **moves**: she comes onto the stretch at 2.0 m/s and gains
+   speed, holds it or stops, as the two forces decide · θ (0 to 45°,
+   default 25, angle), μ_k (0 to 0.3, opening at 0.0817, which is the
+   example's 45.0 N), m (40 to 90 kg, default 62, mass); a dashed circle on
+   θ at arctan μ_k and on μ_k at tan θ · "On a 25° slope, 257 N of her
+   weight pulls her along it against 45.0 N of friction, so she gains speed"
+   · graph beside: the two forces along the slope against its angle, fixed
+   0 to 45° and 0 to 700 N · 2D.
+   works: parts: the slope with its angle at the foot; the skier plumb on
+   skis laid along it; w straight down from the snow under her boots, with
+   w⊥ and w∥ head to tail beside it and the slope's angle again between w
+   and w⊥; N from the same point, out of the slope; f along the skis, up
+   the slope · flow: she slides down the slope · must hold: every force at
+   one scale (0.3 units to the newton); N equal and opposite to w⊥; w⊥ + w∥
+   = w as drawn; f up the slope; the angle between w and w⊥ equals the
+   slope's; the opening state is Example 5.1 (62 kg, 25°, 45.0 N, 551 N
+   normal, a = 3.42 m/s²); the curves cross at tan θ = μ_k, where the
+   acceleration reads zero · read off the image: w, w⊥, w∥, N, f, 25° twice,
+   "Free-body diagram". The book's separate free-body diagram is not drawn
+   again: the forces on her are that diagram, and the graph takes its place.
+   The book rounds the coefficient to 0.082; 0.0817 is what gives 45.0 N.
+5. `sim-probe` · **replaces Figure 5.6** · atomic-origin-of-friction ·
+   value add: flow by animation, the bending and release the still image
+   freezes, and the vibration the text says becomes heat · arrows: "motion
+   of the probe" is the book's notation; f symbolic · **moves**: one pass
+   across the surface in 6 s; the foot holds while the top is carried on,
+   lets go, and each release sends a vibration into the lattice that spreads
+   and dies away · one choice, the two materials adhering weakly or strongly
+   (the caption's "how the force varies for different materials") · "Strong
+   adhesion bends the tip far over before its foot lets go, and each release
+   leaves the lattice ringing" · none · 2D. No readout: the section gives no
+   relation at this scale, and the earlier build's f = μN in nanonewtons
+   was invented.
+   works: parts: the substrate, a lattice of atoms; the probe, an inverted
+   pyramid of atoms with a flat foot of five resting on the surface; f on
+   the foot, against the motion · flow: the probe's top row moves steadily;
+   the foot stays, then jumps · must hold: f points against the motion of
+   the probe; the tip leans back (foot behind top), more with strong
+   adhesion; f grows with the lean and drops at each release; the vibration
+   starts where the foot let go, spreads outward and into the depth, and
+   fades with distance and time · read off the image: "Motion of probe",
+   "f", "Friction", "Atomic and molecular interactions"; the book's probe
+   moves left with f to the right, drawn here mirrored.
+6. `fig-ice` · the unnumbered image of problem 18, **kept as the book's
+   image** (eyebrow Figure). Reverted in the re-examination: the redraw
+   showed nothing the image does not, and the book's drawing is the better
+   one. The referents `contestant` and `ice-block` went with it.
 
 Photographs: one in the section, the knee X-ray of Figure 5.3, and it is
 kept (above). No splash image to drop. The figures inside the problems: the

@@ -185,17 +185,17 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
   const d = sim('sim-wind', 760);
   const vp = ctl(d.controls, { label: '\\kvp', cls: 'velocity', min: 20, max: 50, step: 0.5, value: 45, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the air' });
   const vt = ctl(d.controls, { label: '\\kvtot', cls: 'velocity', min: 10, max: 50, step: 0.5, value: 38, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the ground' });
-  const b = ctl(d.controls, { label: '\\text{track}', cls: 'angle', min: -40, max: 40, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'direction of the total velocity, degrees west of north',
+  const b = ctl(d.controls, { label: '\\text{track}', cls: 'angle', min: -30, max: 30, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'direction of the total velocity, degrees west of north',
     fmt: (v) => (Math.abs(v) < 0.05 ? 'due north' : fmt(Math.abs(v), 1) + '° ' + (v > 0 ? 'west' : 'east') + ' of north') });
   function draw() {
     const { ctx } = begin(d.c);
     const a = 90 + b.v, ux = vt.v * Math.cos(a * DEG), uy = vt.v * Math.sin(a * DEG), vwx = ux, vwy = uy - vp.v, vw = Math.hypot(vwx, vwy), cv = C('velocity'), ca = C('angle');
-    /* a fixed 11 units per m/s: the fastest plane the slider allows, 50 m/s north, is 550 units above the
-       origin, and the widest track, 50 m/s at 40° from north, 354 units to either side of it */
-    const K = 11, Ox = 440, Oy = 696;
+    /* a fixed 10 units per m/s: the fastest plane the slider allows, 50 m/s north, is 500 units above the
+       origin, and the widest track, 50 m/s at 30° from north, 250 units to either side of it */
+    const K = 10, Ox = 400, Oy = 696;
     const lab = labeller(ctx, 760); lab.block(0, 0, 1400, 100);
-    line(ctx, Ox - 380, Oy, Ox + 380, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 44, Ox, 116, PAL.muted, 2);
-    text(ctx, 'x (east)', Ox + 388, Oy, PAL.muted, { size: 19 }); text(ctx, 'y (north)', Ox + 14, 124, PAL.muted, { size: 19 });
+    line(ctx, Ox - 380, Oy, Ox + 380, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 44, Ox, 130, PAL.muted, 2);
+    text(ctx, 'x (east)', Ox + 388, Oy, PAL.muted, { size: 19 }); text(ctx, 'y (north)', Ox + 14, 138, PAL.muted, { size: 19 });
     const hx = Ox, hy = Oy - vp.v * K, tx = Ox + ux * K, ty = Oy - uy * K, west = ux <= 0, calm = vw < 0.05;
     /* the wind's two components, from the head of the plane's velocity: across first, then down or up */
     if (!calm) { line(ctx, hx, hy, tx, hy, alpha(cv, 0.7), 3, [8, 8]); line(ctx, tx, hy, tx, ty, alpha(cv, 0.7), 3, [8, 8]); }
@@ -214,7 +214,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     if (Math.abs(b.v) > 4) F.angleArc(ctx, { x: Ox, y: Oy }, 190, 90 * DEG, a * DEG, fmt(Math.abs(b.v), 1) + '°', lab, ca);
     lab.flush();
     /* the subtraction, component by component, as the example does it */
-    const TX = 860, TY = 330, cols = [TX + 250, TX + 420], rowH = 62;
+    const TX = 900, TY = 330, cols = [TX + 250, TX + 420], rowH = 62;
     title(ctx, 'components (m/s)', TX, TY - 56);
     text(ctx, 'x (east)', cols[0], TY, PAL.muted, { size: 20, align: 'right' }); text(ctx, 'y (north)', cols[1], TY, PAL.muted, { size: 20, align: 'right' });
     const rows = [['v_{tot}', sf(vt.v) + ' m/s at ' + fmt(a, 1) + '°', ux, uy], ['− v_p', sf(vp.v) + ' m/s north', 0, vp.v], ['= v_w', 'the wind', vwx, vwy]];

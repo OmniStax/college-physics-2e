@@ -222,7 +222,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
   const TB = ctl(d.controls, { label: '\\ktheta_{\\text{B}}', cls: 'angle', min: 0, max: 180, step: 1, value: 112, unit: '°', dec: 0, aria: 'direction of B, north of east' });
   /* A is the example's 27.5 m at 66.0° north of east. Nine units to the metre, fixed: B and −B reach at most 35 m
      from the head of A, which the stage holds on every side. */
-  const AM = 27.5, AD = 66, S = 9, ox = 700, oy = 655, S2 = 4.6, px = 225, py = 440;
+  const AM = 27.5, AD = 66, S = 9, ox = 700, oy = 655, S2 = 4.2, px = 200, py = 440;
   function draw() {
     const { ctx } = begin(d.c);
     const cp = C('position'), ca = C('angle'), tb = TB.v, bm = B.v;
@@ -231,7 +231,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     const hl = topline(ctx, 'Sailing $-\\mathbf{B}$ in place of $\\mathbf{B}$ leaves her ' + fmt(2 * bm, 1) + ' m from the dock.');
     const lab = labeller(ctx, HH, { headline: hl });
     /* the negative of a vector: B and −B from one point */
-    line(ctx, px - 190, py, px + 190, py, PAL.rule, 2); text(ctx, 'east', px + 190, py + 18, PAL.muted, { size: 17, align: 'right' });
+    line(ctx, px - 170, py, px + 170, py, PAL.rule, 2); text(ctx, 'east', px + 170, py + 18, PAL.muted, { size: 17, align: 'right' });
     const [qx, qy] = tip(px, py, bm * S2, tb), [mx, my] = tip(px, py, bm * S2, tb + 180);
     arcDeg(ctx, px, py, 50, 0, tb, ca); arcDeg(ctx, px, py, 66, 0, tb - 180, ca);
     arrow(ctx, px, py, qx, qy, cp, 5); arrow(ctx, px, py, mx, my, cp, 5); dot(ctx, px, py, PAL.ink, true, 6);
@@ -291,7 +291,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
       if (c > 0) { arcDeg(ctx, o2[0], o2[1], 50, 0, AD, ca); lab.add('66.0°', o2[0] + 50 * cos(33), o2[1] - 50 * sin(33), cos(33), -sin(33), ca, 20, 18); }
       else { arcDeg(ctx, o2[0], o2[1], 50, 180, 180 + AD, ca); lab.add('66.0°', o2[0] + 50 * cos(213), o2[1] - 50 * sin(213), cos(213), -sin(213), ca, 20, 18); }
       arrow(ctx, o2[0], o2[1], hx, hy, cp, 6);
-      lab.add(cs + 'A = ' + fmt(mag, 1) + ' m', (o2[0] + hx) / 2, (o2[1] + hy) / 2, sin(AD), cos(AD), cp, 24, 26);
+      lab.add(cs + 'A = ' + fmt(mag, 1) + ' m', (o2[0] + hx) / 2, (o2[1] + hy) / 2, -sin(AD), -cos(AD), cp, 24, 26);
     }
     for (const [x, y] of [o1, o2]) dot(ctx, x, y, PAL.ink, true, 7);
     lab.flush();

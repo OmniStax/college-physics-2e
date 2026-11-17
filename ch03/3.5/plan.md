@@ -132,7 +132,7 @@ line and carried long captions; `sim-components` repeated 3.3's component figure
    made visible: the wind's two components are drawn on the triangle and a table beside
    it subtracts v_p from v_tot one component at a time · arrows: symbolic · still, no
    transport · sliders `\kvp` (20 to 50 m/s, default 45.0), `\kvtot` (10 to 50 m/s,
-   default 38.0), the track (40° east to 40° west of north, default 20.0° west) ·
+   default 38.0), the track (30° east to 30° west of north, default 20.0° west) ·
    headline "The wind that carries the plane off its heading blows at 16.0 m/s, 35.6°
    south of west." · no graph · 2D. Readout: $v_w$ and $\theta$, one line each.
    works: read off the image: v_p = 45.0 m/s north, v_tot = 38.0 m/s, 20.0° from north,
