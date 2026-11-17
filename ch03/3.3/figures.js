@@ -58,9 +58,10 @@ const EW = (v) => (v >= 0 ? 'east' : 'west'), NS = (v) => (v >= 0 ? 'north' : 's
 const CITY = { H: 1000, OX: 700, OY: 548, S: 36, NX: 18, NY: 12 };
 const cityAx = { box: { l: CITY.OX - 12 * CITY.S, r: CITY.OX + 12 * CITY.S, t: CITY.OY - 12 * CITY.S, b: CITY.OY + 12 * CITY.S }, xr: [-12, 12], yr: [-12, 12], X: (v) => CITY.OX + v * CITY.S, Y: (v) => CITY.OY - v * CITY.S };
 /* the grid, the axes with a number every three blocks, the compass rose, and a line of words in each quadrant
-   (the one the vector is in set in ink); returns the labeller the figure names its parts through */
+   (the one the vector is in shaded, its words in ink); returns the labeller the figure names its parts through */
 function city(ctx, lines, ax, ay, marks) {
   const { H, OX, OY, S, NX, NY } = CITY, lab = F.labeller(ctx, H, { headline: lines });
+  if (ax && ay) { ctx.save(); ctx.fillStyle = F.alpha(PAL.ink, 0.05); ctx.fillRect(ax > 0 ? OX : OX - NX * S, ay > 0 ? OY - NY * S : OY, NX * S, NY * S); ctx.restore(); }
   for (let i = -NX; i <= NX; i++) line(ctx, OX + i * S, OY - NY * S, OX + i * S, OY + NY * S, PAL.rule, 1.5);
   for (let j = -NY; j <= NY; j++) line(ctx, OX - NX * S, OY - j * S, OX + NX * S, OY - j * S, PAL.rule, 1.5);
   arrow(ctx, OX - NX * S, OY, OX + NX * S + 30, OY, PAL.muted, 2.5); arrow(ctx, OX, OY + NY * S, OX, OY - NY * S - 28, PAL.muted, 2.5);
@@ -76,9 +77,9 @@ function city(ctx, lines, ax, ay, marks) {
     const on = ax * sx > 0 && ay * sy > 0, x = OX + sx * 14.5 * S;
     marks[q].forEach((s, k) => {
       const y = OY - sy * 10.5 * S + (k - (marks[q].length - 1) / 2) * 32;
-      text(ctx, s, x, y, on ? PAL.ink : PAL.muted, { size: 21, weight: on ? 600 : 400, align: 'center', bg: PAL.panel });
+      text(ctx, s, x, y, on ? PAL.ink : PAL.muted, { size: 22, weight: on ? 600 : 400, align: 'center', bg: PAL.panel });
     });
-    lab.block(x - 125, OY - sy * 10.5 * S - 34, x + 125, OY - sy * 10.5 * S + 34);
+    lab.block(x - 150, OY - sy * 10.5 * S - 34, x + 150, OY - sy * 10.5 * S + 34);
   });
   return lab;
 }
@@ -90,9 +91,9 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
   if (hasX) { darrow(ctx, O.x, O.y, K.x, K.y, pos, 4); blockSeg(lab, O, K); }
   if (hasY) { darrow(ctx, K.x, K.y, T.x, T.y, pos, 4); blockSeg(lab, K, T); }
   if (Math.abs(ax) > 0.8 && Math.abs(ay) > 0.8) rightAngle(ctx, K.x, K.y, -ax, ay);
-  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 6); blockSeg(lab, O, T); lab.beside(seg(O, T), hasX && hasY ? away(O, T, K) : -1, nameA, pos, 24); }
-  if (hasX) lab.add('A_x = ' + blocks(ax), (O.x + K.x) / 2, OY, 0, ay >= 0 ? 1 : -1, pos, 22, 58);
-  if (hasY) lab.add('A_y = ' + blocks(ay), T.x, (K.y + T.y) / 2, ax >= 0 ? 1 : -1, 0, pos, 22, 22);
+  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 7); blockSeg(lab, O, T); lab.beside(seg(O, T), hasX && hasY ? away(O, T, K) : -1, nameA, pos, 26, { offset: 0.62 }); }
+  if (hasX) lab.add('A_x = ' + blocks(ax), (O.x + K.x) / 2, OY, 0, ay >= 0 ? 1 : -1, pos, 24, 60);
+  if (hasY) lab.add('A_y = ' + blocks(ay), T.x, (K.y + T.y) / 2, ax >= 0 ? 1 : -1, 0, pos, 24, 22);
   return { O, K, T };
 }
 
@@ -174,21 +175,28 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
 /* =====================================================================
    FIGURES 3.28 to 3.33: two legs of a walk and their resultant, added by
    components. One drawing serves both: `sign` is +1 for A + B and -1 for
-   A - B, where the second leg is taken in the opposite direction. The scale
-   is fixed, 6.2 units a metre, from the sliders: A reaches 60 m between east
-   and north, B 40 m anywhere north of the east-west line, so the walk stays
-   within 40 m west, 100 m east and 100 m north of the start (A - B also 40 m
-   south). The x-components sit in rows under the lowest point of the walk
-   and the y-components in columns left of its leftmost point, as Figure 3.32
-   sets them. Still: a sum of displacements has no time in it.
+   A - B, where the second leg is taken in the opposite direction. Each has
+   one fixed scale, set from what its sliders reach.
+   A + B, 6.2 units a metre: A reaches 60 m between east and north and B
+   40 m anywhere north of the east-west line, so the walk stays within 40 m
+   west, 100 m east and 100 m north of the start.
+   A - B, 7.6 units a metre: A is the leg of Example 3.3 and stays, and B
+   turns the whole circle, so B and -B stay within 40 m of the head of A,
+   between 22 m south and 58 m north of the start and up to 90 m east.
+   The x-components sit in rows under the lowest point of the walk and the
+   y-components in columns left of its leftmost point, as Figure 3.32 sets
+   them. Still: a sum of displacements has no time in it.
 ===================================================================== */
 function walk(id, sign) {
-  const S = 6.2, OX = 600, OY = 716, H = sign > 0 ? 932 : 1180;   /* y = 100 m is at 96; A - B has 40 m (248 units) more below the axis */
+  const add = sign > 0;
+  const S = add ? 6.2 : 7.6, OX = add ? 600 : 552, OY = add ? 716 : 548, H = add ? 932 : 932;
+  const xR = add ? 104 : 94, yT = add ? 102 : 60, yB = add ? -2.5 : -24;   /* how far the axes run, in metres */
   const d = sim(id, H);
-  const A = ctl(d.controls, { label: '\\kA', cls: 'position', min: 10, max: 60, step: 0.5, value: 53, unit: 'm', dec: 1, aria: 'magnitude of A' });
-  const TA = ctl(d.controls, { label: '\\kthetaA', cls: 'angle', min: 0, max: 90, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'angle of A' });
+  const fixed = (v) => ({ v });
+  const A = add ? ctl(d.controls, { label: '\\kA', cls: 'position', min: 10, max: 60, step: 0.5, value: 53, unit: 'm', dec: 1, aria: 'magnitude of A' }) : fixed(53);
+  const TA = add ? ctl(d.controls, { label: '\\kthetaA', cls: 'angle', min: 0, max: 90, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'angle of A' }) : fixed(20);
   const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 10, max: 40, step: 0.5, value: 34, unit: 'm', dec: 1, aria: 'magnitude of B' });
-  const TB = ctl(d.controls, { label: '\\kthetaB', cls: 'angle', min: 0, max: 180, step: 0.5, value: 63, unit: '°', dec: 1, aria: 'angle of B', detents: [90] });
+  const TB = ctl(d.controls, { label: '\\kthetaB', cls: 'angle', min: add ? 0 : -180, max: 180, step: 0.5, value: 63, unit: '°', dec: 1, aria: 'angle of B', detents: add ? [90] : [-90, 0, 90] });
   const X = (m) => OX + m * S, Y = (m) => OY - m * S;
   const nb = sign > 0 ? 'B' : '−B';
   const round = (v) => Math.round(v * 10) / 10;
@@ -209,12 +217,12 @@ function walk(id, sign) {
     const lab = F.labeller(ctx, H, { headline: lines });
     const pts = sign > 0 ? [O, P, Q] : [O, P, Q, G];
     const low = Math.max(...pts.map((p) => p.y)), lft = Math.min(...pts.map((p) => p.x));
-    const r1 = low + 46, r2 = r1 + 54, r3 = r2 + 54;      /* the rows of the x-components */
-    const c1 = lft - 44, c2 = c1 - 66, c3 = c2 - 66;      /* the columns of the y-components */
-    /* the axes through the start, as long as the walk can reach */
-    arrow(ctx, X(-44), OY, X(104), OY, PAL.muted, 2.5); arrow(ctx, OX, sign > 0 ? OY + 16 : Y(-42), OX, Y(102), PAL.muted, 2.5);
-    text(ctx, 'x', X(104) + 16, OY + 4, PAL.muted, { size: 24, weight: 600, align: 'center' });
-    text(ctx, 'y', OX - 24, Y(102) + 10, PAL.muted, { size: 24, weight: 600, align: 'center' });
+    const r1 = low + 46, r2 = r1 + 56, r3 = r2 + 56;      /* the rows of the x-components */
+    const c1 = lft - 46, c2 = c1 - 68, c3 = c2 - 68;      /* the columns of the y-components */
+    /* the axes through the start, as long as the walk can reach; the x-axis starts at the leftmost point, clear of the columns */
+    arrow(ctx, lft - 18, OY, X(xR), OY, PAL.muted, 2.5); arrow(ctx, OX, Y(yB), OX, Y(yT), PAL.muted, 2.5);
+    text(ctx, 'x', X(xR) + 16, OY + 4, PAL.muted, { size: 24, weight: 600, align: 'center' });
+    text(ctx, 'y', OX + 22, Y(yT) + 10, PAL.muted, { size: 24, weight: 600, align: 'center' });
     compass(ctx, 104, H - 100, 30); lab.block(40, H - 164, 168, H - 36);
     /* faint guides from the points of the walk to the rows and columns that carry their components */
     [[O, r3, c3], [P, r2, c2], [Q, r3, c3]].forEach(([p, row, col]) => { line(ctx, p.x, p.y, p.x, row, guide, 2, [4, 8]); line(ctx, p.x, p.y, col, p.y, guide, 2, [4, 8]); });
@@ -227,9 +235,9 @@ function walk(id, sign) {
     const comp = (x1, y1, x2, y2, solid, name, row) => {
       if (Math.hypot(x2 - x1, y2 - y1) < 2) return;
       if (solid) arrow(ctx, x1, y1, x2, y2, pos, 5); else darrow(ctx, x1, y1, x2, y2, pos, 4);
-      if (row) { lab.add(name, (x1 + x2) / 2, (y1 + y2) / 2, 0, 1, pos, 22, 24); return; }
+      if (row) { lab.add(name, (x1 + x2) / 2, (y1 + y2) / 2, 0, 1, pos, 24, 26); return; }
       ctx.save(); ctx.translate(x1 - 26, (y1 + y2) / 2); ctx.rotate(-Math.PI / 2);
-      text(ctx, name, 0, 0, pos, { size: 22, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
+      text(ctx, name, 0, 0, pos, { size: 24, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
     };
     comp(X(0), r1, X(ax), r1, false, 'A_x = ' + m1(ax), true);
     comp(X(ax), r2, Q.x, r2, false, nb + '_x = ' + m1(bx), true);
@@ -239,20 +247,21 @@ function walk(id, sign) {
     comp(c3, Y(0), c3, Q.y, true, 'R_y = ' + m1(ry), false);
     /* B itself, muted, from the head of A, when the walk takes it the other way */
     if (sign < 0) { darrow(ctx, P.x, P.y, G.x, G.y, PAL.muted, 3.5); lab.beside(seg(P, G), away(P, G, O), 'B', PAL.muted, 26); blockSeg(lab, P, G); }
-    /* the angles, each from a horizontal through its tail and drawn under the arrows; a name goes in the widest gap
-       the other directions leave inside its arc */
-    const arc = (p, deg, rad, name, cuts) => {
+    /* the angles, each from a horizontal through its tail and drawn under the arrows. The legs' names go inside
+       their arcs on the bisector; the resultant's goes just past its arrow, on the side away from A, as Figure 3.32
+       sets it, since A cuts its arc in two */
+    const arc = (p, deg, rad, name, out) => {
       if (Math.abs(deg) < 0.5 || rad < 8) return;
       F.angleArc(ctx, p, rad, 0, deg * RAD, undefined, undefined, angc);
-      const e = [0, deg, ...cuts.filter((c) => c * (deg - c) > 0)].sort((u, v) => u - v);
-      const m = e.slice(1).map((v, i) => [v - e[i], (v + e[i]) / 2]).reduce((u, v) => (v[0] > u[0] ? v : u))[1] * RAD;
-      lab.add(name, p.x + rad * Math.cos(m), p.y - rad * Math.sin(m), Math.cos(m), -Math.sin(m), angc, 22, 18);
+      const m = (out ? deg : deg / 2) * RAD, k = out ? Math.sign(out) : 0;
+      const ux = out ? -k * Math.sin(m) : Math.cos(m), uy = out ? -k * Math.cos(m) : -Math.sin(m);
+      lab.add(name, p.x + rad * Math.cos(m), p.y - rad * Math.sin(m), ux, uy, angc, 24, out ? 26 : 22);
     };
     blockSeg(lab, O, P); blockSeg(lab, P, Q); blockSeg(lab, O, Q);
-    const rA = Math.min(150, Math.max(50, a * S * 0.5)), rR = Math.min(92, Math.max(36, Math.min(a, r) * S * 0.3));
-    arc(P, tb, Math.min(64, b * S * 0.4), 'θ_B', []);
-    arc(O, ta, rA, 'θ_A', none ? [] : [th]);
-    if (!none) arc(O, th, rR, 'θ', [ta]);
+    const rA = Math.min(230, Math.max(60, a * S * 0.62)), rR = Math.min(100, Math.max(40, Math.min(a, r) * S * 0.3));
+    arc(P, tb, Math.min(70, b * S * 0.4), 'θ_B');
+    arc(O, ta, rA, 'θ_A');
+    if (!none) { let dd = th - ta; dd = ((dd + 540) % 360) - 180; arc(O, th, rR, 'θ', dd >= 0 ? 1 : -1); }
     arrow(ctx, O.x, O.y, P.x, P.y, pos, 5);
     arrow(ctx, P.x, P.y, Q.x, Q.y, pos, 5);
     if (Math.hypot(Q.x - O.x, Q.y - O.y) > 4) arrow(ctx, O.x, O.y, Q.x, Q.y, pos, 7);

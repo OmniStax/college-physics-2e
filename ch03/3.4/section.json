@@ -39,6 +39,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -47,20 +50,12 @@
  "figures": [
   {
    "id": "sim-displacement",
-   "kind": "sim",
+   "kind": "photo",
    "number": "3.34",
-   "originals": [
-    "/media/ch03/Figure_03_04_01.jpg"
-   ],
-   "original_caption": "The total displacement s of a soccer ball at a point along its path. The vector s has components x and y along the horizontal and vertical axes. Its magnitude is s, and it makes an angle θ with the horizontal.",
    "widths": [
     350
    ],
-   "draws": [
-    "position",
-    "velocity",
-    "angle"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -81,6 +76,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "typeset headline and note, labels clear, angle arc kept"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image: the redraw added nothing to it"
     }
    ]
   },
@@ -118,6 +117,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "arrows named in a key, shorter arrows, note through macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: marks every 0.50 s cast on a horizontal and a vertical track"
     }
    ]
   },
@@ -156,6 +159,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "height bracket clear of the burst, headline and note typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: four shells with one v0y burst level; sliders v0y and angle"
     }
    ]
   },
@@ -197,6 +204,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "graph axes hold every root, flank kept off the graph, note typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt to fill the stage; impact numbers follow the example's rounding"
     }
    ]
   },
@@ -229,6 +240,10 @@
      "model": "claude-opus-5-5",
      "effort": "low",
      "part": "built"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "opens on the book's 75° and 15° at 50 m/s; larger scene, both ranges bracketed"
     }
    ]
   },
@@ -268,6 +283,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "thousands separators in the readout"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt in one fixed view of the whole Earth with the book's slower launches"
     }
    ]
   }
@@ -1122,13 +1141,6 @@
   }
  ],
  "referents": [
-  {
-   "id": "ball",
-   "label": "the soccer ball",
-   "figures": [
-    "sim-displacement"
-   ]
-  },
   {
    "id": "shell",
    "label": "the fireworks shell of Example 3.4",

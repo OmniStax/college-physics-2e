@@ -60,7 +60,7 @@ function bathScale(ctx, x, y, w, color) {
    the same mass.
 ===================================================================== */
 (function () {
-  const d = sim('sim-wagon', 820);
+  const d = sim('sim-wagon', 840);
   const F1 = ctl(d.controls, { label: '\\kFone', cls: 'force', min: 0, max: 60, step: 0.5, value: 25, unit: 'N', dec: 1, onInput: reset, aria: 'force of the first child' });
   const F2 = ctl(d.controls, { label: '\\kFtwo', cls: 'force', min: 0, max: 60, step: 0.5, value: 30, unit: 'N', dec: 1, onInput: reset, aria: 'force of the second child' });
   const ff = ctl(d.controls, { label: '\\kff', cls: 'force', min: 0, max: 40, step: 0.5, value: 12, unit: 'N', dec: 1, onInput: reset, aria: 'force of friction' });
@@ -91,7 +91,7 @@ function bathScale(ctx, x, y, w, color) {
     const hl = topline(ctx, n <= 0
       ? 'The friction matches the two pushes, so the net force is zero and the wagon stays put'
       : 'After ' + fmt(tau, 1) + ' s at ' + fmt(a, 2) + ' m/s² the wagon moves at ' + fmt(v, 2) + ' m/s');
-    const lb = F.labeller(ctx, 820, { headline: hl });
+    const lb = F.labeller(ctx, 840, { headline: hl });
     /* the ground, its meter marks running back under the wagon */
     line(ctx, 40, gy, 1360, gy, PAL.muted, 3);
     const zero = P(182, 0).x;   /* the front wheel stands on the 0 m mark at the start */
@@ -188,9 +188,9 @@ function bathScale(ctx, x, y, w, color) {
     line(ctx, D.x, D.y + 92, D.x, sy + 12, alpha(PAL.ink, 0.35), 2, [4, 8]);
     if (n > 0) {
       arrow(ctx, D.x, sy, D.x + n * K, sy, cf, 7);
-      lb.add('F_net = ' + fmt(n, 1) + ' N', D.x + n * K, sy, 1, 0, cf, 22, 14);
+      lb.add('F_net = ' + fmt(n, 1) + ' N', Math.max(D.x + n * K / 2, D.x + 90), sy, 0, 1, cf, 22, 26);
       hits.push({ x: D.x + n * K / 2, y: sy, r: 24, name: 'F_net, the two pushes less the friction' });
-    } else text(ctx, 'F_net = 0', D.x + 16, sy, cf, { size: 22, weight: 600 });
+    } else text(ctx, 'F_net = 0', D.x + 22, sy + 26, cf, { size: 22, weight: 600 });
     /* the acceleration against the net force, for the 30.0 kg of the wagon and its rider: 0 to
        120 N, the two pushes at their greatest with no friction, and 0 to 4 m/s². The hollow point
        is the case the figure opens on. */
@@ -447,68 +447,68 @@ function bathScale(ctx, x, y, w, color) {
 })();
 
 /* =====================================================================
-   SIM: the weight of a mass, on Earth and elsewhere. Weight has no time in
-   it — the figure answers its sliders — so it is a still picture with no
-   transport. The scene stands upright, so its graph goes beside it, and
-   the weight and the support of the scale are drawn on a free-body diagram
-   of their own beneath the scene, as the other figures of the page draw
-   their forces.
+   SIM: one mass on one scale, on Earth and somewhere else. Weight has no
+   time in it, so the figure is still. The left scale stays on Earth; the
+   right one goes where the slider sends it. The block is the same on
+   both, the weight arrows are to one scale, and each dial shows what a
+   scale built for Earth prints: the weight divided by 9.80 m/s².
 ===================================================================== */
 (function () {
-  const d = sim('sim-weight', 740);
-  /* The mass runs to 2.0 kg rather than to a person's mass, so that the graph beside the scene can
-     hold the whole of it on one fixed weight axis; 1.0 kg, the mass the section works with, is a
-     detent. The gravity carries the two the section names as detents of its own; they are so far
-     apart that a thumb settling on the nearer of them would swallow most of the slider, so the ticks
-     mark them and the step lands on either exactly. */
+  const d = sim('sim-weight', 600);
   const mm = ctl(d.controls, { label: '\\km', cls: 'mass', min: 0.1, max: 2, step: 0.1, value: 1, unit: 'kg', dec: 1, aria: 'mass on the scale', detents: [{ v: 1, label: '1.0 kg' }], snap: true });
-  const gg = ctl(d.controls, { label: '\\kg', cls: 'acceleration', min: 1, max: 11, step: 0.005, value: 9.8, unit: 'm/s²', dec: 3, aria: 'acceleration due to gravity', detents: [{ v: 1.625, label: 'Moon' }, { v: 9.8, label: 'Earth' }], snap: false });
+  const gg = ctl(d.controls, { label: '\\kg', cls: 'acceleration', min: 1, max: 11, step: 0.005, value: 1.625, unit: 'm/s²', dec: 3, aria: 'acceleration due to gravity at the second place', detents: [{ v: 1.625, label: 'Moon' }, { v: 9.8, label: 'Earth' }], snap: false });
   /* 9.80 and 1.625 are the two the book names, so each is printed as the book prints it */
   const gtxt = (g) => (Math.abs(g * 100 - Math.round(g * 100)) < 1e-9 ? fmt(g, 2) : fmt(g, 3));
-  const place = (g) => (Math.abs(g - 9.8) < 0.003 ? 'On Earth, where' : Math.abs(g - 1.625) < 0.003 ? 'On the Moon, where' : 'Where');
+  const where = (g) => (Math.abs(g - 9.8) < 0.003 ? 'On Earth' : Math.abs(g - 1.625) < 0.003 ? 'On the Moon' : 'Elsewhere');
+  /* fixed scales: 2.0 kg at 11 m/s² weighs 22 N, drawn at 8 units to the newton (176 units), and
+     the dial runs 0 to 2.5 kg, past the 2.24 kg it would print there */
+  const KW = 8, DMAX = 2.5, fy = 480;
+  let hits = [];
+  function panel(ctx, cx, g, lb) {
+    const w = mm.v * g, read = w / G, cf = C('force'), ca = C('acceleration'), cs = F.ref('scale'), cl = F.ref('load');
+    text(ctx, where(g), cx + 60, 56, PAL.ink, { size: 26, weight: 600, align: 'center' });
+    F.rich(ctx, ['g = ', [gtxt(g) + ' m/s²', ca]], cx + 60, 92, { size: 21, align: 'center' });
+    fixed(ctx, cx - 260, fy, 640, 26);
+    /* the scale: a cabinet with a dial in its face and a platform on top */
+    const bw = 300, bh = 130, top = fy - bh;
+    ctx.save(); ctx.strokeStyle = cs; ctx.fillStyle = PAL.panel; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.rect(cx - bw / 2, top, bw, bh); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = F.mixColor(cs, PAL.panel, 0.6); ctx.beginPath(); ctx.rect(cx - bw / 2 - 16, top - 14, bw + 32, 14); ctx.fill(); ctx.stroke();
+    const R = 92, oy = fy - 18;
+    ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, oy, R, Math.PI, TAU); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+    for (let i = 0; i <= 25; i++) {
+      const th = Math.PI * (1 - i / 25), big = i % 5 === 0, r0 = R - (big ? 16 : 9);
+      line(ctx, cx + r0 * Math.cos(th), oy - r0 * Math.sin(th), cx + (R - 2) * Math.cos(th), oy - (R - 2) * Math.sin(th), cs, big ? 2.5 : 1.5);
+      if (big) text(ctx, fmt(i / 10, 1), cx + (R - 32) * Math.cos(th), oy - (R - 32) * Math.sin(th) + 2, PAL.muted, { size: 15, align: 'center' });
+    }
+    const th = Math.PI * (1 - Math.min(read, DMAX) / DMAX);
+    line(ctx, cx, oy, cx + (R - 20) * Math.cos(th), oy - (R - 20) * Math.sin(th), PAL.ink, 4);
+    dot(ctx, cx, oy, PAL.ink, true, 6);
+    F.rich(ctx, ['the dial reads ', [sig3(read) + ' kg', PAL.ink]], cx, fy + 52, { size: 21, align: 'center', weight: 600 });
+    /* the block, the same size in both places */
+    const s = Math.cbrt(mm.v), kw = 60 + 80 * s, kh = 44 + 56 * s, by = top - 14 - kh / 2 - 2;
+    block(ctx, cx, by, kw, kh, cl);
+    text(ctx, fmt(mm.v, 1) + ' kg', cx, by, C('mass'), { size: 23, weight: 600, align: 'center' });
+    /* the two forces on the block, from a dot beside the scene */
+    const dx = cx + 300, dy = 300, L = w * KW;
+    arrow(ctx, dx, dy, dx, dy + L, cf, 6); lb.add('w = ' + sig3(w) + ' N', dx, dy + Math.max(L, 20), 1, 0, cf, 23, 16);
+    arrow(ctx, dx, dy, dx, dy - L, cf, 6); lb.add('N = ' + sig3(w) + ' N', dx, dy - Math.max(L, 20), 1, 0, cf, 23, 16);
+    dot(ctx, dx, dy, cl, true, 9);
+    hits.push({ x: dx, y: dy + L / 2 + 8, r: 24, name: 'w, the weight of the block' }, { x: dx, y: dy - L / 2 - 8, r: 24, name: 'N, the scale pushing up on the block' },
+      { x: cx, y: by, r: 50, name: 'the block, ' + fmt(mm.v, 1) + ' kg wherever it goes' }, { x: cx, y: fy - 60, r: 80, name: 'a scale built for Earth: it prints the weight divided by 9.80 m/s²' });
+  }
   function draw() {
     const { ctx } = begin(d.c);
-    const w = mm.v * gg.v, cf = C('force'), ca = C('acceleration');
-    /* the scene: a mass resting on a bathroom scale on the floor */
-    const cx = 340, fy = 300;
-    fixed(ctx, 100, fy, 480, 28);
-    bathScale(ctx, cx, fy, 240, F.ref('scale'));
-    const bh = 46 + Math.min(110, Math.cbrt(mm.v) * 30), bw = 84 + Math.min(130, Math.cbrt(mm.v) * 38);
-    const by = fy - 34 - bh / 2;
-    block(ctx, cx, by, bw, bh, F.ref('load'));
-    text(ctx, fmt(mm.v, 1) + ' kg', cx, by, C('mass'), { size: 22, weight: 600, align: 'center' });
-    text(ctx, 'the dial reads ' + sig3(w / G) + ' kg', cx, fy + 58, PAL.muted, { size: 19, align: 'center' });
-    text(ctx, 'g = ' + gtxt(gg.v) + ' m/s²', cx, fy + 90, ca, { size: 21, weight: 600, align: 'center' });
-    /* the two forces on the mass, equal and opposite, at a length that follows the gravity */
-    const dy = 580, L = 34 + 96 * (gg.v / 11);
-    text(ctx, 'the forces on the mass', cx, dy - 152, PAL.muted, { size: 18, align: 'center' });
-    arrow(ctx, cx, dy, cx, dy + L, cf, 5);
-    text(ctx, 'w = ' + sig3(w) + ' N', cx + 16, dy + L - 12, cf, { size: 21, weight: 600 });
-    arrow(ctx, cx, dy, cx, dy - L, cf, 5);
-    text(ctx, 'the scale pushes back with ' + sig3(w) + ' N', cx + 16, dy - L + 12, cf, { size: 19, weight: 600 });
-    dot(ctx, cx, dy, F.ref('load'), true, 8);
-    /* the weight against the acceleration due to gravity */
-    /* fixed axes: the gravity slider stops at 11 m/s² and the mass slider at 2.0 kg, so no weight on
-       the sliders can pass 22 N and the weight axis is fixed at 0 to 24 N, ticked every 6 N. Neither
-       range changes as a slider moves, and the 9.8 N the figure opens with sits well up the box. */
-    const WR = 24, gbox = { l: 850, r: 1280, t: 170, b: 630 };
-    const g = axes(ctx, gbox, [0, 11], [0, WR], { xl: 'g (m/s²)', xc: ca, yl: 'w (N)', yc: cf, nx: 11, ny: 4, fx: (s) => fmt(s, 0), fy: (s) => fmt(s, 0) });
-    inbox(ctx, gbox, () => {
-      line(ctx, g.X(0), g.Y(0), g.X(11), g.Y(mm.v * 11), cf, 5);
-      [[1.625, 'the Moon', 1], [9.8, 'Earth', -1]].forEach(([gv, name, side]) => {
-        line(ctx, g.X(gv), g.Y(0), g.X(gv), g.Y(mm.v * gv), PAL.muted, 2, [4, 8]);
-        dot(ctx, g.X(gv), g.Y(mm.v * gv), cf, true, 9);
-        const low = side > 0 && mm.v < 0.6;   /* a nearly flat line leaves no room under the Moon's point, so its name goes above */
-        text(ctx, name, g.X(gv) + (low ? 0 : side * 18), g.Y(mm.v * gv) + (low ? -28 : side > 0 ? 12 : -24), PAL.ink, { size: 18, weight: 600, align: low ? 'center' : side > 0 ? 'left' : 'right', bg: PAL.panel });
-      });
-      line(ctx, g.X(gg.v), g.Y(0), g.X(gg.v), g.Y(w), ca, 3, [10, 10]);
-      line(ctx, g.X(0), g.Y(w), g.X(gg.v), g.Y(w), cf, 2, [10, 10]);
-    });
-    pinned(ctx, gbox, g.X, g.Y, gg.v, w, ca, sig3(w) + ' N');
-    headline(ctx, place(gg.v) + ' g = ' + gtxt(gg.v) + ' m/s², a mass of ' + fmt(mm.v, 1) + ' kg weighs ' + sig3(w) + ' N');
-    readout(d.readout, `\\kwgt = \\km\\kg = (${fmt(mm.v, 1)}\\ \\text{kg})(${gtxt(gg.v)}\\ \\text{m/s}^2) = ${sig3(w)}\\ \\text{N}`,
-      'A bathroom scale measures the force and divides it by 9.80 m/s² to print a mass.');
+    const lb = F.labeller(ctx, 600), w = mm.v * gg.v;
+    hits = [];
+    panel(ctx, 300, G, lb); panel(ctx, 980, gg.v, lb);
+    line(ctx, 700, 40, 700, 560, PAL.rule, 2);
+    lb.flush();
+    readout(d.readout, `\\kwgt = \\km\\kg = (${fmt(mm.v, 1)}\\ \\text{kg})(${gtxt(gg.v)}\\ \\text{m/s}^2) = ${sig3(w)}\\ \\text{N} \\\\ \\text{dial reading} = \\frac{\\kwgt}{9.80\\ \\text{m/s}^2} = \\frac{${sig3(w)}\\ \\text{N}}{9.80\\ \\text{m/s}^2} = ${sig3(w / G)}\\ \\text{kg}`);
   }
+  F.hover(d.stage, () => hits);
   register(d.fig, { update: () => {}, draw });
 })();
+
 };

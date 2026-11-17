@@ -3,9 +3,6 @@ window.OMNISTAX_FIGURES = window.OMNISTAX_FIGURES || {};
 window.OMNISTAX_FIGURES['3.4'] = function (root, F) {
 const { el, fmt, tex, C, PAL, alpha, ctl, cycle, register, begin, line, arrow, dot, text, headline, topline, hbracket, vbracket, axes, nice, curve, labeller } = F;
 const sim = (id, H) => F.sim(root, id, H);
-function readout(host, main, small) { tex(host, main); if (small) host.appendChild(el('small', null, small)); }
-/* a note line set through the macros, for a note that names symbols */
-function texNote(host, s) { const sm = el('small', null, ''); host.appendChild(sm); tex(sm, s); }
 
 /* ---------- small helpers shared by the figures ---------- */
 const G = 9.80, TAU = 2 * Math.PI, RAD = Math.PI / 180;
@@ -32,13 +29,6 @@ function path(ctx, f, t0, t1, X, Y, color, w = 4, dash, n = 90) {
   ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; if (dash) ctx.setLineDash(dash); ctx.beginPath();
   for (let i = 0; i <= n; i++) { const t = t0 + ((t1 - t0) * i) / n; if (i) ctx.lineTo(X(f.x(t)), Y(f.y(t))); else ctx.moveTo(X(f.x(t)), Y(f.y(t))); }
   ctx.stroke(); ctx.restore();
-}
-/* an angle arc at (x, y) from the horizontal up to th degrees, with its label beyond the arc */
-function angleArc(ctx, x, y, r, th, label, color, lab) {
-  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, r, 0, -th * RAD, true); ctx.stroke(); ctx.restore();
-  const a = (th / 2) * RAD;
-  if (lab) lab.add(label, x + r * Math.cos(a), y - r * Math.sin(a), Math.cos(a), -Math.sin(a), color, 20, 30);
-  else text(ctx, label, x + (r + 26) * Math.cos(a), y - (r + 26) * Math.sin(a), color, { size: 20, weight: 600, align: 'center', bg: PAL.panel });
 }
 /* a flat piece of ground through the scene at the height y */
 function ground(ctx, x1, x2, y) { line(ctx, x1, y, x2, y, PAL.muted, 3); }

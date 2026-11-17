@@ -179,7 +179,7 @@ function stopwatch(ctx, x, y, r, min) {
    its conversion factor. Finite motion, so it gets the scrubber.
 ===================================================================== */
 (function () {
-  const d = sim('sim-drive', 612);
+  const d = sim('sim-drive', 626);
   const D = ctl(d.controls, { label: '\\kd', cls: 'position', min: 1, max: 30, step: 0.5, value: 10, unit: 'km', dec: 1, onInput: reset, aria: 'distance' });
   const T = ctl(d.controls, { label: '\\kt', cls: 'time', min: 15, max: 60, step: 1, value: 20, unit: 'min', dec: 1, onInput: reset, aria: 'time' });
   const cy = cycle(() => T.v, 1.2);
@@ -190,12 +190,12 @@ function stopwatch(ctx, x, y, r, min) {
   const L = 330, R = 1200, X = (km) => L + ((R - L) * km) / KM_MAX;
   const SL = 380, SR = 1290, S = (kmh) => SL + ((SR - SL) * kmh) / VMAX;
   const ROWS = [
-    { y: 398, unit: 'km/min', per: 60, minor: 0.1, major: 0.5, dec: 1 },   /* per: km/h in one of this unit */
-    { y: 476, unit: 'km/h', per: 1, minor: 10, major: 30, dec: 0 },
-    { y: 554, unit: 'm/s', per: 3.6, minor: 1, major: 5, dec: 0 },
+    { y: 412, unit: 'km/min', per: 60, minor: 0.1, major: 0.5, dec: 1 },   /* per: km/h in one of this unit */
+    { y: 490, unit: 'km/h', per: 1, minor: 10, major: 30, dec: 0 },
+    { y: 568, unit: 'm/s', per: 3.6, minor: 1, major: 5, dec: 0 },
   ];
-  const ys = 214, kerb = ys - 24;
-  F.hover(d.stage, () => { const cx = X((D.v * cy.now()) / T.v); return [{ x: cx, y: ys, r: 46, name: 'car' }, { x: cx + 90, y: ys - 8, r: 40, name: 'average speed' }, { x: 120, y: 190, r: 70, name: 'stopwatch' }]; });
+  const ys = 228, kerb = ys - 24;
+  F.hover(d.stage, () => { const cx = X((D.v * cy.now()) / T.v); return [{ x: cx, y: ys, r: 46, name: 'car' }, { x: cx + 90, y: ys - 8, r: 40, name: 'average speed' }, { x: 120, y: 204, r: 70, name: 'stopwatch' }]; });
   function draw() {
     const { ctx } = begin(d.c);
     const tau = cy.now(), done = tau >= T.v - 1e-9, pos = (D.v * tau) / T.v;
@@ -213,8 +213,8 @@ function stopwatch(ctx, x, y, r, min) {
     car(ctx, cx, ys + 4, F.ref('car'), 1.2);
     arrow(ctx, cx + 52, ys - 8, cx + 64 + (150 * kmH) / VMAX, ys - 8, C('velocity'), 5);
     /* the stopwatch, one turn of the dial an hour */
-    stopwatch(ctx, 120, 190, 62, tau);
-    F.rich(ctx, ['t = ', [fmt(tau, 1) + ' min', C('time')]], 120, 286, { align: 'center', size: 24 });
+    stopwatch(ctx, 120, 204, 62, tau);
+    F.rich(ctx, ['t = ', [fmt(tau, 1) + ' min', C('time')]], 120, 300, { align: 'center', size: 24 });
     /* one speed on three scales with a common zero; a line through all three marks it */
     const xv = S(kmH), left = xv > SR - 190;
     ROWS.forEach((r, i) => {

@@ -64,7 +64,12 @@ const G = 9.80;
     lab.add('b = ' + n + (n === 1 ? ' block north' : ' blocks north'), xr, (yb + yt) / 2, 1, 0, pc, 22, 22);
     lab.add('start', x0, yb, -1, 0.6, PAL.muted, 18, 30);
     lab.add('destination', xr, yt, 1, -0.5, PAL.muted, 18, 30);
-    lab.beside({ x1: x0, y1: yb, x2: xr, y2: yt }, 'left', 'c = ' + fmt(c, 1) + ' blocks', pc, 22, { gap: 52, offset: 0.62 });
+    { /* c stands above the diagonal, kept inside the city where the triangle is small */
+      const cs = 'c = ' + fmt(c, 1) + ' blocks', hw = F.measure(ctx, cs, { size: 22, weight: 600 }) / 2;
+      const mx = x0 + 0.6 * (xr - x0) + 50 * uy, my = yb + 0.6 * (yt - yb) - 50 * ux;
+      const lx = Math.max(mx, x0 + hw + 8); lab.place({ l: lx - hw - 6, r: lx + hw + 6, t: my - 17, b: my + 17 });
+      text(ctx, cs, lx, my, pc, { size: 22, weight: 600, align: 'center', bg: PAL.panel });
+    }
     /* the corner the reader drags */
     P.draw(ctx, city, pc);
     /* the walker on the streets and the helicopter on the diagonal, one block per unit of model time */
