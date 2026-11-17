@@ -189,12 +189,12 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
    The idea has a clock in it and the run is finite, so it loops.
 ===================================================================== */
 (function () {
-  const d = sim('sim-terminal', 700);
+  const d = sim('sim-terminal', 680);
   const POST = { spread: { A: 0.70, C: 1.0, name: 'spread eagle' }, head: { A: 0.18, C: 0.70, name: 'head first' } };
   const P = F.choice(d.controls, { label: '\\text{position}', options: [{ value: 'spread', label: 'spread eagle' }, { value: 'head', label: 'head first' }], value: 'spread', aria: 'position of the skydiver in the air', onInput: reset });
   const M = ctl(d.controls, { label: '\\km', cls: 'mass', min: 50, max: 110, step: 1, value: 85, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skydiver', detents: [75, 85] });
   const vtOf = (p) => Math.sqrt((2 * M.v * G) / (RHO_AIR * POST[p].C * POST[p].A));
-  const total = () => (3.5 * vtOf(P.value)) / G;
+  const total = () => (4 * vtOf(P.value)) / G;
   const cy = cycle(total, 1.2);
   function reset() { cy.reset(); }
   let hits = [];
@@ -202,17 +202,19 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
   function draw() {
     const { ctx } = begin(d.c);
     const cf = C('force'), cv = C('velocity'), ca = C('acceleration'), ct = C('time'), cb = F.ref('skydiver');
-    const p = P.value, q = POST[p], t = cy.now(), V = vtOf(p), v = speed(V, t), w = M.v * G;
+    const p = P.value, q = POST[p], t = cy.now(), V = vtOf(p), w = M.v * G;
+    /* within a thousandth of the terminal velocity the fall is shown as having reached it */
+    const v0 = speed(V, t), v = v0 > 0.999 * V ? V : v0;
     const wN = Math.round(w), fN = Math.min(wN, Math.round(w * Math.pow(v / V, 2))), a = G * (1 - Math.pow(v / V, 2));
     /* the scene: the skydiver seen from the side, held in the middle. One force scale for both arrows
-       (190 units for the 1,078 N of the heaviest skydiver), so equal forces are equal arrows; the speed
+       (170 units for the 1,078 N of the heaviest skydiver), so equal forces are equal arrows; the speed
        is 1.7 units a metre per second and the acceleration 12 units a metre per second squared. */
-    const bx = 320, by = 360, S = 1.2, NU = 190 / (110 * G);
+    const bx = 320, by = 345, S = 1.4, NU = 170 / (110 * G);
     F.rich(ctx, ['frontal area ', [fmt(q.A, 2) + ' m²', C('area')]], 40, 40, { size: 17 });
     text(ctx, 'drag coefficient ' + fmt(q.C, 2), 40, 66, PAL.ink, { size: 17 });
     P.only(ctx, 'spread', () => faller(ctx, bx, by, S, 'spread', cb), [0, 0]);
     P.only(ctx, 'head', () => faller(ctx, bx, by, S, 'head', cb), [0, 0]);
-    const half = P.mix((k) => (k === 'head' ? 75 * S + 14 : 36));
+    const half = P.mix((k) => (k === 'head' ? 75 * S + 14 : 42));
     const Lw = NU * wN, Ld = NU * fN;
     arrow(ctx, bx, by + half, bx, by + half + Lw, cf, 5);
     text(ctx, 'w = ' + wN + ' N', bx, by + half + Lw + 24, cf, { size: 21, weight: 600, align: 'center' });
@@ -223,11 +225,11 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     text(ctx, 'v = ' + fmt(v, 1) + ' m/s', xv, y0 - 28, cv, { size: 21, weight: 600, align: 'center' });
     if (a > 0.9) arrow(ctx, xa, y0, xa, y0 + 12 * a, ca, 5); else dot(ctx, xa, y0, ca, true, 5);
     text(ctx, 'a = ' + fmt(a, 2) + ' m/s²', xa, y0 - 28, ca, { size: 21, weight: 600, align: 'center' });
-    /* the graph: the falling speed against time. Fixed axes, 0 to 40 s by 0 to 120 m/s: the heaviest
-       skydiver head first settles at 119 m/s in the 42 s her run lasts, and the spread-eagle skydiver the
-       figure opens with levels at 44 m/s in 16 s, so both positions are read on one frame. */
-    const TR = 40, VR = 120, box = { l: 800, r: 1340, t: 110, b: 560 };
-    const g = axes(ctx, box, [0, TR], [0, VR], { xl: 't (s)', xc: ct, yl: 'v (m/s)', yc: cv, nx: 4, ny: 4, fx: (x) => fmt(x, 0), fy: (y) => fmt(y, 0) });
+    /* the graph: the falling speed against time. Fixed axes, 0 to 50 s by 0 to 120 m/s: the heaviest
+       skydiver head first settles at 119 m/s in the 49 s her run lasts, and the spread-eagle skydiver the
+       figure opens with levels at 44 m/s in 18 s, so both positions are read on one frame. */
+    const TR = 50, VR = 120, box = { l: 800, r: 1340, t: 110, b: 560 };
+    const g = axes(ctx, box, [0, TR], [0, VR], { xl: 't (s)', xc: ct, yl: 'v (m/s)', yc: cv, nx: 5, ny: 4, fx: (x) => fmt(x, 0), fy: (y) => fmt(y, 0) });
     const other = p === 'head' ? 'spread' : 'head', Vo = vtOf(other), Vd = P.mix((k) => vtOf(k));
     inbox(ctx, box, () => {
       line(ctx, g.X(0), g.Y(Vo), g.X(TR), g.Y(Vo), alpha(cv, 0.45), 2, [10, 10]);
@@ -264,8 +266,8 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
   const hOf = (lg) => (Math.abs(lg - 2.96) < 0.005 ? 914 : Math.abs(lg - 0.7) < 0.005 ? 5 : +Math.pow(10, lg).toPrecision(2));
   const Hh = ctl(d.controls, { label: 'h', cls: 'position', min: 0, max: 3, step: 0.01, value: 2.96, unit: '', fmt: (lg) => fmt(hOf(lg), hOf(lg) < 10 ? 1 : 0) + ' m', aria: 'height of the fall', detents: [{ v: 0.7, label: 'tree' }, { v: 2.96, label: 'mine shaft' }] });
   /* the speed after falling the height h from rest, with a drag that goes as the square of the speed */
-  const vOf = (vt, h) => vt * Math.sqrt(1 - Math.exp((-2 * G * h) / (vt * vt)));
-  const areaLabel = (a) => (a >= 0.1 ? fmt(a, 2) + ' m²' : fmt(a * 1e4, a * 1e4 >= 100 ? 0 : 1) + ' cm²');
+  const vOf = (vt, h) => { const f = Math.sqrt(1 - Math.exp((-2 * G * h) / (vt * vt))); return f > 0.999 ? vt : vt * f; };   /* within a thousandth, the terminal velocity itself */
+  const areaLabel = (a) => (a >= 0.1 ? fmt(a, 2) + ' m²' : fmt(a * 1e4, a * 1e4 >= 20 ? 0 : 1) + ' cm²');
   let hits = [];
   F.hover(d.stage, () => hits);
   function draw() {
@@ -275,7 +277,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     headline(ctx, 'After falling ' + fmt(h, h < 10 ? 1 : 0) + ' m the full-size body lands at ' + fmt(vA, 1) + ' m/s and the smaller one at ' + fmt(vB, 1) + ' m/s; with no air both would land at ' + fmt(free, 1) + ' m/s');
     /* the scene: the two bodies to one scale (the full-size one 2 m long, as Example 5.2 takes it), each
        with the velocity it lands at, 4.4 units a metre per second */
-    const xa = 190, xb = 480, yb = 250, S = 1.5, gy = 590;
+    const xa = 200, xb = 500, yb = 260, S = 1.8, gy = 590;
     line(ctx, 50, gy, 620, gy, PAL.muted, 3);
     text(ctx, 'the ground', 335, gy + 24, PAL.muted, { size: 17, align: 'center' });
     const rows = [[xa, 1, cA, 'full size', vA], [xb, k, cB, fmt(k, 2) + ' times the length', vB]];
@@ -283,7 +285,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
       text(ctx, name, x, 128, col, { size: 20, weight: 600, align: 'center' });
       F.rich(ctx, [[massLabel(MASS * kk * kk * kk), cm], ', ', [areaLabel(AREA * kk * kk), cAr]], x, 156, { size: 18, align: 'center' });
       faller(ctx, x, yb, S * kk, 'spread', col);
-      const y1 = yb + 40 * kk + 14;
+      const y1 = yb + 50 * kk + 14;
       if (vv > 3.5) arrow(ctx, x, y1, x, y1 + 4.4 * vv, cv, 5);
       text(ctx, fmt(vv, 1) + ' m/s', x, y1 + Math.max(4.4 * vv, 6) + 24, cv, { size: 21, weight: 600, align: 'center' });
     }

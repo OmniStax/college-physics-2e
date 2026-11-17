@@ -26,7 +26,7 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
 /* the rise and the run between the two ends of a tangent, each labelled where the triangle leaves room: the
    run under its line (above it at the right-hand corner when the line lies along the time axis), the rise to
    the right of its line (inside the corner when there is no room to the right, above the line when it is level) */
-function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColor, rightLimit, flatRight) {
+function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColor, rightLimit, flatRight, avoidX) {
   const xa = X(p1[0]), xb = X(p2[0]), ya = Y(p1[1]), yb = Y(p2[1]);
   drop(ctx, xa, ya, xb, ya, runColor); drop(ctx, xb, ya, xb, yb, riseColor);
   const o = { weight: 600, bg: alpha(PAL.panel, 0.85) };
@@ -38,7 +38,12 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
   else text(ctx, riseLabel, xb - 16, ya - (low ? 52 : 24), riseColor, { ...o, align: 'right' });
   if (low && flat) text(ctx, runLabel, (xa + xb) / 2, yb - 26, runColor, { ...o, align: 'center' });
   else if (low) text(ctx, runLabel, xb - 16, ya - 24, runColor, { ...o, align: 'right' });
-  else text(ctx, runLabel, (xa + xb) / 2, ya + 26, runColor, { ...o, align: 'center' });
+  else {
+    /* under the middle of the run, moved to one side of a drop line that would cross it */
+    const half = F.measure(ctx, runLabel, { size: 22, weight: 600 }) / 2 + 14, mid = (xa + xb) / 2;
+    const x = avoidX === undefined || Math.abs(avoidX - mid) > half ? mid : avoidX + (avoidX + 2 * half < xb ? half : -half);
+    text(ctx, runLabel, x, ya + 26, runColor, { ...o, align: 'center' });
+  }
 }
 
 /* =====================================================================
@@ -264,7 +269,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     for (const t of MARKS) dot(ctx, g1.X(t), g1.Y(vel(t)), C('velocity'), true, 5);
     const lo = Math.min(ta, tQ.v) - 2, hi = Math.max(tb, tQ.v) + 2;
     clipped(ctx, b1, () => line(ctx, g1.X(lo), g1.Y(tan(lo)), g1.X(hi), g1.Y(tan(hi)), PAL.ink, 3));
-    riseRun(ctx, g1.X, g1.Y, b1, [ta, v1], [tb, v2], 'Δt = ' + fmt(dt, 1) + ' s', 'Δv = ' + fmt(dv, 0) + ' m/s', C('time'), C('velocity'), b1.r + 150);
+    riseRun(ctx, g1.X, g1.Y, b1, [ta, v1], [tb, v2], 'Δt = ' + fmt(dt, 1) + ' s', 'Δv = ' + fmt(dv, 0) + ' m/s', C('time'), C('velocity'), b1.r + 150, false, g1.X(tQ.v));
     drop(ctx, g1.X(tQ.v), b1.t, g1.X(tQ.v), b2.b, C('time'));
     E1.draw(ctx, g1, PAL.ink); E2.draw(ctx, g1, PAL.ink);
     PQ.draw(ctx, g1, C('velocity'));

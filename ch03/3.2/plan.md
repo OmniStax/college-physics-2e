@@ -215,7 +215,7 @@ image no sentence points at).
 
 ## Colour
 
-The page binds position only, from the seven sims whose sliders carry a
+The page binds position and angle, from the sims whose sliders carry a
 displacement magnitude ($\kD$, $\kA$, $\kB$, $\kC$) or whose readouts state
 a resultant ($\kR$). Every angle, the scalar c and the order of addition
 are untyped and in ink, as the chapter config says; the bold vectors
@@ -256,3 +256,10 @@ carries 3.19 with 3.20 to 3.23, so each eyebrow reads every number of its
 run and the text's references to any of them link to the one sim. The
 build links references in the running text only; problem 9's prompt is an
 exercise card, and its "Figure 3.23" stays plain there.
+
+Set pass (2026-11-17, claude-fable-5-2): the lines under "Figures" above are
+the current ones; the "Figure pass" and "Fold pass" notes describe the earlier
+build. `sim-vector-2d` is now the kept photograph of Figure 3.8 and
+`fig-ruler-protractor` that of 3.9; `sim-order` is folded into `sim-walk`
+(3.14 with 3.15 to 3.18); the referent `woman` went with the walker the
+merged figure no longer draws.

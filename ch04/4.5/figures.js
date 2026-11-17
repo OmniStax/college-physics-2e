@@ -299,11 +299,23 @@ const deg = (v, d) => fmt(v, d) + '°';
     ctx.beginPath(); ctx.arc(CX - half, TOPY, 110, 0, th); ctx.stroke(); ctx.restore();
     text(ctx, 'θ = ' + deg(TH.v, 1), CX - half + 118, TOPY - 20, C('angle'), { size: 21, weight: 600, align: 'center', bg: PAL.panel });
     lab.block(CX - half + 60, TOPY - 36, CX - half + 176, TOPY - 4);
-    lab.beside({ x1: CX, y1: sagY, x2: hL[0], y2: hL[1] }, 'right', 'T_L = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
-    lab.beside({ x1: CX, y1: sagY, x2: hR[0], y2: hR[1] }, 'left', 'T_R = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
     lab.add('w = ' + num(W, 0) + ' N', CX, sagY + U, 0, 1, col, 21, 18);
-    lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, 0.35, 0.94, col, 21, 26);
-    lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, -0.35, 0.94, col, 21, 26);
+    if (reach > 330) {
+      /* long arrows: each tension named over its shaft, its upward part under the arrow's head */
+      lab.beside({ x1: CX, y1: sagY, x2: hL[0], y2: hL[1] }, 'right', 'T_L = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
+      lab.beside({ x1: CX, y1: sagY, x2: hR[0], y2: hR[1] }, 'left', 'T_R = ' + num(T, 0) + ' N', col, 21, { offset: 0.62, gap: 30 });
+      lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, 0.35, 0.94, col, 21, 26);
+      lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, -0.35, 0.94, col, 21, 26);
+    } else {
+      /* short arrows: the names stand outside the heads, clear of the walker */
+      lab.add('T_L = ' + num(T, 0) + ' N', hL[0], hL[1], -0.9, -0.44, col, 21, 20);
+      lab.add('T_R = ' + num(T, 0) + ' N', hR[0], hR[1], 0.9, -0.44, col, 21, 20);
+      lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, -0.8, 0.6, col, 21, 22);
+      lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, 0.8, 0.6, col, 21, 22);
+      const wide = reach > 280;   /* room under the dashed line for its name, or else it goes below the upward part's */
+      lab.add('T_{Lx} = ' + num(T * c, 0) + ' N', wide ? CX - reach * 0.55 : hL[0], sagY, wide ? 0 : -0.6, wide ? 1 : 0.8, col, 21, wide ? 26 : 58);
+      lab.add('T_{Rx} = ' + num(T * c, 0) + ' N', wide ? CX + reach * 0.55 : hR[0], sagY, wide ? 0 : 0.6, wide ? 1 : 0.8, col, 21, wide ? 26 : 58);
+    }
     if (reach > 330) {
       lab.add('T_{Lx} = ' + num(T * c, 0) + ' N', CX - reach * 0.4, sagY, 0, 1, col, 21, 26);
       lab.add('T_{Rx} = ' + num(T * c, 0) + ' N', CX + reach * 0.4, sagY, 0, 1, col, 21, 26);
@@ -319,7 +331,7 @@ const deg = (v, d) => fmt(v, d) + '°';
       fx: (v) => fmt(v, 0), fy: (v) => num(v, 0),
     });
     line(ctx, box.l, ax.Y(W), box.r, ax.Y(W), alpha(PAL.ink, 0.45), 2, [10, 10]);
-    text(ctx, 'w = ' + num(W, 0) + ' N', box.r + 10, ax.Y(W), PAL.muted, { size: 18, align: 'left' });
+    text(ctx, 'w = ' + num(W, 0) + ' N', box.r + 20, ax.Y(W), PAL.muted, { size: 18, align: 'left' });
     F.plot(ctx, ax, (t) => tension(t), col, { x: [1, 30] });
     line(ctx, ax.X(TH.v), box.b, ax.X(TH.v), ax.Y(T), PAL.ink, 2, [4, 8]);
     pinned(ctx, box, ax.X, ax.Y, TH.v, T, col, num(T, 0) + ' N');

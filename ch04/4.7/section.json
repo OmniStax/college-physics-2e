@@ -194,7 +194,8 @@
     "acceleration",
     "velocity",
     "time",
-    "mass"
+    "mass",
+    "position"
    ],
    "ai": [
     {

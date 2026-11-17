@@ -103,91 +103,104 @@ sliders with their types · headline · graph · 3D
 
 5. `sim-drag` · **Sim** · drag-force-equation, drag-coefficient, drag-force ·
    variation by slider: the drag arrow and the parabola answer speed,
-   coefficient and area · still, no clock in the idea · v (20 to 150 km/h,
-   velocity), C (0.05 to 1.12 with a detent at every Table 5.2 value,
-   untyped), A (0.20 to 3.00 m², area) · "At 100 km/h the drag is 91.5 N,
-   four times the 22.9 N it would be at half that speed" · graph below the
-   strip, the half-speed point hollow as the caption says · 2D. Each body of
-   Table 5.2 is a library body moving the way it really moves: F.car for the
-   cars, F.skydiver turned to fall down a vertical strip (feet first drawn
-   from F.silhouette "stand" falling) with the velocity down and the drag
-   up, F.silhouette "sit" on the bicycle for the cyclist; the sphere, plate
-   and airfoil stay as shapes. Note dropped. No fold or split.
-   Readout: $\kFD = \tfrac12 C\rho A\kv^2$ with the numbers put in, and no
-   small line. The arrows keep one scale within each scene (1.2 units a
-   newton along the road, 0.45 down the shorter column of air), and a drag
-   longer than the room is cut with two slashes. Draws force, velocity,
-   area, density. Rewritten 2026-10-05 after the review of Chapter 5.
+   coefficient and area, and the hollow point at half the speed sits at a
+   quarter of the force · arrows: symbolic (a force and a velocity vector) ·
+   still, no clock in the idea · v (20 to 150 km/h, velocity), C (0.05 to
+   1.12 with a detent at every Table 5.2 value, untyped), A (0.20 to 3.00 m²,
+   area); it opens on the Toyota Camry of problem 4, C = 0.28 and 0.70 m², at
+   100 km/h · "At 100 km/h the drag is 91.5 N, four times the 22.9 N it would
+   be at half that speed" · graph below the strip, fixed at 0 to 150 km/h by
+   0 to 250 N · 2D. Each body of Table 5.2 is a library body moving the way
+   it really moves; the arrows keep one scale within each scene and a drag
+   longer than the room is cut with two slashes. Readout: the drag equation
+   with the numbers put in. Draws force, velocity, area, density.
+   works: read off the image: no image. Table 5.2's twelve values are the
+   detents; problem 4 gives the Camry 0.70 m². ½(0.28)(1.21)(0.70)(27.8)² =
+   91.5 N, and 22.9 N at 50 km/h.
+   Re-examined 2026-11-17: kept and fixed. The scene left a blank band under
+   a small body and the caption ran to six sentences; the road bodies are
+   drawn 1.3 times larger, the stage is 80 units shorter and the caption says
+   only what to change.
 
 6. `sim-terminal` · **Sim** (the book draws no sketch of the falling
    skydiver) · terminal-velocity, terminal-velocity-magnitude,
-   drag-force-equation · **moves**: a skydiver is released and falls, and
-   the whole idea is what happens as the clock runs, the drag growing until
-   it equals the weight and the acceleration falling to zero; the run is
-   finite, so it loops with the scrubber · mass $m$ (40 to 120 kg, step 1,
-   default 85, ink), frontal area $A$ (0.10 to 1.20 m², step 0.01, default
-   0.70, ink), drag coefficient $C$ (0.30 to 1.20, step 0.01, default 1.00,
-   ink); the defaults are Example 5.2, the 85 kg skydiver falling spread
-   eagle, and sliding $m$ to 75, $A$ to 0.18 and $C$ to 0.70 gives the head
-   first skydiver of the text · "t = 5.0 s · the skydiver is falling at 37.4
-   m/s, the drag has grown to 594 N against a weight of 833 N, and the
-   acceleration is down to 2.81 m/s²" · graph beside the vertical scene:
-   $\kv$ against $\kt$, the curve levelling on the dashed terminal velocity
-   · no. Readout: $\kvt = \sqrt{2m\kg/\rho C A}$ with the numbers put in;
-   small line giving the same speed in km/h. Draws force, velocity,
-   acceleration, time.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence.
-7. `sim-stokes` · **Sim** (the book draws no sketch of Stokes' law) ·
-   stokes-law, terminal-velocity · **moves**: a steel bead sinks through a
-   jar of oil and the fall takes a time that the reader is asked to measure,
-   which is the whole of the ball-bearing problem; the fall is finite, so it
-   loops with the scrubber · bead radius $r$ (0.5 to 4.0 mm, step 0.1,
-   default 1.5, ink), viscosity $\eta$ (0.10 to 2.00 kg/(m·s), step 0.01,
-   default 0.76, ink); the defaults are the ball bearing of problem 9, which
-   falls 0.60 m in 12 s through motor oil · "t = 6.0 s · the 1.5 mm steel
-   bead has sunk 30.2 cm at a steady 50.3 mm/s, because the Stokes drag grew
-   to match its weight almost at once" · graph beside the vertical scene:
-   the steady speed against the bead's radius, the curve $\kv \propto r^2$,
-   with the current bead marked · no. Readout: $\kFs = 6\pi r\eta\kv$ with
-   the numbers put in; small line saying that this equals the weight of the
-   bead. Draws force, velocity, time.
-   Revised in the figure-audit pass of 2026-09-12: the curve is greyed past
-   the radius at which the Reynolds number of the sinking bead reaches one,
-   with that radius marked, and the headline and the small line say that
-   Stokes' law no longer holds there and give the Reynolds number the
-   setting reaches. The headline is one capitalized sentence.
-8. `sim-size` · **Sim** (the book draws no sketch of Haldane's scaling) ·
-   size-and-terminal-velocity, terminal-velocity-magnitude · **moves**: two
-   bodies of the same shape and different size are released together and
-   fall side by side, and what the reader is to watch is one of them
-   settling early and slowly while the other is still speeding up, which is
-   a thing that happens over time; the fall is finite, so it loops with the
-   scrubber · the scale factor $k$ of the smaller body (0.05 to 1.00, step
-   0.01, default 0.10, which is Haldane's "divide an animal's length,
-   breadth, and height each by ten", ink), the mass $m$ of the full-size
-   body (10 to 120 kg, step 1, default 75, ink), the drop $h$ (20 to 900 m,
-   step 10, default 200, ink) · "t = 3.0 s · the full-size body is falling
-   at 27.0 m/s and still speeding up, while the one a tenth its size has
-   settled at 13.2 m/s; its weight is a thousandth and its area a hundredth"
-   · graph beside the two columns: $\kv$ against $\kt$ for both bodies, each
-   levelling on its own dashed terminal velocity · no. Readout:
-   $\kvt \propto \sqrt{k}$ with the two speeds; small line on the weight
-   falling as $k^3$ and the area only as $k^2$. Draws velocity, time.
+   drag-force-equation · flow by animation: the reader watches the drag
+   arrow grow to the length of the weight arrow while the acceleration arrow
+   shrinks to nothing and the speed levels off, which the book gives only in
+   words · arrows: symbolic (two forces, the velocity and the acceleration
+   of a body held in the middle of the scene) · **moves**: the fall has a
+   clock in it; the run lasts 3.5 v_t/g and loops with the scrubber ·
+   position in the air (choice: spread eagle, the book's 0.70 m² and C = 1.0
+   of Example 5.2; head first, the text's 0.18 m² and C = 0.70), mass (50 to
+   110 kg, detents at the book's 75 and 85 kg, default 85); the area and the
+   coefficient are what the position changes, so they are no longer two free
+   sliders · no headline: every arrow carries its live value · graph beside:
+   v against t on fixed axes, 0 to 40 s by 0 to 120 m/s, the terminal
+   velocity dashed and the other position's terminal velocity dashed faint
+   above or below it · 2D. Readout, two formulas on two lines: F_net = mg −
+   F_D with the live numbers, and v_t with its substitution in m/s and km/h.
+   Draws force, velocity, acceleration, time, mass, area, density.
+   works: read off the image: no image. Example 5.2: 85 kg, A = (2 m)(0.35 m)
+   = 0.70 m², C = 1.0, v_t = 44 m/s (here 44.4 m/s, 160 km/h). The text: 75
+   kg head first, 0.18 m², C = 0.70, 98 m/s = 350 km/h (here 98.2 m/s, 354
+   km/h). must hold: (1) those two on load and at 75 kg head first; (2) the
+   weight and drag arrows share one scale and are equal at the end of the
+   run; (3) the readout's difference is the difference of the two numbers
+   shown; (4) the point on the graph, the velocity arrow and the label give
+   one speed.
+   Re-examined 2026-11-17: rebuilt. The skydiver fell down a ruled column
+   that taught nothing, with the two force arrows on different footings, a
+   three-clause headline and a note under the readout; the area and the
+   coefficient were free sliders though the book ties both to the position.
 
-   Figure pass of 2026-09-14 (Claude Fable 5.1): the skydiver of `sim-terminal`
-   and `sim-size` is a spread-eagled silhouette seen from below (round head,
-   solid torso, arms and legs thrown out and bent), drawn in this file, so she
-   reads as a skydiver without her label; her weight leaves her centre and
-   the drag meets her from below. `sim-terminal`'s column of air is fixed at
-   0 to 1000 m and never rescales, a longer fall held at the last mark with
-   a note saying how far she has really gone. `sim-drag`'s quarter-drag note
-   sits under its point on a panel, off the curve at every coefficient;
-   `sim-size` moves the smaller body's name to the right end of its line
-   when the two terminal velocities lie within a label of each other; and
-   `sim-stokes` wraps its headline through `topline()`, keeps its smooth-flow
-   note at the foot of the graph and drops the square-law note when the live
-   point is pinned in the corner it would occupy.
+7. `sim-stokes` · **Sim** (the book draws no sketch of Stokes' law) ·
+   stokes-law, terminal-velocity · flow by animation: a steel bead sinks
+   through a jar of oil at one steady speed, and the fall takes a time the
+   reader can read, which is the ball-bearing problem · arrows: symbolic
+   (the Stokes drag and the weight, equal) · **moves**: the fall is finite
+   and loops with the scrubber · bead radius r (0.5 to 4.0 mm, default 1.5),
+   viscosity η (0.10 to 2.00 kg/(m·s), default 0.76); the defaults are the
+   ball bearing of problem 9, 0.60 m in 12 s · "After 4.9 s the bead has
+   sunk 24.8 cm at a steady 50.3 mm/s" · graph beside: the steady speed
+   against the radius, greyed past the radius where the flow stops being
+   smooth · 2D. Readout, two formulas on two lines: F_s = 6πrηv with the
+   numbers, and mg with the numbers, the same force. Draws force, velocity,
+   position, viscosity, mass, acceleration.
+   works: read off the image: no image. Problem 9: steel 7.8 × 10³ kg/m³,
+   diameter 3.0 mm, 0.60 m in 12 s, η = 0.76 kg/(m·s). v = 2ρr²g/9η = 50.3
+   mm/s, 11.9 s; m = 1.10 × 10⁻⁴ kg, mg = 1.08 × 10⁻³ N = 6πrηv.
+   Re-examined 2026-11-17: kept and fixed. The headline and the caption are
+   cut, the note under the readout (which named the Reynolds number, an idea
+   of Chapter 12) is gone, and the weight has its own readout line.
+
+8. `sim-size` · **Sim** (the book draws no sketch of Haldane's scaling) ·
+   size-and-terminal-velocity, terminal-velocity-magnitude · variation by
+   slider: the speed a body lands at against the height it fell, for the 85
+   kg skydiver of Example 5.2, for a body of the same shape k times as long
+   and for no air at all; the small body leaves the no-air curve within a
+   few metres and never goes faster, which is Haldane's mouse down the mine
+   shaft · arrows: symbolic (the two landing velocities, to one scale) ·
+   still: the reader sets the height and reads both landings, so no clock is
+   needed; the drop race it replaces repeated the levelling curves of
+   `sim-terminal` · k (0.05 to 1.00, default and dashed circle at Haldane's
+   tenth), h (1 to 1000 m on a logarithmic slider, detents at the 5.0 m tree
+   of problem 3 and at Haldane's thousand yards, 914 m, the default) ·
+   "After falling 914 m the full-size body lands at 44.4 m/s and the smaller
+   one at 14.0 m/s; with no air both would land at 134 m/s" · graph beside
+   the two bodies: v against the height of the fall, 1 to 1000 m
+   logarithmic by 0 to 50 m/s, fixed · 2D. Readout: v_t with k³m and k²A put
+   in, reduced to √k times the full-size v_t, one chain. Draws velocity,
+   position, mass, area, density.
+   works: read off the image: no image. Haldane: a tenth the length, a
+   thousandth the weight (85 kg to 85 g), a hundredth the surface (0.70 m² to
+   70 cm²). v after a fall h with quadratic drag: v² = v_t²(1 − e^(−2gh/v_t²)).
+   must hold: (1) on load 44.4 m/s and 14.0 m/s = √0.10 × 44.4; (2) the two
+   bodies are drawn to one scale, the small one k times as long; (3) both
+   curves start on the no-air curve; (4) the arrows' values are the points
+   on the graph.
+   Re-examined 2026-11-17: rebuilt. The smaller body was a dot, the race
+   showed the same v against t curves as `sim-terminal`, and the readout
+   joined two formulas with a colon.
 
 The drag coefficient has no figure of its own: the wind tunnel that measures
 it is Figure 5.8, which is kept, and `sim-drag` carries $C$ on a slider and

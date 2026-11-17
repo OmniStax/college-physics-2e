@@ -196,7 +196,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
       const px = at[2 * i], py = at[2 * i + 1], [hx, hy] = tip(px, py, MAG[i] * S, WALK_DEG[i]);
       arrow(ctx, px, py, hx, hy, cp, 5);
       const L = MAG[i] * S, nx = (hy - py) / L, ny = -(hx - px) / L, out = (ox + 25 * S - (px + hx) / 2) * nx + (oy - (py + hy) / 2) * ny > 0 ? -1 : 1;
-      lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx * out, ny * out, cp, 26, 26);
+      lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx * out, ny * out, cp, 26, 36);
     });
     text(ctx, 'R = 50.8 m', ex + 26, ey + 6, cp, { size: 24, weight: 600, align: 'left', bg: PAL.panel });
     dot(ctx, ox, oy, PAL.ink, true, 7); dot(ctx, ex, ey, PAL.ink, true, 7);

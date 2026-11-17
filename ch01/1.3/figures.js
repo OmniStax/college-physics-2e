@@ -150,7 +150,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
   const sig = (x) => (x ? String(+x.toPrecision(3)) : '0');
   const LEN = 4, WID = 3, K = 140, BX = 240, BY = 560;
   /* the magnified corner: 0.30 m by 0.24 m about the corner, ten times the floor's scale, wide enough for 5% of each side */
-  const IN = { l: 900, r: 1320, t: 70, b: 400, k: 1400, x0: 3.97, y0: 2.96 };
+  const IN = { l: 880, r: 1300, t: 70, b: 400, k: 1400, x0: 3.97, y0: 2.96 };
   function pieces(ctx, X, Y, dl, dw, lw) {
     const cl = F.cat(0), cw = F.cat(2);
     ctx.save();

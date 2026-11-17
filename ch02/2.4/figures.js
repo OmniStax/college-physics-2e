@@ -78,7 +78,7 @@ function topCar(ctx, x, y, heading, color) {
     const tau = cy.now(), done = tau >= T - 1e-9, vv = vel(tau), flat = Math.abs(a.v) < 0.05;
     const tr = done ? T : Math.floor(tau * 10) / 10, vr = vel(tr);
     /* the road */
-    const y = 236, X = (m) => 190 + 7.6 * (m + 45);
+    const y = 236, X = (m) => 170 + 6.6 * (m + 45);
     strip(ctx, 80, 1320, y, 52);
     scale(ctx, X, -40, 80, 20, y + 26, 'm', 1);
     const px = X(pos(tau));
@@ -90,8 +90,8 @@ function topCar(ctx, x, y, heading, color) {
       if (Math.abs(gx - px) > 78 && Math.abs(gx - last) > 46) { text(ctx, k + ' s', gx, y - 52, C('time'), { size: 17, align: 'center' }); last = gx; }
     }
     carDir(ctx, px, y - 6, F.ref('car'), 1.2, vv >= 0 ? 1 : -1);
-    if (Math.abs(vv) > 0.3) arrow(ctx, px, y - 110, px + vv * 10, y - 110, C('velocity'), 5);
-    text(ctx, 'v', px + vv * 10 + (vv >= 0 ? 18 : -18), y - 110, C('velocity'), { size: 24, weight: 600, align: 'center' });
+    if (Math.abs(vv) > 0.3) arrow(ctx, px, y - 110, px + vv * 8, y - 110, C('velocity'), 5);
+    text(ctx, 'v', px + vv * 8 + (vv >= 0 ? 18 : -18), y - 110, C('velocity'), { size: 24, weight: 600, align: 'center' });
     if (!flat) {
       arrow(ctx, px, y - 76, px + a.v * 30, y - 76, C('acceleration'), 5);
       text(ctx, 'ā', px + a.v * 30 + (a.v >= 0 ? 18 : -18), y - 76, C('acceleration'), { size: 24, weight: 600, align: 'center' });
@@ -378,9 +378,9 @@ function topCar(ctx, x, y, heading, color) {
     F.rich(ctx, ['slope = v = ', [fmt(vv, 2) + ' m/s', C('velocity')]], 1250, BOX[0].t - 24, { size: 20, align: 'right' });
     F.rich(ctx, ['slope = a = ', [phase === 'steady' ? '0' : sig3s(aa) + ' m/s²', C('acceleration')]], 1250, BOX[1].t - 24, { size: 20, align: 'right' });
     const GX = AX[0].X;
-    text(ctx, 'speeding up', GX(t1.v / 2), 318, PAL.muted, { size: 18, align: 'center' });
-    text(ctx, 'constant velocity', GX(t1.v + TS / 2), 318, PAL.muted, { size: 18, align: 'center' });
-    text(ctx, 'stopping', GX(t1.v + TS + t3.v / 2), 318, PAL.muted, { size: 18, align: 'center' });
+    text(ctx, 'speeding up', GX(t1.v / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
+    text(ctx, 'constant velocity', GX(t1.v + TS / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
+    text(ctx, 'stopping', GX(t1.v + TS + t3.v / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
     topline(ctx, done ? 'After ' + fmt(T(), 1) + ' s the train is at rest again, ' + fmt(pos(T()), 0) + ' m down the track.'
       : phase === 'up' ? 'Speeding up: the velocity rises ' + sig3(a1()) + ' m/s every second, and the position graph steepens.'
         : phase === 'steady' ? 'Constant velocity: the acceleration is zero, and the position graph is a straight line.'

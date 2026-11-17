@@ -58,7 +58,7 @@ const RAD = Math.PI / 180;
     text(ctx, 'his pull on the vine acts', xr + 20, yv + 62, PAL.muted, { size: 20, align: 'left' });
     text(ctx, 'on the vine, so it is left out', xr + 20, yv + 88, PAL.muted, { size: 20, align: 'left' });
     if (!still) {                                  /* which way he speeds up */
-      const xa = CX - 190, la = 44 * a;
+      const xa = CX - 190, la = Math.sign(a) * (24 + 34 * Math.abs(a));
       arrow(ctx, xa, 440 + la / 2, xa, 440 - la / 2, C('acceleration'), 5);
       text(ctx, 'a', xa - 18, 440, C('acceleration'), { size: 26, weight: 600, align: 'right', base: 'middle' });
     }
@@ -77,12 +77,12 @@ const RAD = Math.PI / 180;
     arrow(ctx, x1, top, x1, end, force, 5);
     dot(ctx, x0, BASE, PAL.ink, false, 10); dot(ctx, x1, end, PAL.ink, true, 10);
     text(ctx, 'T', x0 - 22, (BASE + top) / 2, force, { size: 26, weight: 600, align: 'right', base: 'middle' });
-    text(ctx, 'w', x1 + 20, top + 60, force, { size: 26, weight: 600, align: 'left', base: 'middle' });
+    text(ctx, 'w', x1 + 20, (top + end) / 2, force, { size: 26, weight: 600, align: 'left', base: 'middle' });
     if (still) text(ctx, 'F_{net} = 0', x2 + 22, BASE - 30, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
     else {
       if (Math.abs(end - BASE) >= 16) arrow(ctx, x2, BASE, x2, end, force, 7);
       else line(ctx, x2, BASE, x2, end, force, 7);
-      text(ctx, 'F_{net} = ma = ' + num(Math.abs(gap)) + ' N ' + way, x2 + 22, (BASE + end) / 2, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
+      text(ctx, 'F_{net} = ma = ' + num(Math.abs(gap)) + ' N ' + way, x2 + 30, (BASE + end) / 2, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
     }
 
     [[CX, '(a) to (c)', 'the sketch, the forces and the system of interest'], [FX, '(c)', 'the free-body diagram'], [SX, '(d)', still ? 'head to tail, the sum closes' : 'head to tail, the sum stays open']].forEach(([x, a1, a2]) => {
@@ -149,9 +149,10 @@ const RAD = Math.PI / 180;
     text(ctx, 'θ = ' + fmt(TH.v, 0) + '°', wide ? xR - 118 * Math.cos(th / 2) : xR + 16, wide ? GY - 118 * Math.sin(th / 2) : GY - 22, ang, { size: 20, align: wide ? 'center' : 'left', base: 'middle' });
     const P = [X0 + 0.26 * L * Math.cos(th), yTop + 0.26 * L * Math.sin(th)], B = at(P, nrm, 34), A0 = at(B, dwn, 44);
     /* the chosen axes through the tail of the acceleration, and the acceleration split along them */
-    dash(ctx, at(A0, ux, -70), at(A0, ux, 300), guide, 2, [12, 10]);
+    const xEnd = Math.min(300, ux[1] > 0.01 ? (GY - 30 - A0[1]) / ux[1] : 300);   /* the x′ axis stops short of the ground */
+    dash(ctx, at(A0, ux, -70), at(A0, ux, xEnd), guide, 2, [12, 10]);
     dash(ctx, at(A0, uy, -120), at(A0, uy, 120), guide, 2, [12, 10]);
-    text(ctx, 'x′', ...at(A0, ux, 318), PAL.muted, { size: 20, weight: 600, align: 'center', base: 'middle' });
+    text(ctx, 'x′', ...at(A0, ux, xEnd + 18), PAL.muted, { size: 20, weight: 600, align: 'center', base: 'middle' });
     text(ctx, 'y′', ...at(A0, uy, 138), PAL.muted, { size: 20, weight: 600, align: 'center', base: 'middle' });
     ctx.save(); ctx.translate(B[0], B[1]); ctx.rotate(th); ctx.fillStyle = PAL.panel; ctx.strokeStyle = F.ref('block'); ctx.lineWidth = 4;
     ctx.fillRect(-34, -34, 68, 68); ctx.strokeRect(-34, -34, 68, 68); ctx.restore();

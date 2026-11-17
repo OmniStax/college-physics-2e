@@ -53,7 +53,7 @@ function blockSeg(lab, p, q) {
    (a sign, as labeller.beside counts sides), turned to read left to right, and blocked for the labels queued after */
 function along(ctx, lab, p, q, side, s, color) {
   const L = Math.hypot(q.x - p.x, q.y - p.y) || 1, tx = (q.x - p.x) / L, ty = (q.y - p.y) / L, nx = side * -ty, ny = side * tx;
-  const f = Math.min(0.56, Math.max(0.5, 1 - 150 / L)), cx = p.x + (q.x - p.x) * f + nx * 26, cy = p.y + (q.y - p.y) * f + ny * 26;
+  const f = Math.min(0.56, Math.max(0.5, 1 - 150 / L)), cx = p.x + (q.x - p.x) * f + nx * 36, cy = p.y + (q.y - p.y) * f + ny * 36;
   let a = Math.atan2(ty, tx); if (a > Math.PI / 2 + 1e-6 || a < -Math.PI / 2 - 1e-6) a += Math.PI;
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); text(ctx, s, 0, 0, color, { size: 26, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
   const h = F.measure(ctx, s, { size: 26, weight: 600 }) / 2 + 8;
@@ -81,6 +81,7 @@ function city(ctx, lines, ax, ay, marks) {
   text(ctx, 'y', OX - 24, OY - NY * S - 14, PAL.muted, { size: 24, weight: 600, align: 'center' });
   text(ctx, 'E', OX + NX * S + 52, OY, PAL.ink, { size: 24, weight: 600, align: 'center' }); text(ctx, 'W', OX - NX * S - 26, OY, PAL.ink, { size: 24, weight: 600, align: 'center' });
   text(ctx, 'N', OX + 26, OY - NY * S - 14, PAL.ink, { size: 24, weight: 600, align: 'center' }); text(ctx, 'S', OX + 26, OY + NY * S - 16, PAL.ink, { size: 24, weight: 600, align: 'center', bg: PAL.panel });
+  [[OX + NX * S + 52, OY], [OX - NX * S - 26, OY], [OX + 26, OY - NY * S - 14], [OX + 26, OY + NY * S - 16]].forEach(([x, y]) => lab.block(x - 18, y - 18, x + 18, y + 18));
   /* the numbers stand on the side of each axis the triangle leaves free */
   const below = ay >= 0 ? 1 : -1, left = ax >= 0 ? -1 : 1;
   for (let i = -15; i <= 15; i += 3) { if (!i) continue; const x = OX + i * S, y = OY + below * 22; line(ctx, x, OY - 6, x, OY + 6, PAL.muted, 2); text(ctx, String(i).replace('-', '−'), x, y, PAL.muted, { size: 18, align: 'center', bg: PAL.panel }); lab.block(x - 16, y - 12, x + 16, y + 12); }
@@ -104,7 +105,7 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
   if (hasX) { darrow(ctx, O.x, O.y, K.x, K.y, pos, 4); blockSeg(lab, O, K); }
   if (hasY) { darrow(ctx, K.x, K.y, T.x, T.y, pos, 4); blockSeg(lab, K, T); }
   if (Math.abs(ax) > 0.8 && Math.abs(ay) > 0.8) rightAngle(ctx, K.x, K.y, -ax, ay);
-  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 7); blockSeg(lab, O, T); along(ctx, lab, O, T, hasX && hasY ? away(O, T, K) : (hasY ? (ay < 0 ? 1 : -1) : (ax < 0 ? 1 : -1)), nameA, pos); }
+  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 7); blockSeg(lab, O, T); along(ctx, lab, O, T, hasX && hasY ? away(O, T, K) : (hasY ? (ay < 0 ? -1 : 1) : (ax < 0 ? 1 : -1)), nameA, pos); }
   if (hasX) lab.add('A_x = ' + blocks(ax), (O.x + K.x) / 2, OY, 0, ay >= 0 ? 1 : -1, pos, 24, 60);
   if (hasY) lab.add('A_y = ' + blocks(ay), T.x, (K.y + T.y) / 2, ax >= 0 ? 1 : -1, 0, pos, 24, 22);
   return { O, K, T };
@@ -167,7 +168,8 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
       const ux = Math.cos(atn * RAD), uy = -Math.sin(atn * RAD), Lm = Math.min(a, 8) * S, M = { x: OX + ux * Lm, y: OY + uy * Lm }, k = atn < 0 ? 1 : -1;
       line(ctx, OX, OY, M.x, M.y, PAL.muted, 3, [10, 10]); blockSeg(lab, { x: OX, y: OY }, M);
       if (Math.abs(atn) >= 0.5) F.angleArc(ctx, { x: OX, y: OY }, Math.min(130, Lm * 0.6), 0, atn * RAD, undefined, undefined, PAL.muted);
-      lab.add('tan⁻¹(A_y / A_x) = ' + deg(atn), OX + ux * Lm * 0.7, OY + uy * Lm * 0.7, -k * uy, k * ux, PAL.muted, 22, 28);
+      if (Math.abs(atn) < 20) lab.add('tan⁻¹(A_y / A_x) = ' + deg(atn), OX + ux * Lm * 0.7, OY + uy * Lm * 0.7, -k * uy, k * ux, PAL.muted, 22, 28);
+      else lab.add('tan⁻¹(A_y / A_x) = ' + deg(atn), M.x, M.y, ux, uy, PAL.muted, 22, 24);
     }
     const t = triangle(ctx, lab, ax, ay, pos, 'A = ' + blocks(a));
     if (some && Math.abs(th) >= 0.5) F.angleArc(ctx, t.O, Math.min(84, Math.max(44, a * S * 0.3)), 0, th * RAD, 'θ = ' + deg(th), lab, angc);

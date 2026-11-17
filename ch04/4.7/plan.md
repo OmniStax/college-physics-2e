@@ -101,7 +101,7 @@ graph · 3D
 2. `sim-traffic-light` · Figure 4.22 (a) to (e) · unequal-tensions, net-force-by-axis, tension ·
    variation by slider: the knot moves, the tensions change, their parts stay balanced · arrows:
    symbolic · **still**: a light hanging at rest has no time in it · $\theta_1$, $\theta_2$ (20° to
-   60°, defaults 30.0 and 45.0, angle; each carries a dashed circle where the two angles are equal) ·
+   50°, defaults 30.0 and 45.0, angle; each carries a dashed circle where the two angles are equal) ·
    "At 30.0° and 45.0° the wires carry 108 N and 132 N: the steeper wire holds up more of the 147 N
    weight" · no graph · 2D. The mass slider is gone: it scaled every arrow alike and changed nothing
    of the idea, so the light keeps the book's 15.0 kg. The lamps are red, amber and green through
@@ -112,7 +112,7 @@ graph · 3D
    part (e), $T_{1x}$ left and $T_{2x}$ right from one dot, $T_{1y}$ then $T_{2y}$ stacked upward and
    $w$ downward · flow: nothing moves · must hold: both poles keep their place and height and the knot
    sits where the two angles put it, lower as the wires steepen; each wire meets the horizontal
-   through the knot at its slider's angle; every arrow of both panels is on one scale (150 units to
+   through the knot at its slider's angle; every arrow of both panels is on one scale (170 units to
    147 N); $T_{1x} = T_{2x}$; $T_{1y} + T_{2y}$ reaches exactly as far up as $w$ reaches down; the
    steeper wire has the longer arrow; at equal angles the arrows are equal · read off the image: 30°
    on the left, 45° on the right, $T_1$, $T_2$, $w$, and the part names $T_{1x}$, $T_{1y}$, $T_{2x}$,

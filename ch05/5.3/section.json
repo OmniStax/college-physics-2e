@@ -82,6 +82,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "label off the headline, readout true past fracture, note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: the book's curve, spring beside it, force removed to test each region"
     }
    ]
   },
@@ -99,8 +103,7 @@
    "draws": [
     "force",
     "position",
-    "elastic-modulus",
-    "area"
+    "stiffness"
    ],
    "ai": [
     {
@@ -122,6 +125,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "moduli staggered, stretch labels off the strings, note cut"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "each string's force constant shown, lines in string colours, caption cut"
     }
    ]
   },
@@ -132,33 +139,7 @@
    "widths": [
     175
    ],
-   "draws": [],
-   "ai": [
-    {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "line names on panels, note cut"
-    },
-    {
-     "model": "claude-fable-5-2",
-     "part": "reverted to the book's image"
-    }
-   ]
+   "draws": []
   },
   {
    "id": "fig-gondolas",
@@ -205,6 +186,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "length bracket, note cut to one line through the macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: curve as the book's, fibers uncrimp, stretch and break by region"
     }
    ]
   },
@@ -215,33 +200,7 @@
    "widths": [
     200
    ],
-   "draws": [],
-   "ai": [
-    {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "push arrow and labels clear of the case, note dropped"
-    },
-    {
-     "model": "claude-fable-5-2",
-     "part": "reverted to the book's image"
-    }
-   ]
+   "draws": []
   },
   {
    "id": "sim-nail",
@@ -281,6 +240,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "arrows capped, labels clear, note through the macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt to one scale from the book's side view, opens on Example 5.5"
     }
    ]
   },
@@ -322,6 +285,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "volume label off the arrow, note cut"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "cube enlarged, volume slider dropped, headline names the liquid, caption cut"
     }
    ]
   }

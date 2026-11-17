@@ -20,7 +20,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
    no cycle and carries no transport.
 ===================================================================== */
 (function () {
-  const d = sim('sim-strengths', 480);
+  const d = sim('sim-strengths', 490);
   const FORCE = [
     { name: 'gravitational', p: -38, tex: '10^{-38}' },
     { name: 'electromagnetic', p: -2, tex: '10^{-2}' },
@@ -32,7 +32,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
   const A = F.select(d.controls, { label: '\\text{force A}', aria: 'the first force', options: OPTS, value: '1' });
   const B = F.select(d.controls, { label: '\\text{force B}', aria: 'the second force', options: OPTS, value: '0' });
   const LO = -40, L = 110, R = 1290, X = (p) => L + ((R - L) * (p - LO)) / -LO;
-  const rowY = (i) => 128 + i * 56, YA = 356, YB = 424;
+  const rowY = (i) => 128 + i * 56, YA = 356, YB = 434;
   const WORD = { 1: 'ten', 2: 'a hundred', 3: 'a thousand', 4: 'ten thousand', 6: 'a million' };
   function draw() {
     const { ctx } = begin(d.c);
@@ -44,15 +44,15 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       line(ctx, X(p), YA - (big ? 9 : 4), X(p), YA + (big ? 9 : 4), PAL.muted, 2);
       if (big) text(ctx, p === 0 ? '1' : pow10(p), X(p), YA + 28, PAL.muted, { size: 17, align: 'center' });
     }
-    text(ctx, 'relative strength, each step a factor of 100', X(-20), 462, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'relative strength (strong nuclear force = 1)', X(-20), 468, PAL.muted, { size: 17, align: 'center' });
     /* one mark per force, standing over its own strength */
     FORCE.forEach((f, i) => {
       const y = rowY(i), w = Math.max(A.a(String(i)), B.a(String(i))), on = i === a || i === b;
       line(ctx, X(f.p), y, X(f.p), YA, alpha(PAL.ink, 0.18 + 0.5 * w), 2, on ? undefined : [4, 8]);
       dot(ctx, X(f.p), y, PAL.ink, on, 10);
       const right = f.p < -20;
-      F.rich(ctx, right ? [[f.p === 0 ? '1' : pow10(f.p), on ? PAL.ink : PAL.muted, on ? 600 : 400], '   ' + f.name + ' force']
-        : [f.name + ' force   ', [f.p === 0 ? '1' : pow10(f.p), on ? PAL.ink : PAL.muted, on ? 600 : 400]],
+      F.rich(ctx, right ? [[f.p === 0 ? '1' : pow10(f.p), on ? PAL.ink : PAL.muted, on ? 600 : 400], ['   ' + f.name + ' force', PAL.ink, on ? 600 : 400]]
+        : [[f.name + ' force   ', PAL.ink, on ? 600 : 400], [f.p === 0 ? '1' : pow10(f.p), on ? PAL.ink : PAL.muted, on ? 600 : 400]],
       X(f.p) + (right ? 20 : -20), y, { align: right ? 'left' : 'right', size: 21, weight: on ? 600 : 400, bg: PAL.panel });
     });
     /* the bracket that counts the powers of ten between the two picked forces; its ends slide from the old pick to the new */
@@ -126,8 +126,9 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     ctx.stroke(); ctx.restore();
   };
   const head = (ctx, pts, f, color, w) => {
-    const i = Math.max(2, Math.min(pts.length - 1, Math.round(pts.length * f)));
-    arrow(ctx, px(pts[i - 2][0]), py(pts[i - 2][1]), px(pts[i][0]), py(pts[i][1]), color, w);
+    /* the head sits on a chord of nine steps, long enough for the arrow to show */
+    const i = Math.max(9, Math.min(pts.length - 1, Math.round(pts.length * f)));
+    if (pts.length > 10) arrow(ctx, px(pts[i - 9][0]), py(pts[i - 9][1]), px(pts[i][0]), py(pts[i][1]), color, w);
   };
   let spots = [];
   F.hover(d.stage, () => spots);
@@ -139,7 +140,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     const guide = alpha(PAL.ink, 0.4);
     ctx.save();
     ctx.beginPath(); ctx.rect(BOX.l, BOX.t, BOX.r - BOX.l, BOX.b - BOX.t); ctx.clip();
-    LINES.forEach((pts) => { stroke(ctx, pts, guide, 2.5); head(ctx, pts, 0.5, PAL.muted, 2.5); });
+    LINES.forEach((pts) => { stroke(ctx, pts, guide, 2.5); head(ctx, pts, 0.52, PAL.muted, 3); });
     /* the one line that runs through the test charge, both ways from it */
     if (!near) {
       const fw = follow(x, y, 1).pts, bw = follow(x, y, -1).pts, through = bw.slice().reverse().concat(fw.slice(1));
@@ -156,11 +157,11 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     const below = y > -0.1 ? 46 : -46;
     text(ctx, '+1.0 nC', px(-SEP), py(0) + below, F.ref('positive-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     text(ctx, '−1.0 nC', px(SEP), py(0) + below, F.ref('negative-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
-    /* the force on the test charge, 4 units to the nanonewton, cut short past 300 units */
+    /* the force on the test charge, 6 units to the nanonewton, cut short past 300 units */
     const ux = ex / (E || 1), uy = ey / (E || 1), sg = Math.sign(q);
     let tip = [px(x), py(y)];
     if (!near && q !== 0) {
-      const full = 4 * Math.abs(Fm), len = Math.min(300, full);
+      const full = 6 * Math.abs(Fm), len = Math.min(300, full);
       tip = [px(x) + sg * ux * len, py(y) - sg * uy * len];
       arrow(ctx, px(x), py(y), tip[0], tip[1], C('force'), 5);
       if (full > 300) {
@@ -185,7 +186,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       { x: px(-SEP), y: py(0), r: 26, name: 'the positive charge that makes the field' },
       { x: px(SEP), y: py(0), r: 26, name: 'the negative charge that makes the field' },
       { x: px(x), y: py(y), r: 18, name: 'the test charge: drag it' },
-      { x: (px(x) + tip[0]) / 2, y: (py(y) + tip[1]) / 2, r: 22, name: 4 * Math.abs(Fm) > 300 ? 'the force on the test charge, drawn cut short' : 'the force on the test charge' },
+      { x: (px(x) + tip[0]) / 2, y: (py(y) + tip[1]) / 2, r: 22, name: 6 * Math.abs(Fm) > 300 ? 'the force on the test charge, drawn cut short' : 'the force on the test charge' },
     ];
     headline(ctx, near ? 'Right at a charge the field has no single direction'
       : q === 0 ? 'With no charge on it the test object feels no force, and the field is still there'
