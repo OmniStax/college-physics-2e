@@ -86,7 +86,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
 (function () {
   const d = sim('sim-field', 640);
   const TX = ctl(d.controls, { label: '\\kx', cls: 'position', min: -3, max: 3, step: 0.05, value: 0.4, unit: 'm', dec: 2, aria: 'the test charge across the field' });
-  const TY = ctl(d.controls, { label: '\\ky', cls: 'position', min: -1.25, max: 1.25, step: 0.05, value: 0.8, unit: 'm', dec: 2, aria: 'the test charge up the field' });
+  const TY = ctl(d.controls, { label: '\\ky', cls: 'position', min: -1.25, max: 1.25, step: 0.05, value: 0.7, unit: 'm', dec: 2, aria: 'the test charge up the field' });
   const TQ = ctl(d.controls, { label: '\\kq', cls: 'charge', min: -4, max: 4, step: 0.5, value: 2, unit: 'nC', dec: 1, detents: [0], aria: 'the test charge' });
   const P = F.drag(d, { x: TX, y: TY });
   /* 200 units to the metre; the two charges are ±1.0 nC and stand 2.0 m apart */
@@ -158,14 +158,14 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     const below = y > -0.1 ? 46 : -46;
     text(ctx, '+1.0 nC', px(-SEP), py(0) + below, F.ref('positive-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     text(ctx, '−1.0 nC', px(SEP), py(0) + below, F.ref('negative-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
-    /* the force on the test charge, 6 units to the nanonewton, cut short past 300 units */
+    /* the force on the test charge, 4 units to the nanonewton, cut short past 300 units */
     const ux = ex / (E0 || 1), uy = ey / (E0 || 1), sg = Math.sign(q);
     let tip = [px(x), py(y)], cut = false;
     if (!near && q !== 0) {
       /* the arrow stops short of the edge of the drawing as well */
-      const dx = sg * ux, dy = -sg * uy, m = 34;
+      const dx = sg * ux, dy = -sg * uy, m = 44;
       const room = Math.min(dx > 0 ? (BOX.r - m - px(x)) / dx : dx < 0 ? (BOX.l + m - px(x)) / dx : 1e9, dy > 0 ? (BOX.b - m - py(y)) / dy : dy < 0 ? (BOX.t + m - py(y)) / dy : 1e9);
-      const full = 6 * Math.abs(Fm), len = Math.max(0, Math.min(300, full, room));
+      const full = 4 * Math.abs(Fm), len = Math.max(0, Math.min(300, full, room));
       cut = len < full - 0.5;
       tip = [px(x) + sg * ux * len, py(y) - sg * uy * len];
       arrow(ctx, px(x), py(y), tip[0], tip[1], C('force'), 5);

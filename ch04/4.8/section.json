@@ -442,7 +442,7 @@
     "type": "number",
     "generated_by": "source",
     "value": 100,
-    "hint": "Take the strong nuclear force’s strength of 1 over the electromagnetic force’s $10^{-2}$, which is the two rungs the ladder in the text brackets by default.",
+    "hint": "Take the strong nuclear force’s strength of 1 over the electromagnetic force’s $10^{-2}$; pick the two on the ladder in the text to count the powers of ten between them.",
     "solution": "$10^{2}$"
    }
   }

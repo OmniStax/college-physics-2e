@@ -302,7 +302,7 @@ running off the drawing, each with an arrowhead pointing from + to −; a test c
 flow: nothing moves by itself; the test charge goes where the reader drags it.
 must hold: (1) lines leave + and arrive at −, arrowheads from + to −, and the picture is mirror-symmetric
 left to right as the book's is; (2) the line through the test charge passes through it and is tangent to
-the force; (3) F = qE with E the sum of the two charges' fields (8.99 N/C at 1 m from 1.0 nC), the arrow 6
+the force; (3) F = qE with E the sum of the two charges' fields (8.99 N/C at 1 m from 1.0 nC), the arrow 4
 units per nN and marked where it is cut at 300 units; (4) a negative q reverses the arrow, q = 0 removes
 it, and no field line moves when q or the position changes; (5) labels stay inside the canvas.
 read off the image: "+q" at the left and "−q" at the right; about two dozen lines per charge with
