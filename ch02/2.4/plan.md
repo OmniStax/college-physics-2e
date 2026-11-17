@@ -272,7 +272,7 @@ id · replaces · concepts · what moves · sliders · headline · graph · 3D
     finite, scrubber. Readout: +0.556 m/s² with the
     conversion. Draws time, velocity, acceleration.
 
-Figures 4, 7, 8 and 11 are one shape (a sprite on a strip with v and a
+(Before the re-examination) Figures 4, 7, 8 and 11 were one shape (a sprite on a strip with v and a
 arrows, a v–t graph below, sliders v₀, v_f, Δt) built by one function
 in `figures.js` with the sprite, the unit and the defaults as its
 arguments; each keeps its own book number, its own original and its
@@ -310,6 +310,94 @@ change in velocity that is entirely a change in direction. Left: the
 other two.
 
 Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-average-acceleration`: the whole-second readings and the one-second bracket's label overprinted each other, so all of them go through `labeller()` and the bracket is drawn as a step. `sim-turning`: the headline wraps through `topline()`, the velocity label is kept under it, and the car seen from above is redrawn with tyres, a bonnet and windows (a new sprite, drawn here). `sim-four-cars`: the four velocity lines of the readout ran off the right of the panel in two columns and now stand one to a row. `sim-racehorse` and the three subway sketches: the horse was a box with a wedge for a neck and is redrawn with a barrel, a neck, a head with ears, a mane, a tail and four galloping legs (a new sprite, drawn here); the graph's $v_0$, $v_f$ and slope labels go through `labeller()`. `sim-subway-displacement` and `sim-subway-velocity`: the subscript labels use the drawing layer's `x_f` form on a panel, the slope label goes through `labeller()`, the average-velocity label stays inside the canvas, and every headline wraps. `sim-instantaneous` and `sim-subway-graphs` unchanged except the wrap.
+
+Figure re-examination, 2026-11-17 (Claude Fable 5.2). The eleven drawn
+figures were judged as a set. Six of them were one shape (a sprite on a
+strip, a v–t or x–t line below, sliders for the two end values and the
+time) and repeated `sim-average-acceleration`; the six subway figures
+also repeated each other. What the section teaches is carried by five
+figures now, and the plan lines above for figures 1, 3, 5 and 9 are
+replaced by these:
+
+1. `sim-average-acceleration` · Sim, for the boxed definition ·
+   average-acceleration, acceleration · value add: "meters per second per
+   second" seen as the same piece added to the velocity arrow each second
+   · arrows kinematic (v and ā on the car) · moving: the car drives 5.0 s,
+   a tick is left on the road at each whole second, and under the road
+   the velocity is drawn once per second on a fixed scale of −15 to
+   25 m/s, each arrow starting from zero with the piece that second added
+   drawn above it from where the arrow before ended · $\kvo$ (0 to
+   10 m/s, default 5.0), $\kab$ (−3.0 to 3.0 m/s², default 2.5) ·
+   headline "The velocity changes by +2.5 m/s every second: after 2.6 s
+   it is 11.5 m/s." · no graph (the row of arrows is the record; the
+   section's graphs come with Figure 2.21) · 2D. Readout: ā = Δv/Δt over
+   the 5.0 s, on one line.
+3. `sim-four-cars` · Figure 2.14 · acceleration-sign, deceleration ·
+   value add: the cars set out two by two, rows by the way they move and
+   columns by the way they accelerate, in the book's own lettering, with
+   the x-axis turned round by a choice: the signs of v and a change and
+   the cars that slow down do not · arrows kinematic · moving: 3.5 s from
+   15 m/s at 3.0 m/s², so (b) and (c) are still moving at the end; the
+   starting velocity stays as a dashed line under the live arrow · choice
+   "positive direction" (right, left) · headline "With +x to the right,
+   (b) and (d) have negative acceleration, but the cars slowing down are
+   (b) and (c)." · none · 2D. No letters ride the arrows (26.7): a
+   legend names them, the value line under each road wears the colours.
+   Readout: ā = Δv/Δt for (b) and (c), the two that decelerate with
+   opposite signs.
+   works: read off the image · (a) car facing right, v right, a right;
+   (b) facing right, v right, a left; (c) facing left, v left, a right;
+   (d) facing left, v left, a left; axes x to the right. The image gives
+   no numbers; 15 m/s and 3.0 m/s² are this figure's. must hold · the v
+   arrows of (a) and (d) lengthen and those of (b) and (c) shorten; a arrows never change; signs flip together with the
+   choice.
+5. `sim-instantaneous` · Figure 2.17 · instantaneous-acceleration,
+   average-acceleration · value add: the interval is the reader's, and
+   the greatest distance of a from ā over it is marked and stated for
+   both motions · arrows none · still: it answers its sliders · $t_1$,
+   $t_2$ (0 to 5.0 s, detents at the book's 1.0 and 3.0 s, default 0 to
+   3.0) · headline "From 0.0 s to 3.0 s the acceleration stays within
+   0.35 m/s² of its average in (a), and within 3.33 m/s² in (b)." · the
+   graphs are the figure, both on −5 to 5 m/s² as the book prints them on
+   one scale · 2D.
+   works: read off the image · (a) 0 to 5 s: starts 1.47, peaks 2.07 at
+   0.63 s and 3.58 s, trough 1.47 at 1.97 s, ends about 1.33; average
+   line at about 1.75. (b) 3.0 for 0 to 1.0 s, −2.0 to 3.0 s, 0 to 4.2 s,
+   1.5 to 4.8 s, 5.0 to 5.5 s, −4.0 to 6.0 s. The earlier drawing had
+   (a) as a cosine with its first peak at 1.45 s; the image wins.
+9. `sim-subway-graphs` · Figure 2.21, and the one moving figure of the
+   train (Examples 2.4 and 2.5) · average-acceleration, deceleration,
+   instantaneous-acceleration · value add: the train, its two arrows and
+   the three graphs on one clock, with the tangent to the position graph
+   carrying the velocity as its slope and the slope of the velocity graph
+   read as the acceleration · arrows kinematic · moving · $\kdt$ speeding
+   up (10 to 25 s, default 20.0), $\kdt$ stopping (5 to 15 s, default
+   8.00); 30.0 km/h and 20 s at constant velocity are fixed · headline by
+   part of the journey · three graphs below on one time axis, fixed at
+   0 to 60 s, 0 to 400 m, 0 to 10 m/s, −2 to 1 m/s² · 2D. Readout: the
+   book's two conversions, +0.417 and −1.04 m/s², one line each.
+   works: read off the image · x: 0 at 0 s, 83 m at 20 s, 167 m at 30 s,
+   250 m at 40 s, 283 m at 48 s; v: 8.33 m/s from 20 to 40 s, zero at
+   48 s; a: +0.417, 0, −1.04 m/s². must hold · x curves up, runs
+   straight, flattens; v ramp, plateau, ramp; a three steps; the three
+   markers share one time; the tangent's slope equals the v reading.
+
+`sim-turning` (figure 2) is kept: the triangle of velocities is larger,
+the speed and radius ranges are cut to 5 to 15 m/s and 20 to 60 m so the
+velocity arrow is drawn to one scale everywhere without being cut short
+under the headline, the acceleration arrow's length is proportional to
+ā, and the readout is the one formula.
+
+Reverted to the book's image, each a kept photograph with its number:
+Figure 2.16 (`sim-racehorse`: the same strip and line as figure 1 with a
+horse on it; the book's sketch is the strategy step the example names),
+Figure 2.18 (`sim-subway-displacement`: four sliders on a displacement,
+which is 2.1's idea, and the examples read their numbers off the book's
+drawing), Figures 2.19, 2.20 and 2.23 (the three train sketches: figure 9
+shows the same speeding up and stopping on one clock, and car (c) of
+Figure 2.14 is the train of Example 2.7), Figure 2.22
+(`sim-subway-velocity`: average velocity is 2.3's idea). The ids are
+kept so every link holds. The referent `horse` went with its figure.
 
 ## Exercises
 

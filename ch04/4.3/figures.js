@@ -228,8 +228,8 @@ function suv(ctx, x, y, color, s) {
       line(ctx, px - 110, gy, px + 520, gy, PAL.muted, 3);
       F.silhouette(ctx, { x: px, y: gy, s: S, pose: 'push', color: cp, hands: [{ x: (hand.x - px) / S, y: (hand.y - gy) / S }, { x: (hand.x - px) / S - 2, y: (hand.y - gy) / S + 7 }] });
       body();
-      arrow(ctx, hand.x, 150, hand.x + L, 150, cf, 6);
-      text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', hand.x, 122, cf, { size: 22, weight: 600 });
+      arrow(ctx, hand.x, 134, hand.x + L, 134, cf, 6);
+      text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', hand.x, 106, cf, { size: 22, weight: 600 });
       F.rich(ctx, [name + ', m_' + sub + ' = ', [m, cm]], mid, gy + 34, { size: 20, align: 'center' });
       F.rich(ctx, ['a_' + sub + ' = ', [sig3(a) + ' m/s²', ca]], mid, gy + 66, { size: 23, weight: 600, align: 'center' });
     };
@@ -421,14 +421,14 @@ function suv(ctx, x, y, color, s) {
       ctx.save(); ctx.globalAlpha = t;
       const g = axes(ctx, gbox, [0, 4], [0, AR], { xl: 'rockets burning', xc: PAL.ink, yl: 'a (m/s²)', yc: C('acceleration'), nx: 4, ny: 4, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 0) });
       inbox(ctx, gbox, () => {
-        line(ctx, g.X(0), g.Y(0), g.X(4), g.Y(accOf(4)), PAL.muted, 3, [10, 10]);
+        line(ctx, g.X(0), g.Y(0), g.X(4), g.Y(4 * Tt.v / M), PAL.muted, 3, [10, 10]);
         line(ctx, g.X(1), g.Y(accOf(1)), g.X(4), g.Y(accOf(4)), C('acceleration'), 5);
         for (let i = 1; i <= 4; i++) dot(ctx, g.X(i), g.Y(accOf(i)), C('acceleration'), i !== n, 9);
       });
       const nm = nn.mix((v) => +v);   /* the marker slides along the line to the new count */
       pinned(ctx, gbox, g.X, g.Y, nm, accOf(nm), PAL.ink, fmt(a, 1) + ' m/s²');
       /* the dashed line through the origin lies above the real one at every count, so its name goes above it */
-      text(ctx, 'simply proportional', g.X(3.2) - 6, g.Y(accOf(4) * 0.8) - 20, PAL.muted, { size: 17, align: 'right' });
+      text(ctx, 'with no friction', g.X(3.2) - 6, g.Y(3.2 * Tt.v / M) - 20, PAL.muted, { size: 17, align: 'right' });
       ctx.restore();
     }
     const missed = lb.flush();
@@ -486,7 +486,7 @@ function suv(ctx, x, y, color, s) {
     block(ctx, cx, by, kw, kh, cl);
     text(ctx, fmt(mm.v, 1) + ' kg', cx, by, C('mass'), { size: 23, weight: 600, align: 'center' });
     /* the two forces on the block, from a dot beside the scene */
-    const dx = cx + 290, dy = 330, L = w * KW;
+    const dx = cx + 330, dy = 330, L = w * KW;
     arrow(ctx, dx, dy, dx, dy + L, cf, 6); lb.add('w = ' + sig3(w) + ' N', dx, dy + Math.max(L, 20), -1, 0, cf, 23, 16);
     arrow(ctx, dx, dy, dx, dy - L, cf, 6); lb.add('N = ' + sig3(w) + ' N', dx, dy - Math.max(L, 20), -1, 0, cf, 23, 16);
     dot(ctx, dx, dy, cl, true, 6);

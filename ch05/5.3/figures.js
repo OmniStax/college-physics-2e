@@ -36,84 +36,92 @@ function plain(v, d) {
 const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDrawn > 0 ? plain(unitsPerMetreDrawn / unitsPerMetreScene, 1) : '0');
 
 /* =====================================================================
-   FIGURE 5.11: deformation against applied force. A spring is pulled
-   along its length and the deformation it takes is plotted against the
-   force. While the graph is straight, Hooke's law holds; past the end of
-   the straight segment the stretch is still elastic, then permanent, and
-   at last the spring breaks. Still: the idea has no time in it.
+   FIGURE 5.11: deformation against applied force, with the curve of the
+   book's image. The spring stands beside the graph, held at the bottom
+   and pulled up, so its free end is at the height of the point on the
+   curve. Let go, and the spring shows what the regions mean: inside the
+   elastic region it returns to its original length, past it it does not.
 ===================================================================== */
 (function () {
-  const d = sim('sim-hooke-graph', 700);
-  let Fh;
-  const Fa = ctl(d.controls, { label: '\\kF', cls: 'force', min: 0, max: 600, step: 5, value: 90, unit: 'N', dec: 0, aria: 'applied force',
-    specials: [{ at: () => (Fh ? Fh.v : null), label: 'Hooke limit' }] });
-  const kk = ctl(d.controls, { label: '\\kk', cls: 'stiffness', min: 50, max: 400, step: 10, value: 150, unit: 'N/m', dec: 0, aria: 'force constant' });
-  const ro = F.readout(d);
-  Fh = ctl(d.controls, { label: '\\text{Hooke limit}', cls: 'force', min: 40, max: 300, step: 10, value: 120, unit: 'N', dec: 0, aria: 'force at which the straight segment of the graph ends' });
-  const elastic = () => 1.5 * Fh.v, fracture = () => 1.9 * Fh.v;
-  /* the deformation the force produces: proportional while Hooke's law holds, then steeper, then steeper again */
-  function dl(f) {
-    const k = kk.v, h = Fh.v, e = elastic(), fr = fracture(), top = Math.min(f, fr);
-    return Math.min(top, h) / k + Math.max(0, Math.min(top, e) - h) / (0.55 * k) + Math.max(0, top - e) / (0.18 * k);
+  const d = sim('sim-hooke-graph', 720);
+  /* read off the book's image as fractions of the force and the deformation at fracture: the straight
+     segment ends at (0.375, 0.375), the elastic region at (0.80, 0.575), and the curve bends up to (1, 1).
+     The book prints no numbers, so the spring is given k = 200 N/m and a fracture at 20 N and 10 cm. */
+  const KK = 200, FFR = 20, DMAX = 10, HOOKE = 7.5, ELAST = 16;
+  const KN = [[0.375, 0.375], [0.44, 0.44], [0.57, 0.494], [0.70, 0.531], [0.80, 0.575], [0.90, 0.654], [0.95, 0.78], [1, 1]];
+  /* slopes for a monotone cubic through the knots (Fritsch and Carlson), the first one the slope of the straight segment */
+  const DS = KN.slice(1).map((p, i) => (p[1] - KN[i][1]) / (p[0] - KN[i][0]));
+  const MS = KN.map((p, i) => (i === 0 ? 1 : i === KN.length - 1 ? DS[i - 1] * 1.4 : (2 * DS[i - 1] * DS[i]) / (DS[i - 1] + DS[i])));
+  function shape(u) {
+    if (u <= KN[0][0]) return u;
+    let i = 0; while (i < KN.length - 2 && u > KN[i + 1][0]) i++;
+    const h = KN[i + 1][0] - KN[i][0], t = Math.min(1, (u - KN[i][0]) / h), t2 = t * t, t3 = t2 * t;
+    return (2 * t3 - 3 * t2 + 1) * KN[i][1] + (t3 - 2 * t2 + t) * h * MS[i] + (-2 * t3 + 3 * t2) * KN[i + 1][1] + (t3 - t2) * h * MS[i + 1];
   }
-  const region = (f) => (f <= Fh.v ? 0 : f <= elastic() ? 1 : f <= fracture() ? 2 : 3);
+  const dl = (f) => DMAX * shape(Math.min(f, FFR) / FFR);              /* centimetres */
+  /* what stays when the force is removed: nothing inside the elastic region, and past it the stretch gained beyond that region's end */
+  const set = (f) => Math.max(0, dl(f) - dl(ELAST));
+  const Fa = ctl(d.controls, { label: '\\kF', cls: 'force', min: 0, max: 20, step: 0.1, value: 5, unit: 'N', dec: 1, aria: 'applied force',
+    specials: [{ at: () => HOOKE, label: 'end of the straight segment' }, { at: () => ELAST, label: 'end of the elastic region' }] });
+  const hold = F.choice(d.controls, { label: 'the force is', options: [{ value: 'on', label: 'applied' }, { value: 'off', label: 'removed' }], value: 'on', aria: 'whether the force is applied or removed' });
+  const ro = F.readout(d);
   function draw() {
     const { ctx } = begin(d.c);
-    const f = Fa.v, x = dl(f), reg = region(f);
-    /* the scene: a spring clamped at the left and pulled to the right */
-    /* fixed scene scale: the spring is drawn against the same 0 to 4 m the graph is ruled to, so a
-       stiffer spring is drawn shorter rather than filling the same span at every setting; a stretch
-       past 4 m is held at the end of the strip and the headline gives its true length */
-    const y = 175, wall = 170, nat = 250, SC = 130;
-    fixed(ctx, wall - 60, y - 80, 60, 160);
-    const end = wall + nat + Math.min(x, 4) * SC, csp = F.ref('spring');
-    strip(ctx, 120, Math.min(1320, end + 320), y, 50);
-    if (reg < 3) {
-      spring(ctx, wall, y, end, y, 11, 24, csp, 4);
-      line(ctx, end, y - 34, end, y + 34, csp, 7);
-      arrow(ctx, end + 24, y, end + 24 + Math.max(20, f * 0.5), y, C('force'), 5);
-      text(ctx, 'F = ' + fmt(f, 0) + ' N', end + 30, y - 34, C('force'), { weight: 600, size: 22 });
+    const f = Fa.v, x = dl(f), broken = f >= FFR, off = hold.value === 'off', left = set(f);
+    const reg = f <= HOOKE ? 0 : f <= ELAST ? 1 : broken ? 3 : 2;
+    const on = hold.mix((v) => (v === 'on' ? 1 : 0));                 /* 1 while the force is applied, easing to 0 when it is removed */
+    const now = left + (x - left) * on;                               /* the deformation the spring shows at this instant */
+    const box = { l: 400, r: 1320, t: 130, b: 520 };
+    const ax = axes(ctx, box, [0, FFR], [0, DMAX], { xl: 'applied force F (N)', xc: C('force'), yl: 'deformation ΔL (cm)', yc: C('position'), nx: 4, ny: 5, fy: (v) => fmt(v, 0) });
+    const { X, Y } = ax, cp = C('position'), cf = C('force'), csp = F.ref('spring');
+    /* the limits of the regions, dropped from the curve to the axis as the book drops them */
+    [HOOKE, ELAST, FFR].forEach((v) => line(ctx, X(v), Y(dl(v)), X(v), box.b + 100, alpha(PAL.ink, 0.4), 2, [6, 6]));
+    F.plot(ctx, ax, dl, cp, { w: 5 });
+    text(ctx, 'slope 1/k', X(3.2) - 16, Y(dl(3.2)) - 30, C('stiffness'), { size: 20, weight: 600, align: 'right' });
+    const fx = X(FFR), fy = Y(DMAX);
+    line(ctx, fx - 13, fy - 13, fx + 13, fy + 13, PAL.ink, 4); line(ctx, fx - 13, fy + 13, fx + 13, fy - 13, PAL.ink, 4);
+    text(ctx, 'fracture', fx - 24, fy + 2, PAL.ink, { size: 19, weight: 600, align: 'right' });
+    /* the regions, bracketed under the axis as in the book's figure */
+    hbracket(ctx, X(0), X(HOOKE), box.b + 84, PAL.ink, 'Hooke’s law obeyed');
+    hbracket(ctx, X(ELAST), X(FFR), box.b + 84, PAL.ink, 'permanent deformation');
+    hbracket(ctx, X(0), X(ELAST), box.b + 140, PAL.ink, 'elastic region');
+    /* the spring: held to the floor below the level ΔL = 0 and pulled upward, so its free end stands at the height of the point */
+    const sx = 190, floor = box.b + 150, yEnd = Y(now);
+    fixed(ctx, sx - 90, floor, 180, 30);
+    line(ctx, sx - 110, Y(0), box.l, Y(0), PAL.muted, 2, [6, 6]);
+    text(ctx, 'original length', sx - 112, Y(0) + 22, PAL.muted, { size: 17 });
+    if (!broken) {
+      spring(ctx, sx, floor, sx, yEnd, 12, 26, csp, 4);
+      line(ctx, sx - 40, yEnd, sx + 40, yEnd, csp, 7);
+      if (on > 0.02 && f > 0) {
+        const aL = (20 + 3.4 * f) * on;
+        arrow(ctx, sx, yEnd - 10, sx, yEnd - 10 - aL, cf, 5);
+        text(ctx, 'F', sx + 18, yEnd - 14 - aL / 2, cf, { weight: 600, size: 24 });
+      }
+      if (Y(0) - yEnd > 10) vbracket(ctx, sx + 78, yEnd, Y(0), cp, 'ΔL', 1);
     } else {
-      spring(ctx, wall, y, wall + nat * 0.55, y, 5, 24, csp, 4);
-      spring(ctx, end - nat * 0.55, y, end, y, 5, 24, csp, 4);
-      text(ctx, 'the spring has broken', (wall + nat * 0.55 + end - nat * 0.55) / 2, y - 46, PAL.muted, { size: 20, align: 'center', weight: 600 });
+      spring(ctx, sx, floor, sx, floor - 120, 5, 26, csp, 4);
+      spring(ctx, sx, Y(0) - 60, sx, Y(0) - 180, 5, 26, csp, 4);
+      line(ctx, sx - 40, Y(0) - 180, sx + 40, Y(0) - 180, csp, 7);
+      text(ctx, 'broken', sx + 56, Y(0) - 30, PAL.muted, { size: 19, weight: 600 });
     }
-    line(ctx, wall + nat, y - 62, wall + nat, y + 62, PAL.muted, 2, [6, 6]);
-    text(ctx, 'original length', wall + nat - 12, y - 46, PAL.muted, { size: 17, align: 'right' });
-    if (x * SC > 8 && reg < 3) hbracket(ctx, wall + nat, end, y + 96, C('position'), 'ΔL = ' + fmt(x, 3) + ' m');
-    /* the graph: the deformation against the force, with the three regions the book names */
-    /* The range is fixed. At the slider extremes (k = 50 N/m with the Hooke limit at 300 N) the
-       spring stretches about 25 m before it fractures, and an axis that tall would leave the default
-       state a sliver along the bottom, so the axis keeps a default-sized 0 to 4 m in ticks of 1 m and
-       never rescales; a deformation past 4 m is drawn with pinned(). */
-    const YHI = 4, YN = 4;
-    const box = { l: 190, r: 1290, t: 330, b: 620 };
-    const { X, Y } = axes(ctx, box, [0, 600], [0, YHI], { xl: 'applied force F (N)', xc: C('force'), yl: 'deformation ΔL (m)', yc: C('position'), nx: 6, ny: YN, fy: (v) => fmt(v, 1) });
-    /* a region of the graph is not a quantity, so it is banded in ink and never in a type hue */
-    const band = (a, b) => { ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.07); ctx.fillRect(X(a), box.t, X(Math.min(b, 600)) - X(a), box.b - box.t); ctx.restore(); };
-    band(0, Fh.v); band(elastic(), fracture());
-    const seg = (a, b, w) => { if (b <= a) return; line(ctx, X(a), Y(dl(a)), X(Math.min(b, 600)), Y(dl(Math.min(b, 600))), C('position'), w); };
-    /* the curve is clipped to the box, so a segment that climbs past the fixed range leaves through the top rather than running over the scene */
-    ctx.save(); ctx.beginPath(); ctx.rect(box.l, box.t, box.r - box.l, box.b - box.t); ctx.clip();
-    seg(0, Fh.v, 5); seg(Fh.v, elastic(), 5); seg(elastic(), fracture(), 5);
-    ctx.restore();
-    if (fracture() <= 600 && dl(fracture()) <= YHI) {
-      const fx = X(fracture()), fy = Y(dl(fracture()));
-      line(ctx, fx - 14, fy - 14, fx + 14, fy + 14, C('force'), 4); line(ctx, fx - 14, fy + 14, fx + 14, fy - 14, C('force'), 4);
-      text(ctx, 'fracture', fx + 22, fy - 14, C('force'), { size: 18, weight: 600 });
+    /* the point on the curve, level with the end of the spring; once the force is off, the point the spring comes back to */
+    if (!broken) {
+      line(ctx, sx + 40, yEnd, X(f * on), yEnd, cp, 2, [4, 8]);
+      if (on > 0.5) line(ctx, X(f), box.b, X(f), Y(x), cf, 2, [4, 8]);
+      if (off) dot(ctx, X(f), Y(x), PAL.ink, false, 10);
+      dot(ctx, X(f * on), Y(now), PAL.ink, true, 10);
+      if (off && on < 0.05 && left > 0.05) text(ctx, 'it stays ' + fmt(left, 2) + ' cm longer', X(0) + 20, Y(left) - 22, cp, { size: 19, weight: 600, bg: PAL.panel });
     }
-    text(ctx, 'Hooke’s law', X(Fh.v / 2), box.t + 22, PAL.muted, { size: 18, align: 'center' });
-    if (X(elastic()) - X(Fh.v) > 80) text(ctx, 'still elastic', (X(Fh.v) + X(elastic())) / 2, box.t + 22, PAL.muted, { size: 18, align: 'center' });
-    if (X(Math.min(600, fracture())) - X(elastic()) > 110) text(ctx, 'permanent', (X(elastic()) + X(Math.min(600, fracture()))) / 2, box.t + 22, PAL.muted, { size: 18, align: 'center' });
-    if (reg < 3 && x <= YHI) { line(ctx, X(f), box.b, X(f), Y(x), C('force'), 2, [4, 8]); line(ctx, box.l, Y(x), X(f), Y(x), C('position'), 2, [4, 8]); dot(ctx, X(f), Y(x), PAL.ink, true, 10); }
-    else if (reg < 3) pinned(ctx, box, X, Y, f, x, C('position'), fmt(x, 1) + ' m');
-    headline(ctx, reg === 0 ? 'A force of ' + fmt(f, 0) + ' N has stretched the spring ' + fmt(x, 3) + ' m, and the graph is still on its straight segment, where Hooke’s law holds'
-      : reg === 1 ? 'A force of ' + fmt(f, 0) + ' N has stretched the spring ' + fmt(x, 3) + ' m, so the graph has left its straight segment, but the stretch is still elastic and comes back'
-        : reg === 2 ? 'A force of ' + fmt(f, 0) + ' N has stretched the spring ' + fmt(x, 3) + ' m and deformed it permanently, so it will not return to its original length'
-          : 'A force of ' + fmt(f, 0) + ' N has fractured the spring, which happens here at ' + fmt(fracture(), 0) + ' N');
-    /* once it has fractured, the stretch it reached is set against the force that broke it */
-    const past = reg > 0, fe = reg === 3 ? fracture() : f;
-    ro.set(`\\mk{dL}{\\kdL} = \\mk{nx}{${fmt(x, 3)}}\\ \\text{m} \\mk{rel}{${past ? '>' : '='}} \\mk{Fk}{\\frac{\\kF}{\\kk}} = \\mk{fk}{\\frac{${fmt(fe, 0)}\\ \\text{N}}{${fmt(kk.v, 0)}\\ \\text{N/m}}} = \\mk{nfk}{${fmt(fe / kk.v, 3)}}\\ \\text{m}`, undefined, { form: past });
+    const nx = fmt(x, 2) + ' cm';
+    headline(ctx, broken ? 'At ' + fmt(FFR, 0) + ' N the spring fractures.'
+      : off ? (reg < 2 ? 'With the force removed the spring is back at its original length: a stretch of ' + nx + ' was elastic.'
+        : 'With the force removed the spring stays ' + fmt(left, 2) + ' cm longer than it was: the deformation is permanent.')
+        : reg === 0 ? 'A force of ' + fmt(f, 1) + ' N stretches the spring ' + nx + ', on the straight segment where Hooke’s law holds.'
+          : reg === 1 ? 'A force of ' + fmt(f, 1) + ' N stretches the spring ' + nx + ': off the straight segment, but still elastic.'
+            : 'A force of ' + fmt(f, 1) + ' N stretches the spring ' + nx + ', past the elastic region.');
+    const pred = (100 * f) / KK, rel = reg === 0 ? '=' : Math.abs(x - pred) < 0.005 ? '\\approx' : x < pred ? '<' : '>';
+    ro.set(`\\mk{dL}{\\kdL} = \\mk{nx}{${fmt(x, 2)}}\\ \\text{cm} \\mk{rel}{${rel}} \\mk{Fk}{\\frac{\\kF}{\\kk}} = \\mk{fk}{\\frac{${fmt(f, 1)}\\ \\text{N}}{${KK}\\ \\text{N/m}}} = \\mk{nfk}{${fmt(pred, 2)}}\\ \\text{cm}`, undefined, { form: rel });
   }
   register(d.fig, { update: () => {}, draw });
 })();
@@ -179,79 +187,6 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
 })();
 
 /* =====================================================================
-   FIGURE 5.13: the same rod in tension and in compression. The change in
-   length is proportional to the force and to the original length and
-   inversely proportional to the cross-sectional area. Still.
-===================================================================== */
-(function () {
-  const d = sim('sim-rod', 740);
-  const Fa = ctl(d.controls, { label: '\\kF', cls: 'force', min: 0, max: 5000, step: 50, value: 1500, unit: 'N', dec: 0, aria: 'force applied to the rod' });
-  const L0 = ctl(d.controls, { label: '\\kLo', cls: 'position', min: 0.2, max: 3, step: 0.1, value: 1, unit: 'm', dec: 1, aria: 'original length of the rod' });
-  const rr = ctl(d.controls, { label: '\\krad', cls: 'position', min: 0.5, max: 5, step: 0.1, value: 1, unit: 'cm', dec: 1, aria: 'radius of the rod' });
-  /* every Young's modulus Table 5.3 prints is a tick on the slider, and the whole number the slider
-     steps by lands on each of them exactly; two are named, and naming more would crowd the track */
-  const YDET = [1, 3, 5, 6, 9, 10, 15, 16, 20, 45, 60, { v: 70, label: 'aluminum' }, 90, 100, { v: 210, label: 'steel' }];
-  const YY = ctl(d.controls, { label: '\\kY', cls: 'elastic-modulus', min: 1, max: 210, step: 1, value: 70, unit: '× 10⁹ N/m²', dec: 0, aria: 'Young’s modulus', detents: YDET });
-  const OTHERS = [{ name: 'steel', Y: 210 }, { name: 'aluminum', Y: 70 }, { name: 'bone, compression', Y: 9 }, { name: 'nylon', Y: 5 }];
-  const area = () => Math.PI * Math.pow(rr.v / 100, 2);
-  const dl = (force, Yg) => (force * L0.v) / (Yg * 1e9 * area());   /* metres */
-  function draw() {
-    const { ctx } = begin(d.c);
-    const x = dl(Fa.v, YY.v), len = 100 + 160 * (L0.v / 3), wRod = 26 + 44 * (rr.v / 5);
-    const MAG = x > 0 ? Math.min(90, x * 4e5) / x : 0;              /* units per metre of change, kept readable at every setting */
-    /* the rod, its stretch and the longest arrow all end above the notes at 640 and the captions at
-       CAPY, so neither is ever crossed by a force arrow: the longest rod with the largest stretch and
-       the largest force ends at 610 */
-    const grow = x * MAG, yTop = 170, aL = 24 + Fa.v * 0.010, CAPY = 700;
-    ['tension', 'compression'].forEach((mode, i) => {
-      const cx = 200 + i * 320, pull = mode === 'tension' ? 1 : -1;
-      const bot = yTop + len + pull * grow;
-      ghost(ctx, cx - wRod / 2, yTop, wRod, len);
-      ctx.save(); ctx.fillStyle = PAL.soft; ctx.strokeStyle = F.ref('rod'); ctx.lineWidth = 4;
-      ctx.fillRect(cx - wRod / 2, yTop, wRod, bot - yTop); ctx.strokeRect(cx - wRod / 2, yTop, wRod, bot - yTop); ctx.restore();
-      if (pull > 0) { arrow(ctx, cx, yTop - 16, cx, yTop - 16 - aL, C('force'), 5); arrow(ctx, cx, bot + 16, cx, bot + 16 + aL, C('force'), 5); }
-      else { arrow(ctx, cx, yTop - 16 - aL, cx, yTop - 16, C('force'), 5); arrow(ctx, cx, bot + 16 + aL, cx, bot + 16, C('force'), 5); }
-      text(ctx, 'F', cx + wRod / 2 + 14, yTop - 16 - aL / 2, C('force'), { weight: 600, size: 22 });
-      text(ctx, 'F', cx + wRod / 2 + 14, bot + 16 + aL / 2, C('force'), { weight: 600, size: 22 });
-      if (grow > 4) vbracket(ctx, cx - wRod / 2 - 44, Math.min(yTop + len, bot), Math.max(yTop + len, bot), C('position'), 'ΔL', -1);
-    });
-    /* the captions last, so they sit above every arrow rather than under one */
-    ['tension', 'compression'].forEach((mode, i) => {
-      text(ctx, '(' + (i ? 'b' : 'a') + ') ' + mode, 200 + i * 320, CAPY, PAL.ink, { size: 20, align: 'center', weight: 600, bg: PAL.panel });
-    });
-    text(ctx, x > 0 ? 'ΔL = ' + fmt(x * 1000, 3) + ' mm, drawn about ' + timesLarger(MAG, len / L0.v) + ' times larger than it is' : 'with no force applied the rod keeps its original length', 110, 640, PAL.muted, { size: 18 });
-    text(ctx, 'L₀ = ' + fmt(L0.v, 1) + ' m, r = ' + fmt(rr.v, 1) + ' cm, A = πr² = ' + plain(area(), 2) + ' m²', 110, 668, PAL.muted, { size: 18 });
-    /* the graph beside the two vertical rods: the change in length against the force, with four materials of Table 5.3 */
-    /* The range is fixed. At the slider extremes (L₀ = 3.0 m, r = 0.5 cm and Y = 1 × 10⁹ N/m²) a
-       5000 N force changes the length by 191 mm, and an axis that tall would press the default state
-       flat against the bottom, so the axis keeps a default-sized 0 to 0.5 mm in ticks of 0.1 mm and
-       never rescales; a change past 0.5 mm is drawn with pinned(). */
-    const YHI = 0.5, YN = 5;
-    const box = { l: 790, r: 1310, t: 150, b: 560 };
-    const { X, Y } = axes(ctx, box, [0, 5000], [0, YHI], { xl: 'force F (N)', xc: C('force'), yl: 'change in length ΔL (mm)', yc: C('position'), nx: 5, ny: YN, fy: (v) => fmt(v, 2) });
-    const names = [];
-    OTHERS.forEach((o, i) => {
-      const e = Math.min(5000, (YHI / 1000) * o.Y * 1e9 * area() / L0.v);
-      if (e < 120) return;
-      line(ctx, X(0), Y(0), X(e), Y(dl(e, o.Y) * 1000), PAL.rule, 3);
-      /* a line that leaves through the top of the box is named beside where it leaves, not above it, so the labels keep off the axis title;
-         the names go on panels after every line is drawn, so no other line runs through them */
-      if (e < 4980) names.push([o.name, X(e) + 10, box.t + 20 + i * 30, 'left']);
-      else names.push([o.name, X(e) - 8, Y(dl(e, o.Y) * 1000) - 16, 'right']);
-    });
-    const ec = Math.min(5000, (YHI / 1000) * YY.v * 1e9 * area() / L0.v);
-    line(ctx, X(0), Y(0), X(ec), Y(dl(ec, YY.v) * 1000), C('position'), 5);
-    if (x * 1000 <= YHI) { line(ctx, X(Fa.v), box.b, X(Fa.v), Y(x * 1000), C('force'), 2, [4, 8]); dot(ctx, X(Fa.v), Y(x * 1000), PAL.ink, true, 10); }
-    else pinned(ctx, box, X, Y, Fa.v, x * 1000, C('position'), fmt(x * 1000, 2) + ' mm');
-    names.forEach(([s, nx, ny, align]) => text(ctx, s, nx, ny, PAL.muted, { size: 16, align, bg: PAL.panel }));
-    headline(ctx, 'A force of ' + fmt(Fa.v, 0) + ' N stretches the rod ' + fmt(x * 1000, 3) + ' mm in tension and compresses it by the same amount');
-    readout(d.readout, `\\kdL = \\frac{1}{\\kY}\\frac{\\kF}{\\karea}\\kLo = \\frac{(${fmt(Fa.v, 0)}\\ \\text{N})(${fmt(L0.v, 1)}\\ \\text{m})}{(${sci(YY.v * 1e9, 1)}\\ \\text{N/m}^2)(${sci(area(), 2)}\\ \\text{m}^2)} = ${sci(x, 2)}\\ \\text{m}`,
-      'Double the length and the change doubles; double the radius and the area is four times as large, so the change falls to a quarter.');
-  }
-  register(d.fig, { update: () => {}, draw });
-})();
-
-/* =====================================================================
    FIGURE 5.15: the stress a mammalian tendon carries against its strain.
    The toe region gives easily, the linear region has the slope Table 5.3
    gives for tendon, and in the failure region fibers break. Still.
@@ -306,98 +241,6 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     readout(d.readout, `\\text{strain} = \\frac{\\kdL}{\\kLo} = \\frac{${fmt(dL * 1000, 1)}\\ \\text{mm}}{${fmt(L0.v, 0)}\\ \\text{cm}} = ${fmt(e, 3)}`,
       'Only in the linear region does stress = $\\kY$ × strain hold, with $\\kY = 1 \\times 10^9\\ \\text{N/m}^2$.');
   }
-  register(d.fig, { update: () => {}, draw });
-})();
-
-/* =====================================================================
-   FIGURE 5.16: a bookcase sheared sideways, drawn from the book's own viewpoint through the locked view() above. The deformation is
-   perpendicular to the length rather than parallel to it, and the
-   constant is the shear modulus. Still.
-===================================================================== */
-(function () {
-  const d = sim('sim-shear', 700);
-  const Fa = ctl(d.controls, { label: '\\kF', cls: 'force', min: 0, max: 2000, step: 20, value: 800, unit: 'N', dec: 0, aria: 'shearing force' });
-  const L0 = ctl(d.controls, { label: '\\kLo', cls: 'position', min: 0.3, max: 2.5, step: 0.1, value: 1.8, unit: 'm', dec: 1, aria: 'height of the bookcase' });
-  const AA = ctl(d.controls, { label: '\\karea', cls: 'area', min: 0.05, max: 1, step: 0.05, value: 0.3, unit: 'm²', dec: 2, aria: 'cross-sectional area' });
-  const MATS = [{ n: 'lead', S: 5, l: 1 }, { n: 'hardwood', S: 10 }, { n: 'glass, granite, marble', S: 20 }, { n: 'aluminum', S: 25, l: 'aluminum' }, { n: 'brass', S: 35 }, { n: 'iron', S: 40 }, { n: 'bone, steel', S: 80, l: 'steel' }];
-  /* every shear modulus Table 5.3 prints is a tick on the slider, and the whole number the slider
-     steps by lands on each of them exactly; two are named, and naming more would crowd the track */
-  const SDET = MATS.map((m) => (typeof m.l === 'string' ? { v: m.S, label: m.l } : m.S));
-  const SS = ctl(d.controls, { label: '\\kS', cls: 'elastic-modulus', min: 1, max: 80, step: 1, value: 10, unit: '× 10⁹ N/m²', dec: 0, aria: 'shear modulus', detents: SDET });
-  const dx = (Sg) => (Fa.v * L0.v) / (Sg * 1e9 * AA.v);              /* metres */
-  let marks = [];
-  function draw() {
-    const { ctx } = begin(d.c);
-    const x = dx(SS.v), H = 120 + 300 * (L0.v / 2.5), W = 150 + 130 * AA.v, D = 0.5 * W;
-    const MAG = x > 0 ? Math.min(96, x * 1.6e8) / x : 0;
-    const lean = x * MAG;
-    /* the book's viewpoint: a little to the left of the bookcase and a little above it, so its left side and its top show */
-    const V = view({ yaw: -0.42, pitch: 0.2, dist: 2400, cx: 400, cy: 350 });
-    /* a point of the box in its own units (each of sx, sy, sz runs from -1 to 1; the origin is the centre of the box), sheared by sh at the top and not at all at the bottom */
-    const pt = (sx, sy, sz, sh) => V.P([sx * W / 2 + sh * (sy + 1) / 2, sy * H / 2, sz * D / 2]);
-    const quad = (a, b, c, e, sh) => [pt(...a, sh), pt(...b, sh), pt(...c, sh), pt(...e, sh)];
-    const cbk = F.ref('bookcase'), rf = (pts, k, w) => rface(ctx, pts, k, w, cbk);
-    const dashed = (pts) => pts.forEach((p, i) => { const q = pts[(i + 1) % pts.length]; line(ctx, p[0], p[1], q[0], q[1], PAL.muted, 2, [8, 8]); });
-    const kFront = V.shade([0, 0, 1]), kTop = V.shade([0, 1, 0]), kLeft = V.shade([-1, 0, 0]);
-    const t = 0.07, ty = t * W / H;                                    /* the thickness of the case's walls and shelves, in box units */
-    const floor = pt(-1, -1, 1, 0);
-    const floorY = Math.max(floor[1], pt(1, -1, 1, 0)[1]);
-    fixed(ctx, floor[0] - 60, floorY, W + 120, 34);
-    /* the solid case: its front, then the inside seen through the open front (back wall, right wall, shelves), then its left side and top */
-    rf(quad([-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1], lean), kFront, 3);
-    rf(quad([-1 + 2 * t, -1 + ty, -1], [1 - 2 * t, -1 + ty, -1], [1 - 2 * t, 1 - ty, -1], [-1 + 2 * t, 1 - ty, -1], lean), kFront + 0.2);
-    rf(quad([1 - 2 * t, -1 + ty, -1], [1 - 2 * t, -1 + ty, 1], [1 - 2 * t, 1 - ty, 1], [1 - 2 * t, 1 - ty, -1], lean), kLeft + 0.06);
-    for (let i = 0; i <= 3; i++) {
-      const yy = -1 + ty + (2 - 2 * ty) * i / 4;
-      rf(quad([-1 + 2 * t, yy, -1], [1 - 2 * t, yy, -1], [1 - 2 * t, yy, 1], [-1 + 2 * t, yy, 1], lean), kTop);
-      if (i) rf(quad([-1 + 2 * t, yy - ty, 1], [1 - 2 * t, yy - ty, 1], [1 - 2 * t, yy, 1], [-1 + 2 * t, yy, 1], lean), kFront, 1.5);
-    }
-    rf(quad([-1 + 2 * t, -1 + ty, 1], [1 - 2 * t, -1 + ty, 1], [1 - 2 * t, 1 - ty, 1], [-1 + 2 * t, 1 - ty, 1], lean), null, 1.5);
-    rf(quad([-1, -1, -1], [-1, -1, 1], [-1, 1, 1], [-1, 1, -1], lean), kLeft, 3);
-    rf(quad([-1, 1, -1], [-1, 1, 1], [1, 1, 1], [1, 1, -1], lean), kTop, 3);
-    /* the dashed outline is the case before the forces were applied: the same box with no shear */
-    dashed(quad([-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1], 0));
-    dashed(quad([-1, 1, -1], [-1, 1, 1], [1, 1, 1], [1, 1, -1], 0));
-    dashed(quad([-1, -1, -1], [-1, -1, 1], [-1, 1, 1], [-1, 1, -1], 0));
-    const tl = pt(-1, 1, 1, lean), tl0 = pt(-1, 1, 1, 0), br = pt(1, -1, 1, 0), bl = pt(-1, -1, 1, 0), topC = pt(0, 1, -1, lean);
-    const fl = 40 + Fa.v * 0.055;
-    /* the push meets the case at its left side, so the arrow stops short of the side face, and its name sits above it, clear of the case */
-    const xe = Math.min(tl[0], pt(-1, 1, -1, lean)[0]) - 12;
-    arrow(ctx, xe - fl, tl[1] + 30, xe, tl[1] + 30, C('force'), 5);
-    text(ctx, 'F = ' + fmt(Fa.v, 0) + ' N', Math.min(xe - 4, tl0[0] - 14), tl[1] - 26, C('force'), { align: 'right', weight: 600, size: 21, bg: PAL.panel });
-    arrow(ctx, br[0] + 24 + fl, br[1] - 14, br[0] + 24, br[1] - 14, C('force'), 5);
-    text(ctx, 'F', br[0] + 24 + fl + 12, br[1] - 14, C('force'), { weight: 600, size: 21 });
-    text(ctx, 'A = ' + fmt(AA.v, 2) + ' m²', topC[0] + 10, topC[1] - 30, C('area'), { weight: 600, size: 18 });
-    const lx = Math.min(tl0[0], bl[0]) - 50;
-    vbracket(ctx, lx, tl0[1], bl[1], C('position'), '', -1);
-    text(ctx, 'L₀ = ' + fmt(L0.v, 1) + ' m', lx - 12, (tl0[1] + bl[1]) / 2, C('position'), { align: 'right', weight: 600, size: 20 });
-    if (lean > 5) hbracket(ctx, tl0[0], tl[0], tl0[1] - 40, C('position'), 'Δx');
-    text(ctx, x > 0 ? 'Δx = ' + fmt(x * 1e6, 3) + ' µm, drawn about ' + timesLarger(MAG, H / L0.v) + ' times larger than it is' : 'with no force applied the bookcase stands square', 110, Math.min(676, floorY + 66), PAL.muted, { size: 18 });
-    /* the graph beside the vertical scene: the deformation falls as 1/S, with the materials of Table 5.3 along it */
-    /* The range is fixed. At the slider extremes (F = 2000 N, L₀ = 2.5 m and A = 0.05 m²) a material
-       of shear modulus 1 × 10⁹ N/m² deforms by 100 µm, and an axis that tall would leave the default
-       state flat along the bottom, so the axis keeps a default-sized 0 to 10 µm in ticks of 2 µm and
-       never rescales; a deformation past 10 µm is drawn with pinned(). */
-    const YHI = 10, YN = 5;
-    const box = { l: 800, r: 1300, t: 170, b: 540 };
-    const { X, Y } = axes(ctx, box, [0, 80], [0, YHI], { xl: 'shear modulus S (× 10⁹ N/m²)', xc: C('elastic-modulus'), yl: 'deformation Δx (µm)', yc: C('position'), nx: 4, ny: YN, fy: (v) => fmt(v, 1) });
-    F.curve(ctx, (t) => Math.min(YHI, dx(t) * 1e6), 1, 80, X, Y, C('position'), 5, 140);
-    marks = [];
-    MATS.forEach((m) => {
-      const yv = dx(m.S) * 1e6; if (yv > YHI) return;
-      dot(ctx, X(m.S), Y(yv), PAL.muted, false, 8);
-      /* the curve crowds its points together at the right, so only three of the seven are named on
-         the drawing; the other four give their names under the pointer (rule 26.6) */
-      if (m.l) text(ctx, m.n, X(m.S) + (m.S > 60 ? -10 : 12), Y(yv) - 20, PAL.muted, { size: 17, align: m.S > 60 ? 'right' : 'left' });
-      else marks.push({ x: X(m.S), y: Y(yv), r: 18, name: m.n + ', S = ' + giga(m.S) });
-    });
-    if (x * 1e6 <= YHI) { line(ctx, X(SS.v), box.b, X(SS.v), Y(x * 1e6), C('elastic-modulus'), 2, [4, 8]); dot(ctx, X(SS.v), Y(x * 1e6), PAL.ink, true, 10); }
-    else pinned(ctx, box, X, Y, SS.v, x * 1e6, C('position'), fmt(x * 1e6, 1) + ' µm');
-    headline(ctx, 'A force of ' + fmt(Fa.v, 0) + ' N shears a bookcase ' + fmt(L0.v, 1) + ' m tall with a shear modulus of ' + giga(SS.v) + ' sideways by ' + fmt(x * 1e6, 3) + ' µm');
-    readout(d.readout, `\\kdx = \\frac{1}{\\kS}\\frac{\\kF}{\\karea}\\kLo = \\frac{(${fmt(Fa.v, 0)}\\ \\text{N})(${fmt(L0.v, 1)}\\ \\text{m})}{(${sci(SS.v * 1e9, 1)}\\ \\text{N/m}^2)(${fmt(AA.v, 2)}\\ \\text{m}^2)} = ${sci(x, 2)}\\ \\text{m}`,
-      );
-  }
-  hover(d.stage, () => marks);
   register(d.fig, { update: () => {}, draw });
 })();
 

@@ -35,6 +35,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -217,18 +220,7 @@
   {
    "id": "fig-ice",
    "kind": "figure",
-   "originals": [
-    "/media/ch05/Figure_06_01_07a.jpg"
-   ],
-   "original_caption": "Which method of sliding a block of ice requires less force—(a) pushing or (b) pulling at the same angle above the horizontal?",
-   "widths": [
-    234
-   ],
-   "draws": [
-    "force",
-    "mass",
-    "angle"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -249,6 +241,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: library push and pull silhouettes, angle arcs clear"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   }
@@ -995,20 +991,6 @@
    "label": "the substrate",
    "figures": [
     "sim-probe"
-   ]
-  },
-  {
-   "id": "contestant",
-   "label": "the contestant",
-   "figures": [
-    "fig-ice"
-   ]
-  },
-  {
-   "id": "ice-block",
-   "label": "the block of ice",
-   "figures": [
-    "fig-ice"
    ]
   }
  ],

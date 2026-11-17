@@ -79,66 +79,80 @@ id · replaces or Sim · concepts · what moves or still · sliders · headline 
 graph · 3D
 
 1. `sim-barge` · Figure 4.21 · drag-force, vector-addition, newtons-second-law · variation by slider:
-   the applied force swings and grows, the drag is what remains after $\km\ka$ · **still**: nothing in
-   the question runs on a clock (rule 14) · $\kFx$, $\kFy$ (1.0 to 5.0 × 10⁵ N, defaults 2.7 and 3.6,
-   force), $m$ (2.0 to 8.0 × 10⁶ kg, default 5.0, mass), $\ka$ (0 to 0.200 m/s², default 0.075,
-   acceleration) · "The tugs push with 4.50 × 10⁵ N together, the barge takes 3.75 × 10⁵ N of it, and
-   the water drags back with 0.75 × 10⁵ N" · bar below the scene, free-body diagram beside · 2D: the
-   tugs are hulls seen from above with a fender on the bow and a wheelhouse, bow on the barge's stern
-   and side, the barge a hull with four hatches; the acceleration arrow capped at 140 units so it and
-   its name stay inside panel (a); $F_x$, $F_y$, the barge's name and the angle in both panels placed
-   by the labeller; readout on one line in scientific form, $\kFD = \kFa - \km\ka$, or
-   $\kFa - \km\ka < 0$ when the pushes cannot give the acceleration. No note, no fold or split.
-   Rebuilt in the review of 2026-10-05.
-2. `sim-traffic-light` · replaces Figure 4.22 (a) to (e) (the light hung
-   from two poles, the forces, the free-body diagram, the components and the
-   two axes) · unequal-tensions, net-force-by-axis, tension · **still**: a
-   traffic light hanging at rest has no time in it; the figure answers the
-   two angles and the mass and nothing else (rule 14) · $\theta_1$ (10° to
-   80°, default 30.0, ink), $\theta_2$ (10° to 80°, default 45.0, ink), $m$
-   (5.0 to 40.0 kg, default 15.0, ink) · "with the wires at 30.0° and 45.0°
-   the left wire carries 108 N and the right 132 N, because the steeper wire
-   takes the greater share of the 147 N weight" · none: the scene and the
-   free-body diagram with the components resolved beside it are the picture
-   · no. Readout: the two axis equations with the live numbers; small line on
-   when the two tensions are equal and on how both grow as the wires are
-   pulled toward the horizontal, which is the book's discussion. Draws force.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence.
+   the applied force swings and grows, and the drag is what is left of it after $\km\ka$ · arrows:
+   symbolic (force vectors) · **still**: nothing in the question runs on a clock (rule 14) · $\kFx$,
+   $\kFy$ (1.0 to 5.0 × 10⁵ N, defaults 2.7 and 3.6, force), $m$ (2.0 to 8.0 × 10⁶ kg, default 5.0,
+   mass), $\ka$ (0 to 0.150 m/s², default 0.075, acceleration) · "Of the 4.50 × 10⁵ N the tugs push
+   with, 3.75 × 10⁵ N accelerates the barge and the water drags back with the other 0.75 × 10⁵ N" ·
+   no graph · 2D. Rebuilt in the figure re-examination of 2026-11-17: the small free-body diagram and
+   the bar under the scene are replaced by the book's triangle of panel (b), drawn large and to scale.
+   works: parts: the barge seen from above, the first tug's bow on its stern pushing along +x, the
+   second tug's bow on its side pushing along +y, the acceleration leaving the hull along the
+   resultant; in (b) $F_x$ and $F_y$ head to tail, $F_{app}$ from the tail of the first to the head of
+   the second, and one step to the side of it $F_{net}$ from the tail and $F_D$ back from the head ·
+   flow: nothing moves · must hold: the triangle closes ($F_x$, then $F_y$, ends at the head of
+   $F_{app}$) and is to scale (75 units to 10⁵ N); $F_{net}$ and $F_D$ lie parallel to $F_{app}$, and
+   the head of $F_D$ meets the head of $F_{net}$, so the two make up $F_{app}$; $F_D$ points against
+   the acceleration; the angle is $\tan^{-1}(F_y/F_x)$, 53.1° on load; when $ma$ exceeds $F_{app}$ no
+   drag is drawn and the headline says why · read off the image: $F_x = 2.7 × 10^5$ N,
+   $F_y = 3.6 × 10^5$ N, 53.1°, $F_{app}$, $F_{net}$, $F_D$; the text gives 4.5 × 10⁵ N, 3.75 × 10⁵ N
+   and 7.5 × 10⁴ N. The image's separate free-body diagram with axes is not redrawn: the triangle
+   carries the same three forces.
+2. `sim-traffic-light` · Figure 4.22 (a) to (e) · unequal-tensions, net-force-by-axis, tension ·
+   variation by slider: the knot moves, the tensions change, their parts stay balanced · arrows:
+   symbolic · **still**: a light hanging at rest has no time in it · $\theta_1$, $\theta_2$ (20° to
+   60°, defaults 30.0 and 45.0, angle; each carries a dashed circle where the two angles are equal) ·
+   "At 30.0° and 45.0° the wires carry 108 N and 132 N: the steeper wire holds up more of the 147 N
+   weight" · no graph · 2D. The mass slider is gone: it scaled every arrow alike and changed nothing
+   of the idea, so the light keeps the book's 15.0 kg. The lamps are red, amber and green through
+   `F.fact`, as a signal's are. Rebuilt in the figure re-examination of 2026-11-17.
+   works: parts: two poles of one height on the ground, a wire from the top of each to one knot, the
+   light hanging from the knot; $T_1$ and $T_2$ leave the knot along their wires, each with its
+   horizontal and vertical part dashed; $w$ leaves the light downward; beside the scene the book's
+   part (e), $T_{1x}$ left and $T_{2x}$ right from one dot, $T_{1y}$ then $T_{2y}$ stacked upward and
+   $w$ downward · flow: nothing moves · must hold: both poles keep their place and height and the knot
+   sits where the two angles put it, lower as the wires steepen; each wire meets the horizontal
+   through the knot at its slider's angle; every arrow of both panels is on one scale (150 units to
+   147 N); $T_{1x} = T_{2x}$; $T_{1y} + T_{2y}$ reaches exactly as far up as $w$ reaches down; the
+   steeper wire has the longer arrow; at equal angles the arrows are equal · read off the image: 30°
+   on the left, 45° on the right, $T_1$, $T_2$, $w$, and the part names $T_{1x}$, $T_{1y}$, $T_{2x}$,
+   $T_{2y}$; the text gives 15.0 kg, 147 N, 108 N and 132 N. The alt text agrees with the image.
 3. `sim-elevator-scale` · Figure 4.23 · apparent-weight, newtons-second-law, system-of-interest ·
-   flow by animation: the dial follows the ride · **moves**: speeds up for 3 s, cruises for 4 s, slows
-   for 3 s, ten seconds of ride in about five real seconds, with the scrubber · $m$ (40.0 to 120.0 kg,
-   default 75.0, mass), $\ka$ (0.20 to 3.00 m/s², default 1.20, acceleration) · "After 7.6 s the lift
-   is slowing to a stop, and the dial reads only 645 N against his 735 N weight" · graphs beside (the
-   scale reading and v against t, fixed at 0 to 1,600 N and 0 to 9 m/s) · 2D: the shaft and the lift
-   in the left third, the man a library silhouette on the scale, ringed by a dashed box named "system
-   of interest" inside it (hover names for the box, scale, lift and dial); $F_s$ and $w$ on one fixed
-   scale in the car and named outside its walls by the labeller; the dial and the free-body diagram
-   (weight drawn at a fixed length, so it shows the ratio) under the shaft, out of the lift's travel.
-   Readout $\kFs = \km\ka + \km\kg$; no note. No fold or split. Rebuilt in the review of 2026-10-05.
-4. `sim-soccer` · Sim (the book draws no figure for Example 4.10, and the
-   skill this block introduces has none) · integrated-kinematics-dynamics,
-   newtons-second-law, average-acceleration · **moves**: the player starts
-   from rest and reaches his top speed over the elapsed time, and the run is
-   what the two parts of the example are about, so the sprite runs the strip
-   once per loop with the scrubber · $\kv$ (4.00 to 12.00 m/s, default 8.00,
-   velocity), $\kdt$ (1.00 to 5.00 s, default 2.50, time), $m$ (40.0 to
-   100.0 kg, default 70.0, ink) · "t = 1.25 s · he is halfway to his top
-   speed, and the ground has been pushing him forward with 224 N all the
-   way" · graph below the strip: the velocity against time, a straight line
-   whose slope is the average acceleration, with the moving point on it ·
-   no. Readout: $\ka = \kdv / \kdt$ and then $\kFnet = m\ka$ with the live
-   numbers; small line naming the force in pounds, as the book's discussion
-   does. Draws velocity, acceleration, time and force.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence.
-5. `fig-rescue` · a faithful copy of the unnumbered figure the keyed rescue
-   problem refers to (the book gives it no number, so its eyebrow reads
-   "Figure") · unequal-tensions · **still**: a person held motionless
-   between two ropes · no sliders · "a person held by two ropes, one 15°
-   from the vertical and the other 10° above the horizontal" · none · no.
-   Draws force. The book's image travels with the problem's card as well,
-   as 3.5's galaxies image does.
+   flow by animation: the dial follows the ride · arrows: kinematic (the lift rises) · **moves**:
+   speeds up for 3 s, cruises for 4 s, slows for 3 s, ten seconds of ride in about five real seconds
+   · $m$ (40.0 to 120.0 kg, default 75.0, mass), $\ka$ (0.20 to 3.00 m/s², default 1.20,
+   acceleration) · "After 0.0 s the lift is speeding up at 1.20 m/s², and the dial reads 825 N against
+   his 735 N weight" · graphs beside (the scale reading and v against t, fixed at 0 to 1,600 N and 0
+   to 9 m/s), the three parts of the ride named between them · 2D. Laid out again in the figure
+   re-examination of 2026-11-17: the free-body diagram was 56 units tall in a corner and the two
+   forces in the car were named outside its walls; the diagram now stands between the shaft and the
+   graphs with its numbers, a dashed mark where $F_s$ would equal $w$, and under it the dial, whose
+   needle stands straight up at his weight.
+   works: parts: the shaft, the cable from its top to the car, the car, the scale on the car's floor,
+   the man on the scale inside the dashed system of interest, $w$ down and $F_s$ up on him; the
+   free-body diagram (dot, $F_s$ up, $w$ down); the dial · flow: the car rises 220 units over the ride
+   · must hold: $F_s = m(g + a)$: 825 N while speeding up, 735 N at constant velocity, 645 N while
+   slowing, with the book's 75.0 kg and 1.20 m/s²; in the car both arrows are on one newton scale; in
+   the free-body diagram $w$ keeps one length and $F_s$ passes the dashed mark exactly when it exceeds
+   $w$; the needle is upright exactly when the reading is his weight; the dots on both graphs sit at
+   the time shown · read off the image: $F_s$ and $w$ on the person, "System of Interest",
+   "Free-body diagram". The image's panel (a) with $T$, $N$, $F_p$, $F_t$, $w_s$ and $w_e$ is the
+   picture the book calls formidable and is left to the original.
+4. `sim-soccer` · Sim (the book draws no figure for Example 4.10) · integrated-kinematics-dynamics,
+   newtons-second-law, average-acceleration · **moves**: the player runs from rest to his top speed
+   once per loop · $\kv$ (4.00 to 12.00 m/s, default 8.00, velocity), $\kdt$ (1.00 to 5.00 s, default
+   2.50, time), $m$ (40.0 to 100.0 kg, default 70.0, mass) · "After 1.25 s he is at 4.00 m/s, and the
+   ground has pushed him forward with 224 N all the way" · graph below the strip: v against t, its
+   rise $\kdv$ and run $\kdt$ marked, its slope the acceleration · 2D. Kept in the figure
+   re-examination of 2026-11-17 and repaired: the strip now keeps one scale, 0 to 30 m, so a longer
+   time is a longer run (it used to stretch every run to the strip's width); the rise and the run of
+   the whole line are marked, which are the two numbers of the readout; the readout is one chain,
+   $\kFnet = \km\ka = \km\kdv/\kdt$; the line in pounds is dropped.
+5. `fig-rescue` · the unnumbered figure the keyed rescue problem refers to · unequal-tensions · the
+   book's image, kept (eyebrow "Figure"). Reverted in the figure re-examination of 2026-11-17: the
+   redraw was a stick figure standing on the ground between two lines, without the wall the left
+   rope is tied to, the firefighter who holds the right rope or the fire, and it added nothing to
+   the book's drawing. Its three referents went with it.
 
 Photographs: the section has none, so none is kept and none is dropped.
 

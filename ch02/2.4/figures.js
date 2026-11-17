@@ -105,7 +105,7 @@ function topCar(ctx, x, y, heading, color) {
     text(ctx, 'v (m/s)', XV(25), 714, C('velocity'), { size: 20, weight: 600, align: 'right' });
     const full = Math.floor(tau + 1e-9);
     for (let k = 0; k <= T; k++) {
-      const yk = ROW(k), shown = k <= full, live = !done && k === full + 1;
+      const yk = ROW(k), shown = k <= full, live = !done && k === full + 1 && tau - full > 1e-6;
       text(ctx, 't = ' + k + ' s', 125, yk, shown || live ? C('time') : alpha(C('time'), 0.4), { size: 20, weight: 600, align: 'right' });
       if (!shown && !live) continue;
       const vk = live ? vv : vel(k), vp = k > 0 ? vel(k - 1) : vk, x0 = XV(0), x1 = XV(vk), xp = XV(vp);
@@ -133,11 +133,11 @@ function topCar(ctx, x, y, heading, color) {
    of the bend. Endless loop over the whole run.
 ===================================================================== */
 (function () {
-  const d = sim('sim-turning', 560);
-  const v = ctl(d.controls, { label: '\\kv', cls: 'velocity', min: 5, max: 20, step: 0.5, value: 10, unit: 'm/s', dec: 1, onInput: reset });
-  const Rm = ctl(d.controls, { label: '\\text{radius}', cls: 'position', min: 20, max: 80, step: 5, value: 40, unit: 'm', dec: 0, onInput: reset, aria: 'radius of the bend' });
+  const d = sim('sim-turning', 600);
+  const v = ctl(d.controls, { label: '\\kv', cls: 'velocity', min: 5, max: 15, step: 0.5, value: 10, unit: 'm/s', dec: 1, onInput: reset });
+  const Rm = ctl(d.controls, { label: '\\text{radius}', cls: 'position', min: 20, max: 60, step: 5, value: 40, unit: 'm', dec: 0, onInput: reset, aria: 'radius of the bend' });
   const K = 2.75;                                     /* canvas units per meter */
-  const x0 = 200, xb = 480, yroad = 430, ytop = 120;   /* the straight in, the start of the bend, the road's level and the top of the exit */
+  const x0 = 200, xb = 480, yroad = 480, ytop = 300;   /* the straight in, the start of the bend, the road's level and the top of the exit */
   const Rpx = () => Rm.v * K, Lin = xb - x0, arc = () => (Math.PI / 2) * Rpx(), Lout = () => yroad - Rpx() - ytop;
   const total = () => (Lin + arc() + Lout()) / K;    /* the run in meters */
   const T = () => total() / v.v;
@@ -165,22 +165,22 @@ function topCar(ctx, x, y, heading, color) {
     /* the car and its velocity */
     topCar(ctx, at.x, at.y, at.h, F.ref('turning-car'));
     /* the arrow on the exit straight is cut short of the headline band, and its label stands beside the car */
-    const vl = v.v * 13, up = at.h >= Math.PI / 3, va = up ? Math.max(0, Math.min(vl, at.y - 130)) : vl;
+    const vl = v.v * 12, up = at.h >= Math.PI / 3, va = vl;   /* 15 m/s is 180 units, which clears the headline from the end of the road */
     const ux = Math.cos(at.h), uy = -Math.sin(at.h), tx = at.x + ux * va, ty = at.y + uy * va;
     arrow(ctx, at.x, at.y, tx, ty, C('velocity'), 5);
     if (!up) text(ctx, 'v = ' + fmt(v.v, 1) + ' m/s', tx + 14, Math.max(100, ty), C('velocity'), { weight: 600, size: 20 });
     else text(ctx, 'v = ' + fmt(v.v, 1) + ' m/s', at.x + 44, (at.y + ty) / 2, C('velocity'), { weight: 600, size: 20, align: 'left' });
     /* the two velocities tail to tail, and their difference */
-    const ox = 960, oy = 400, hb = at.phase === 'in' ? 0 : at.h, dvx = Math.cos(hb) - 1, dvy = -Math.sin(hb), dvm = 2 * v.v * Math.sin(hb / 2);
+    const ox = 960, oy = 440, hb = at.phase === 'in' ? 0 : at.h, dvx = Math.cos(hb) - 1, dvy = -Math.sin(hb), dvm = 2 * v.v * Math.sin(hb / 2);
     const tb = at.phase === 'in' ? 0 : Math.min(s * K - Lin, arc()) / K / v.v;   /* the time spent on the bend so far */
     const abar = tb > 0.02 ? dvm / tb : 0;
     /* On the bend the average acceleration is drawn along Δv, which is what this section defines it to
        be. Its length runs on a fixed scale from the fastest, tightest bend the sliders allow, about
-       20 m/s²; the centripetal result that would give its size from the speed and the radius belongs
+       12 m/s²; the centripetal result that would give its size from the speed and the radius belongs
        to a later chapter and is not used here. */
-    const AMAX = 20;
+    const AMAX = 12;
     if (at.phase === 'bend' && abar > 0.05) {
-      const dl = Math.hypot(dvx, dvy) || 1, al = 30 + (110 * Math.min(abar, AMAX)) / AMAX;
+      const dl = Math.hypot(dvx, dvy) || 1, al = (140 * Math.min(abar, AMAX)) / AMAX;
       const ux2 = dvx / dl, uy2 = dvy / dl;
       arrow(ctx, at.x + ux2 * 30, at.y + uy2 * 30, at.x + ux2 * (30 + al), at.y + uy2 * (30 + al), C('acceleration'), 5);
       text(ctx, 'ā', at.x + ux2 * (al + 50), at.y + uy2 * (al + 50), C('acceleration'), { weight: 600, size: 24, align: 'center' });

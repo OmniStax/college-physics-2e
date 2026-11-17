@@ -49,15 +49,27 @@ function blockSeg(lab, p, q) {
   const n = Math.ceil(Math.hypot(q.x - p.x, q.y - p.y) / 14);
   for (let i = 0; i <= n; i++) { const x = p.x + ((q.x - p.x) * i) / n, y = p.y + ((q.y - p.y) * i) / n; lab.block(x - 3, y - 3, x + 3, y + 3); }
 }
+/* a name written along the arrow p to q, as Figure 3.26 writes A = 10.3 blocks: beside it on the side asked for
+   (a sign, as labeller.beside counts sides), turned to read left to right, and blocked for the labels queued after */
+function along(ctx, lab, p, q, side, s, color) {
+  const L = Math.hypot(q.x - p.x, q.y - p.y) || 1, tx = (q.x - p.x) / L, ty = (q.y - p.y) / L, nx = side * -ty, ny = side * tx;
+  const f = Math.min(0.56, Math.max(0.5, 1 - 150 / L)), cx = p.x + (q.x - p.x) * f + nx * 26, cy = p.y + (q.y - p.y) * f + ny * 26;
+  let a = Math.atan2(ty, tx); if (a > Math.PI / 2 + 1e-6 || a < -Math.PI / 2 - 1e-6) a += Math.PI;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); text(ctx, s, 0, 0, color, { size: 26, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
+  const h = F.measure(ctx, s, { size: 26, weight: 600 }) / 2 + 8;
+  blockSeg(lab, { x: cx - tx * h + nx * 12, y: cy - ty * h + ny * 12 }, { x: cx + tx * h + nx * 12, y: cy + ty * h + ny * 12 });
+  blockSeg(lab, { x: cx - tx * h - nx * 6, y: cy - ty * h - ny * 6 }, { x: cx + tx * h - nx * 6, y: cy + ty * h - ny * 6 });
+}
 const blocks = (v) => fmt(Math.abs(v) < 0.05 ? 0 : v, 1).replace('-', '−') + ' blocks';
 const EW = (v) => (v >= 0 ? 'east' : 'west'), NS = (v) => (v >= 0 ? 'north' : 'south');
 
 /* ---------- the city of square blocks that Figures 3.24 to 3.27 are drawn on ----------
    One block is 36 units. The sliders reach 12 blocks each way, so the grid is 24 blocks tall, and it runs
-   18 blocks to each side to fill the stage; the scale never changes. */
-const CITY = { H: 1000, OX: 700, OY: 548, S: 36, NX: 18, NY: 12 };
+   17 blocks to each side to fill the stage; the scale never changes. The compass points stand at the ends
+   of the axes, where no label of the triangle can reach them. */
+const CITY = { H: 1000, OX: 700, OY: 548, S: 36, NX: 17, NY: 12 };
 const cityAx = { box: { l: CITY.OX - 12 * CITY.S, r: CITY.OX + 12 * CITY.S, t: CITY.OY - 12 * CITY.S, b: CITY.OY + 12 * CITY.S }, xr: [-12, 12], yr: [-12, 12], X: (v) => CITY.OX + v * CITY.S, Y: (v) => CITY.OY - v * CITY.S };
-/* the grid, the axes with a number every three blocks, the compass rose, and a line of words in each quadrant
+/* the grid, the axes with a number every three blocks and the compass points at their ends, and a line of words in each quadrant
    (the one the vector is in shaded, its words in ink); returns the labeller the figure names its parts through */
 function city(ctx, lines, ax, ay, marks) {
   const { H, OX, OY, S, NX, NY } = CITY, lab = F.labeller(ctx, H, { headline: lines });
@@ -65,16 +77,17 @@ function city(ctx, lines, ax, ay, marks) {
   for (let i = -NX; i <= NX; i++) line(ctx, OX + i * S, OY - NY * S, OX + i * S, OY + NY * S, PAL.rule, 1.5);
   for (let j = -NY; j <= NY; j++) line(ctx, OX - NX * S, OY - j * S, OX + NX * S, OY - j * S, PAL.rule, 1.5);
   arrow(ctx, OX - NX * S, OY, OX + NX * S + 30, OY, PAL.muted, 2.5); arrow(ctx, OX, OY + NY * S, OX, OY - NY * S - 28, PAL.muted, 2.5);
-  text(ctx, 'x', OX + NX * S + 14, OY + 26, PAL.muted, { size: 24, weight: 600, align: 'center' });
+  text(ctx, 'x', OX + NX * S + 14, OY + 28, PAL.muted, { size: 24, weight: 600, align: 'center' });
   text(ctx, 'y', OX - 24, OY - NY * S - 14, PAL.muted, { size: 24, weight: 600, align: 'center' });
+  text(ctx, 'E', OX + NX * S + 52, OY, PAL.ink, { size: 24, weight: 600, align: 'center' }); text(ctx, 'W', OX - NX * S - 26, OY, PAL.ink, { size: 24, weight: 600, align: 'center' });
+  text(ctx, 'N', OX + 26, OY - NY * S - 14, PAL.ink, { size: 24, weight: 600, align: 'center' }); text(ctx, 'S', OX + 26, OY + NY * S - 16, PAL.ink, { size: 24, weight: 600, align: 'center', bg: PAL.panel });
   /* the numbers stand on the side of each axis the triangle leaves free */
   const below = ay >= 0 ? 1 : -1, left = ax >= 0 ? -1 : 1;
   for (let i = -15; i <= 15; i += 3) { if (!i) continue; const x = OX + i * S, y = OY + below * 22; line(ctx, x, OY - 6, x, OY + 6, PAL.muted, 2); text(ctx, String(i).replace('-', '−'), x, y, PAL.muted, { size: 18, align: 'center', bg: PAL.panel }); lab.block(x - 16, y - 12, x + 16, y + 12); }
   for (let j = -9; j <= 9; j += 3) { if (!j) continue; const x = OX + left * 24, y = OY - j * S; line(ctx, OX - 6, y, OX + 6, y, PAL.muted, 2); text(ctx, String(j).replace('-', '−'), x, y, PAL.muted, { size: 18, align: 'center', bg: PAL.panel }); lab.block(x - 16, y - 12, x + 16, y + 12); }
-  compass(ctx, OX - 15.5 * S, OY + 4.5 * S); lab.block(OX - 17.5 * S, OY + 2.5 * S, OX - 13.5 * S, OY + 6.5 * S);
   /* the quadrants, counterclockwise from north-east */
   [[1, 1], [-1, 1], [-1, -1], [1, -1]].forEach(([sx, sy], q) => {
-    const on = ax * sx > 0 && ay * sy > 0, x = OX + sx * 14.5 * S;
+    const on = ax * sx > 0 && ay * sy > 0, x = OX + sx * 13.2 * S;
     marks[q].forEach((s, k) => {
       const y = OY - sy * 10.5 * S + (k - (marks[q].length - 1) / 2) * 32;
       text(ctx, s, x, y, on ? PAL.ink : PAL.muted, { size: 22, weight: on ? 600 : 400, align: 'center', bg: PAL.panel });
@@ -91,7 +104,7 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
   if (hasX) { darrow(ctx, O.x, O.y, K.x, K.y, pos, 4); blockSeg(lab, O, K); }
   if (hasY) { darrow(ctx, K.x, K.y, T.x, T.y, pos, 4); blockSeg(lab, K, T); }
   if (Math.abs(ax) > 0.8 && Math.abs(ay) > 0.8) rightAngle(ctx, K.x, K.y, -ax, ay);
-  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 7); blockSeg(lab, O, T); lab.beside(seg(O, T), hasX && hasY ? away(O, T, K) : -1, nameA, pos, 26, { offset: 0.62 }); }
+  if (hasX || hasY) { arrow(ctx, O.x, O.y, T.x, T.y, pos, 7); blockSeg(lab, O, T); along(ctx, lab, O, T, hasX && hasY ? away(O, T, K) : (hasY ? (ay < 0 ? 1 : -1) : (ax < 0 ? 1 : -1)), nameA, pos); }
   if (hasX) lab.add('A_x = ' + blocks(ax), (O.x + K.x) / 2, OY, 0, ay >= 0 ? 1 : -1, pos, 24, 60);
   if (hasY) lab.add('A_y = ' + blocks(ay), T.x, (K.y + T.y) / 2, ax >= 0 ? 1 : -1, 0, pos, 24, 22);
   return { O, K, T };
@@ -151,10 +164,10 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
     const lab = city(ctx, lines, ax, ay, DIRS);
     /* the angle the inverse tangent returns, where it is not the vector's own: the same line, the other way */
     if (some && ax < 0) {
-      const M = { x: OX - ax * S, y: OY + ay * S };
+      const ux = Math.cos(atn * RAD), uy = -Math.sin(atn * RAD), Lm = Math.min(a, 8) * S, M = { x: OX + ux * Lm, y: OY + uy * Lm }, k = atn < 0 ? 1 : -1;
       line(ctx, OX, OY, M.x, M.y, PAL.muted, 3, [10, 10]); blockSeg(lab, { x: OX, y: OY }, M);
-      if (Math.abs(atn) >= 0.5) F.angleArc(ctx, { x: OX, y: OY }, 130, 0, atn * RAD, undefined, undefined, PAL.muted);
-      lab.add('tan⁻¹(A_y / A_x) = ' + deg(atn), M.x, M.y, Math.cos(atn * RAD), -Math.sin(atn * RAD), PAL.muted, 21, 22);
+      if (Math.abs(atn) >= 0.5) F.angleArc(ctx, { x: OX, y: OY }, Math.min(130, Lm * 0.6), 0, atn * RAD, undefined, undefined, PAL.muted);
+      lab.add('tan⁻¹(A_y / A_x) = ' + deg(atn), OX + ux * Lm * 0.7, OY + uy * Lm * 0.7, -k * uy, k * ux, PAL.muted, 22, 28);
     }
     const t = triangle(ctx, lab, ax, ay, pos, 'A = ' + blocks(a));
     if (some && Math.abs(th) >= 0.5) F.angleArc(ctx, t.O, Math.min(84, Math.max(44, a * S * 0.3)), 0, th * RAD, 'θ = ' + deg(th), lab, angc);
@@ -236,6 +249,7 @@ function walk(id, sign) {
       if (Math.hypot(x2 - x1, y2 - y1) < 2) return;
       if (solid) arrow(ctx, x1, y1, x2, y2, pos, 5); else darrow(ctx, x1, y1, x2, y2, pos, 4);
       if (row) { lab.add(name, (x1 + x2) / 2, (y1 + y2) / 2, 0, 1, pos, 24, 26); return; }
+      { const half = Math.max(Math.abs(y2 - y1), F.measure(ctx, name, { size: 24, weight: 600 }) + 16) / 2; lab.block(x1 - 44, (y1 + y2) / 2 - half, x1 + 10, (y1 + y2) / 2 + half); }
       ctx.save(); ctx.translate(x1 - 26, (y1 + y2) / 2); ctx.rotate(-Math.PI / 2);
       text(ctx, name, 0, 0, pos, { size: 24, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
     };
@@ -255,7 +269,7 @@ function walk(id, sign) {
       F.angleArc(ctx, p, rad, 0, deg * RAD, undefined, undefined, angc);
       const m = (out ? deg : deg / 2) * RAD, k = out ? Math.sign(out) : 0;
       const ux = out ? -k * Math.sin(m) : Math.cos(m), uy = out ? -k * Math.cos(m) : -Math.sin(m);
-      lab.add(name, p.x + rad * Math.cos(m), p.y - rad * Math.sin(m), ux, uy, angc, 24, out ? 26 : 22);
+      lab.add(name, p.x + rad * Math.cos(m), p.y - rad * Math.sin(m), ux, uy, angc, 24, out ? 34 : 22);
     };
     blockSeg(lab, O, P); blockSeg(lab, P, Q); blockSeg(lab, O, Q);
     const rA = Math.min(230, Math.max(60, a * S * 0.62)), rR = Math.min(100, Math.max(40, Math.min(a, r) * S * 0.3));

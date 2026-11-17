@@ -107,7 +107,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     /* the system of interest, round her or round the wall */
     const her = [hip - 300, Y0 - 66, foot + 4, Y0 + 118], B = sys.mix((u) => (u === 'swimmer' ? her : [WALL - 8, 142, WR + 8, 528]));
     boundary(ctx, B[0], B[1], B[2], B[3]);
-    text(ctx, 'the system of interest', Math.max(B[0] + 8, 36), B[1] - 17, PAL.muted, { size: 18, weight: 600, bg: PAL.panel });
+    text(ctx, 'the system of interest', onHer ? Math.max(B[0] + 8, 36) : B[2] - 2, B[1] - 17, PAL.muted, { size: 18, weight: 600, align: onHer ? 'left' : 'right', bg: PAL.panel });
     /* the swimmer, lying feet to the wall: her legs straighten through the push, then she glides streamlined */
     swimmerBody(ctx, foot, hip, Y0, F.ref('swimmer'));
     /* the pair of forces, each drawn on the body it acts on, to one scale */

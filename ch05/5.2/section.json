@@ -36,6 +36,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -71,6 +74,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: library bodies, skydivers in a column, hollow half point, note cut"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "bodies drawn larger, stage tightened, caption cut"
     }
    ]
   },
@@ -133,6 +140,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "library skydiver, column title and terminal-velocity label kept clear"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: forces to one scale on a fixed skydiver, position choice"
     }
    ]
   },
@@ -141,8 +152,10 @@
    "kind": "sim",
    "draws": [
     "velocity",
-    "time",
-    "mass"
+    "position",
+    "mass",
+    "area",
+    "density"
    ],
    "ai": [
     {
@@ -164,6 +177,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "library skydiver, labels on panels, hover names, note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt as a still graph of landing speed against height of fall"
     }
    ]
   },
@@ -196,6 +213,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "labels off the lines, note shortened"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "headline and caption cut, weight on its own readout line"
     }
    ]
   },

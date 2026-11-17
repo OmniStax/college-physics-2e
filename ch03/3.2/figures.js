@@ -1,11 +1,9 @@
 /* Figures for section 3.2 Vector Addition and Subtraction: Graphical Methods. Boots against the section's text article. */
 window.OMNISTAX_FIGURES = window.OMNISTAX_FIGURES || {};
 window.OMNISTAX_FIGURES['3.2'] = function (root, F) {
-const { el, fmt, tex, C, PAL, alpha, ctl, cycle, register, begin, line, arrow, dot, text, topline, labeller } = F;
+const { el, fmt, tex, C, PAL, alpha, ctl, register, begin, line, arrow, dot, text, topline, labeller } = F;
 const sim = (id, H) => F.sim(root, id, H);
 function readout(host, main, small) { tex(host, main); if (small) host.appendChild(el('small', null, small)); }
-/* a note line set through the macros, for a note that names symbols */
-function texNote(host, s) { const sm = el('small', null, ''); host.appendChild(sm); tex(sm, s); }
 
 /* ---------- small helpers shared by the figures ---------- */
 const RAD = Math.PI / 180;
@@ -18,11 +16,6 @@ const compass = (deg, dec = 1) => { const a = fold(deg); return a >= 0 ? fmt(a, 
 const polar = (x, y) => ({ r: Math.hypot(x, y), deg: Math.atan2(y, x) / RAD });
 /* the tip of an arrow of length L at angle deg (counterclockwise from east) drawn from (x, y) on the canvas, where y runs down */
 const tip = (x, y, L, deg) => [x + L * cos(deg), y - L * sin(deg)];
-/* a label beside the middle of a segment, offset to its left (side 1) or right (side -1) as one walks along it */
-function beside(ctx, x1, y1, x2, y2, s, color, side = 1, gap = 26, size = 22) {
-  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, nx = (dy / L) * side, ny = (-dx / L) * side;
-  text(ctx, s, (x1 + x2) / 2 + nx * gap, (y1 + y2) / 2 + ny * gap, color, { weight: 600, size, align: 'center', bg: PAL.panel });
-}
 /* an arrowhead alone, pointing along deg, for a path drawn as a polyline */
 function arrowhead(ctx, x, y, deg, color) {
   const a = -deg * RAD, hl = 18;
@@ -73,12 +66,6 @@ function protractor(ctx, x, y, r, deg) {
   }
   if (a > 0.05) { ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, r * 0.5, 0, sgn * a * RAD, !below); ctx.stroke(); ctx.restore(); }
 }
-/* the angle written along the bisector of the swept angle, pushed clear of the east-west line when the angle is small */
-function thetaLabel(ctx, ox, oy, deg, dec = 1, R = 128, push = 24) {
-  const a = Math.abs(deg); if (a < 0.05) return;
-  const small = a < 12, x = ox + R * cos(deg / 2) + (small ? 20 : 0), y = oy - R * sin(deg / 2) + (small ? (deg < 0 ? push : -push) : 0);
-  text(ctx, 'θ = ' + fmt(a, dec) + '°', x, y, C('angle'), { weight: 600, size: 20, bg: PAL.panel });
-}
 /* the walker seen from above, as the map is, facing along the leg; `deg` is the leg's direction */
 const walker = (ctx, x, y, deg, color) => F.personTop(ctx, x, y, 1, -deg * RAD, color);
 /* a sailing boat whose waterline is centred on (x, y) */
@@ -101,7 +88,6 @@ function dock(ctx, x, y, color) {
 const WALK_DEG = [49, 15, -68];
 const ORDERS = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
 const NAMES = ['A', 'B', 'C'];
-const orderName = (k) => ORDERS[k].map((i) => NAMES[i]).join(', then ');
 
 /* a number wearing a type's colour in a readout */
 const kp = (s) => '\\htmlClass{kv-position}{' + s + '}', ka = (s) => '\\htmlClass{kv-angle}{' + s + '}';
@@ -178,12 +164,6 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     for (const i of order) { out[2 * i] = px; out[2 * i + 1] = py; [px, py] = tip(px, py, MAG[i] * S, WALK_DEG[i]); }
     return out;
   }
-  /* which side of R the walk lies on: the ruler takes the other */
-  function rulerSide(order) {
-    let x = 0, y = 0, s = 0; const Rx = 50.605, Ry = -4.849;
-    order.slice(0, 2).forEach((i) => { x += MAG[i] * cos(WALK_DEG[i]); y += MAG[i] * sin(WALK_DEG[i]); s += Rx * y - Ry * x; });
-    return s > 0 ? -1 : 1;
-  }
   function draw() {
     const { ctx } = begin(d.c);
     const k = Number(O.value), cp = C('position'), at = O.mix((v) => tails(ORDERS[Number(v)]));
@@ -206,10 +186,8 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     line(ctx, ox - 40, oy, 1330, oy, PAL.rule, 2); text(ctx, 'east', 1330, oy - 16, PAL.muted, { size: 17, align: 'right' });
     rose(ctx, 1300, 180, 40);
     const ex = ox + 50.605 * S, ey = oy + 4.849 * S, r = 50.84, deg = -5.47;
-    const sideNow = rulerSide(ORDERS[k]), sideWas = rulerSide(ORDERS[Number(O.from)]);
-    const moving = O.from !== O.value && O.k < 1 && sideNow !== sideWas, ra = moving ? Math.abs(2 * O.k - 1) : 1, side = moving && O.k < 0.5 ? sideWas : sideNow;
     protractor(ctx, ox, oy, 104, deg);
-    F.faded(ctx, ra, [0, 0], () => ruler(ctx, ox, oy, deg, 56 * S, 10 * S, 1, side, 26, 10));
+    ruler(ctx, ox, oy, deg, 56 * S, 10 * S, 1, -1, 26, 10);
     arcDeg(ctx, ox, oy, 250, 0, deg, C('angle'), 3);
     text(ctx, 'θ = 5.47°', ox + 262, oy - 20, C('angle'), { size: 22, weight: 600, align: 'left', bg: PAL.panel });
     if (refA > 0) { let px = ox, py = oy; for (const i of ORDERS[0]) { const [hx, hy] = tip(px, py, MAG[i] * S, WALK_DEG[i]); arrow(ctx, px, py, hx, hy, alpha(PAL.ink, 0.4 * refA), 3); px = hx; py = hy; } }
@@ -220,11 +198,11 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
       const L = MAG[i] * S, nx = (hy - py) / L, ny = -(hx - px) / L, out = (ox + 25 * S - (px + hx) / 2) * nx + (oy - (py + hy) / 2) * ny > 0 ? -1 : 1;
       lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx * out, ny * out, cp, 26, 26);
     });
-    lab.add('R = 50.8 m', ox + 0.52 * (ex - ox), oy + 0.52 * (ey - oy), 0.1 * -side, -side, cp, 24, side > 0 ? 34 : 100);
+    text(ctx, 'R = 50.8 m', ex + 26, ey + 6, cp, { size: 24, weight: 600, align: 'left', bg: PAL.panel });
     dot(ctx, ox, oy, PAL.ink, true, 7); dot(ctx, ex, ey, PAL.ink, true, 7);
     text(ctx, 'start', ox - 16, oy - 20, PAL.muted, { size: 17, align: 'right' });
     lab.flush();
-    if (k !== 0) F.legend(ctx, { l: 1040, t: 100, r: 1384, b: 150 }, [{ s: 'the walk as A, B, C', color: alpha(PAL.ink, 0.4), w: 3 }], { corner: 'tr', panel: false });
+    if (k !== 0) F.legend(ctx, { l: 1000, t: 760, r: 1384, b: 830 }, [{ s: 'the walk as A, B, C', color: alpha(PAL.ink, 0.4), w: 3 }], { corner: 'br', panel: false });
     const lhs = ORDERS[k].map((i) => '\\mathbf{' + NAMES[i] + '}').join(' + ');
     tex(d.readout, (k === 0 ? lhs : lhs + ' = \\mathbf{A} + \\mathbf{B} + \\mathbf{C}') + ` = \\mathbf{R} = ${kp('50.8')}\\ \\text{m at}\\ ${ka('5.47^\\circ')}\\ \\text{south of east}`);
   }
@@ -398,9 +376,6 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     }
     dot(ctx, SX(0), SY(1), PAL.ink, true, 8); dot(ctx, SX(1), SY(2), PAL.ink, true, 8);
     line(ctx, 300, SY(1), SX(0) - 14, SY(1), PAL.ink, 2); text(ctx, 'Start', 290, SY(1), PAL.ink, { size: 20, align: 'right' });
-    /* a key to the dash patterns */
-    text(ctx, 'the paths', 1180, 120, PAL.ink, { size: 17, weight: 600 });
-    PATHS.forEach(({ n, dash }, i) => { const y = 156 + 34 * i; const pc = F.ref('path-' + n.toLowerCase()); line(ctx, 1180, y, 1260, y, pc, 5, dash ?? undefined); text(ctx, n, 1276, y, pc, { size: 20, weight: 600 }); });
     readout(d.readout, '\\text{one block} = 120\\ \\text{m}');
   }
   register(d.fig, { update: () => {}, draw });

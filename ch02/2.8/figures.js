@@ -25,17 +25,19 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
 
 /* the rise and the run between the two ends of a tangent, each labelled where the triangle leaves room: the
    run under its line (above it at the right-hand corner when the line lies along the time axis), the rise to
-   the right of its line (inside the corner when there is no room to the right, above it when the tangent is level) */
-function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColor, rightLimit) {
+   the right of its line (inside the corner when there is no room to the right, above the line when it is level) */
+function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColor, rightLimit, flatRight) {
   const xa = X(p1[0]), xb = X(p2[0]), ya = Y(p1[1]), yb = Y(p2[1]);
   drop(ctx, xa, ya, xb, ya, runColor); drop(ctx, xb, ya, xb, yb, riseColor);
   const o = { weight: 600, bg: alpha(PAL.panel, 0.85) };
   const low = ya + 26 > box.b - 12, flat = ya - yb < 34;
   const right = xb + 16 + F.measure(ctx, riseLabel, { size: 22, weight: 600 }) <= rightLimit;
-  if (flat) text(ctx, riseLabel, Math.min(xb, rightLimit - 10), yb - 26, riseColor, { ...o, align: 'right' });
+  if (flat && flatRight) text(ctx, riseLabel, xb + 18, yb - 26, riseColor, { ...o, align: 'left' });
+  else if (flat) text(ctx, riseLabel, Math.min(xb, rightLimit - 10), yb - 26, riseColor, { ...o, align: 'right' });
   else if (right) text(ctx, riseLabel, xb + 16, (ya + yb) / 2, riseColor, { ...o, align: 'left' });
   else text(ctx, riseLabel, xb - 16, ya - (low ? 52 : 24), riseColor, { ...o, align: 'right' });
-  if (low) text(ctx, runLabel, xb - 16, ya - 24, runColor, { ...o, align: 'right' });
+  if (low && flat) text(ctx, runLabel, (xa + xb) / 2, yb - 26, runColor, { ...o, align: 'center' });
+  else if (low) text(ctx, runLabel, xb - 16, ya - 24, runColor, { ...o, align: 'right' });
   else text(ctx, runLabel, (xa + xb) / 2, ya + 26, runColor, { ...o, align: 'center' });
 }
 
@@ -68,7 +70,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     lab.block(box.l, box.b, box.r, box.b + 40); lab.block(box.l - 70, box.t - 30, box.l, box.b);
     /* the intercept's label is dropped when the first point sits on the intercept and already names it */
     if (t1.v > 0.3) lab.add('x₀ = ' + fmt(x0.v, 0) + ' m', X(0), Y(x0.v), 0.4, -1, C('position'), 22, 30);
-    riseRun(ctx, X, Y, box, [t1.v, xa], [t2.v, xb], 'Δt = ' + fmt(dt, 2) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), box.r + 150);
+    riseRun(ctx, X, Y, box, [t1.v, xa], [t2.v, xb], 'Δt = ' + fmt(dt, 2) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), box.r + 150, true);
     drop(ctx, X(t1.v), Y(xa), X(t1.v), box.b, C('time')); drop(ctx, X(t2.v), Y(xb), X(t2.v), box.b, C('time'));
     P1.draw(ctx, ax, C('position')); P2.draw(ctx, ax, C('position'));
     const lowP = Y(xa) > box.b - 80;   /* near the time axis the first point is named above the line */
@@ -266,7 +268,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     drop(ctx, g1.X(tQ.v), b1.t, g1.X(tQ.v), b2.b, C('time'));
     E1.draw(ctx, g1, PAL.ink); E2.draw(ctx, g1, PAL.ink);
     PQ.draw(ctx, g1, C('velocity'));
-    rich(ctx, ['slope of the tangent = ', [fmt(aQ, 1) + ' m/s²', C('acceleration')]], b1.r - 24, b1.b - 30, { size: 22, align: 'right' });
+    rich(ctx, ['slope of the tangent = ', [fmt(aQ, 1) + ' m/s²', C('acceleration')]], g1.X(tQ.v) > b1.r - 420 ? g1.X(tQ.v) - 22 : b1.r - 24, b1.b - 30, { size: 22, align: 'right' });   /* clear of the drop line */
     /* (b) the acceleration with the book's markers, falling to zero at 55 s */
     curve(ctx, acc, 0, 70, g2.X, g2.Y, C('acceleration'), 5, 140);
     for (const t of MARKS) dot(ctx, g2.X(t), g2.Y(acc(t)), C('acceleration'), true, 5);

@@ -195,7 +195,7 @@ function feather(ctx, x, y, color, s = 1) {
   const H = 820;
   const d = sim('sim-rock-down', H);
   const v0 = ctl(d.controls, { label: '\\kvo', cls: 'velocity', min: 8, max: 15, step: 0.1, value: 13, unit: 'm/s', dec: 1, onInput: reset, aria: 'initial speed', detents: [{ v: 13, label: 'Example 2.15' }], snap: true });
-  const yE = ctl(d.controls, { label: '\\ky', cls: 'position', min: -12, max: -1, step: 0.1, value: -5.1, unit: 'm', dec: 2, onInput: reset, aria: 'level reached' });
+  const yE = ctl(d.controls, { label: '\\ky', cls: 'position', min: -10, max: -1, step: 0.1, value: -5.1, unit: 'm', dec: 2, onInput: reset, aria: 'level reached' });
   const vmax = () => Math.sqrt(v0.v * v0.v - 2 * G * yE.v);
   const t0 = () => (2 * v0.v) / G, tA = () => (v0.v + vmax()) / G;
   const cy = cycle(tA, 1.8);
@@ -218,7 +218,8 @@ function feather(ctx, x, y, color, s = 1) {
     text(ctx, 'y (m)', SX - 40, sTop - 30, C('position'), { size: 20, weight: 600 });
     cliff(ctx, 112, EDGE, ground, H - 14);
     F.silhouette(ctx, { x: PX, y: ground, s: PS, face: 1, pose: 'stand', color: F.ref('thrower'), hands: [HAND, { x: -6, y: -76 }], elbowSide: 1 });
-    const A = axes(ctx, box, [-VM, VM], [YLO, YHI], { xl: 'v (m/s)', xc: C('velocity'), yl: 'y (m)', yc: C('position'), nx: 6, ny: 6 });
+    const A = axes(ctx, box, [-VM, VM], [YLO, YHI], { xl: 'v (m/s)', xc: C('velocity'), nx: 6, ny: 6, fy: () => '' });
+    text(ctx, 'v at each height', box.l + 8, box.t - 24, C('velocity'), { size: 20, weight: 600 });
     /* the two levels, across the scene and the graph */
     line(ctx, SX + 10, Y(0), box.l, Y(0), C('position'), 2, [8, 8]); text(ctx, 'y₀ = 0', SX + 22, Y(0) - 20, C('position'), { size: 20, weight: 600 });
     line(ctx, EDGE + 4, Y(yE.v), box.r, Y(yE.v), C('position'), 2, [8, 8]);
@@ -238,7 +239,7 @@ function feather(ctx, x, y, color, s = 1) {
     ctx.restore();
     dot(ctx, A.X(v0.v), Y(0), F.ref('rock'), false, 9); dot(ctx, A.X(-v0.v), Y(0), F.ref('rock-down'), false, 9);
     text(ctx, '+' + fmt(v0.v, 1) + ' m/s', A.X(v0.v) + 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600 });
-    text(ctx, '−' + fmt(v0.v, 1) + ' m/s', A.X(-v0.v) - 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600, align: 'right' });
+    text(ctx, '−' + fmt(v0.v, 1) + ' m/s', A.X(-v0.v) - 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
     dot(ctx, A.X(-vm), Y(yE.v), C('velocity'), false, 9);
     text(ctx, vs + ' m/s', A.X(-vm) + 16, Y(yE.v) + 24, C('velocity'), { size: 20, weight: 600, bg: PAL.panel });
     /* now */
@@ -279,7 +280,7 @@ function feather(ctx, x, y, color, s = 1) {
   function reset() { cy.reset(); }
   const YLO = -1.2, TMAX = 0.5, sTop = 160, sBot = 640, SX = 112, bx = 235, KV = 12;
   const Y = (m) => sBot - ((sBot - sTop) * (cl(m, YLO, 0) - YLO)) / -YLO;
-  const box = { l: 760, r: 1340, t: sTop, b: sBot }, cols = [372, 478, 596];
+  const box = { l: 730, r: 1340, t: sTop, b: sBot }, cols = [372, 478, 596];
   const GL = 9.3, GH = 10.3, gy = 782, GX = (g) => 112 + ((cl(g, GL, GH) - GL) / (GH - GL)) * (1340 - 112);
   let hits = [];
   F.hover(d.stage, () => hits);
@@ -290,9 +291,10 @@ function feather(ctx, x, y, color, s = 1) {
     hits = [];
     vscale(ctx, SX, Y, YLO, 0, 0.2, 1);
     text(ctx, 'y (m)', SX - 40, sTop - 64, C('position'), { size: 20, weight: 600 });
-    F.hand(ctx, bx - 118, Y(0) - 34, { aim: [1, 0.06], view: 'side', curl: 0.35, s: 0.95 });
+    line(ctx, bx - 60, Y(0) - 15, bx + 60, Y(0) - 15, PAL.ink, 5);
     line(ctx, bx, Y(0), bx, Y(YLO), PAL.rule, 1.5);
-    const A = axes(ctx, box, [0, TMAX], [YLO, 0], { xl: 't (s)', xc: C('time'), yl: 'y (m)', yc: C('position'), nx: 5, ny: 6 });
+    const A = axes(ctx, box, [0, TMAX], [YLO, 0], { xl: 't (s)', xc: C('time'), nx: 5, ny: 6, fy: () => '' });
+    text(ctx, 'y against t', box.l + 8, box.t - 24, C('position'), { size: 20, weight: 600 });
     /* where the fall is timed to */
     line(ctx, bx - 46, Y(yF.v), bx + 46, Y(yF.v), C('position'), 4);
     /* the readings every 0.1 s, each on the level of its mark, as the book tabulates them */
@@ -314,7 +316,7 @@ function feather(ctx, x, y, color, s = 1) {
     });
     if (!done) { line(ctx, bx + 14, Y(y), A.X(tau), Y(y), C('position'), 2.5, [5, 7]); dot(ctx, A.X(tau), Y(y), PAL.ink, true, 9); if (-v > 0.2) arrow(ctx, bx + 30, Y(y), bx + 30, Y(y) - v * KV, C('velocity'), 5); }
     dot(ctx, bx, Y(y), F.ref('ball'), true, 12);
-    hits.push({ x: bx, y: Y(y), r: 16, name: 'the ball' }, { x: bx - 60, y: Y(0) - 34, r: 50, name: 'the hand that lets the ball go' }, { x: bx, y: Y(yF.v), r: 14, name: 'the level the fall is timed to' });
+    hits.push({ x: bx, y: Y(y), r: 16, name: 'the ball' }, { x: bx - 40, y: Y(0) - 15, r: 14, name: 'the ball is let go from rest here' }, { x: bx, y: Y(yF.v), r: 14, name: 'the level the fall is timed to' });
     /* the g these two measurements give, against the range found on Earth */
     line(ctx, GX(GL), gy, GX(GH), gy, PAL.muted, 2);
     ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.16); ctx.fillRect(GX(9.78), gy - 14, GX(9.83) - GX(9.78), 28); ctx.restore();
@@ -388,7 +390,8 @@ function feather(ctx, x, y, color, s = 1) {
     line(ctx, box.l, Y(-dd), A.X(tf), Y(-dd), C('position'), 2, [8, 8]);
     dot(ctx, A.X(Th.v), Y(-naive), C('position'), false, 8);
     const nl = '½gt² = ' + fmt(naive, 1) + ' m';
-    text(ctx, nl, A.X(Th.v) - 16, Y(-naive) + (naive - dd < 9 ? 26 : 2), C('position'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
+    const tight = A.X(Th.v) < box.l + 340;
+    text(ctx, nl, A.X(Th.v) + (tight ? 16 : -16), Y(-naive) + (!tight && naive - dd < 9 ? 26 : 2), C('position'), { size: 20, weight: 600, align: tight ? 'left' : 'right', bg: PAL.panel });
     text(ctx, 'd = ' + fmt(dd, 1) + ' m', box.l + 12, Y(-dd) + 24, C('position'), { size: 20, weight: 600, bg: PAL.panel });
     /* the two legs of the time, above the graph */
     const by = 172;

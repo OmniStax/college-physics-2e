@@ -283,3 +283,64 @@ both say.
 Revised in the Manim pass of 2026-09-28:
 - `sim-strengths` · the two force choices no longer cut: the ends of the bracket and their drop lines slide from the old pick to the new, and the rows' emphasis crossfades (manim-style 15, 16).
 - `sim-field` · the headline at a charge states the fact instead of addressing the reader (root rule 17).
+
+## Figure re-examination of 2026-11-17 (Claude Fable 5.2)
+
+All three drawn figures were judged against the book's images and rebuilt. The plan lines above are
+superseded by these.
+
+`sim-field` · replaces Figure 4.24 · force-field · value add: the book's still shows the lines, and the
+reader has to imagine a test charge in them; here the reader drags one and sees the force lie along the one
+line through it, turn round when the charge is made negative and vanish at zero while the field stays ·
+arrows: symbolic (the force on the test charge, to scale) · still · x and y of the test charge (position,
+also dragged on the canvas), q from −4.0 to +4.0 nC (charge, opens at +2.0 nC, a detent at 0) · headline:
+"The force on a positive test charge points along the field line through it" · no graph · 2D.
+
+works: parts: a positive charge at the left and a negative charge at the right, ±1.0 nC and 2.0 m apart;
+field lines that leave the positive charge in every direction and end on the negative one, the outer ones
+running off the drawing, each with an arrowhead pointing from + to −; a test charge; the force on it.
+flow: nothing moves by itself; the test charge goes where the reader drags it.
+must hold: (1) lines leave + and arrive at −, arrowheads from + to −, and the picture is mirror-symmetric
+left to right as the book's is; (2) the line through the test charge passes through it and is tangent to
+the force; (3) F = qE with E the sum of the two charges' fields (8.99 N/C at 1 m from 1.0 nC), the arrow 4
+units per nN and marked where it is cut at 300 units; (4) a negative q reverses the arrow, q = 0 removes
+it, and no field line moves when q or the position changes; (5) labels stay inside the canvas.
+read off the image: "+q" at the left and "−q" at the right; about two dozen lines per charge with
+arrowheads; no test charge is drawn (the caption speaks of one). The figure writes the two sources as
++1.0 nC and −1.0 nC so that q can name the test charge, and draws sixteen lines.
+
+`sim-exchange` · replaces Figure 4.25 · carrier-particle · value add: the motion the three stills leave to
+the reader (each person pushed back as the ball leaves and arrives), and the attractive exchange that the
+caption only describes in words and conceptual question 3 asks about · arrows: kinematic (the people, the
+ball, the nucleons and the meson move) with the forces drawn while they act · moving, a 4.6 s loop · choice
+"the ball is" thrown and caught | pulled away; F from 50 to 200 N (force, opens at 100 N; the book gives no
+number) · headline per phase, "Pushing the ball forward with 100 N, person 1 is pushed back with 100 N" ·
+no graph · 2D.
+
+works: parts: person 1 at the left and person 2 at the right facing each other on the ground; a
+basketball; below them a proton p at the left, a neutron n at the right and the meson between them.
+flow: (a) person 1 pushes the ball forward (F_p1 on the ball, toward 2) and is pushed back by F_B, away
+from 2; the ball crosses; (b) person 2 stops it (F_p2 on the ball, toward 1) and is pushed back by F′_B,
+away from 1; (c) the meson goes from p to n, F_exch on p away from n and F′_exch on n away from p. Pulled
+away: both hold the ball, 2 pulls and 1 holds on, and the ball pulls each toward the other.
+must hold: (1) each force is drawn only while it acts, with the book's name; (2) F_B and F_p1 are equal
+and opposite, as are F′_B and F_p2, all 0.8 units per newton; (3) thrown: both end farther apart than the
+hollow marks where they began; pulled: both end closer; (4) the nucleon row moves in step with the people;
+(5) hands are on the ball while it is held.
+read off the image: labels F_B, F_p1, F_p2, F′_B, F_exch, F′_exch, "1", "2", p, n, "Exchange meson",
+"Direction of motion"; F_B points left from person 1, F_p1 right along the ball; F′_B right from person 2,
+F_p2 left along the ball; F_exch left of p, F′_exch right of n. The image has no numbers.
+
+`sim-strengths` · Sim · four-basic-forces · value add: Table 4.1 gives four exponents; on one logarithmic
+axis the reader sees three forces crowded within six powers of ten and gravity alone at the far end, and
+the readout does the subtraction of exponents the section's problems ask for · arrows: none · still ·
+force A and force B (dropdowns, opening on electromagnetic against gravitational, the comparison the text
+makes next) · headline: "The electromagnetic force is 10³⁶ times the gravitational force: a 1 followed by
+36 zeros" · the axis is the graph · 2D.
+
+works: read off the table (no image): gravitational 10⁻³⁸, electromagnetic 10⁻², weak nuclear 10⁻⁶,
+strong nuclear 1. must hold: each mark stands over its own strength on the axis; the bracket spans the
+two picked marks and counts |Δexponent|; the readout's exponent is p_A − p_B; no label is clipped.
+What changed: the bars from an arbitrary foot at 10⁻⁴⁰ are gone (a bar's length meant nothing), the axis
+runs the full width, the bracket label can no longer run off the right edge, and the figure opens on the
+36 powers of ten instead of on the 10² between the two strongest.

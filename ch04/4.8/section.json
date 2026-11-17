@@ -527,14 +527,14 @@
   },
   {
    "id": "thrower",
-   "label": "the thrower",
+   "label": "person 1",
    "figures": [
     "sim-exchange"
    ]
   },
   {
    "id": "catcher",
-   "label": "the catcher",
+   "label": "person 2",
    "figures": [
     "sim-exchange"
    ]

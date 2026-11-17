@@ -3,36 +3,22 @@ window.OMNISTAX_FIGURES = window.OMNISTAX_FIGURES || {};
 window.OMNISTAX_FIGURES['5.2'] = function (root, F) {
 const { el, fmt, tex, C, PAL, alpha, ctl, cycle, register, begin, line, arrow, dot, text, headline, topline, axes, curve, pinned, strip, car } = F;
 const sim = (id, H) => F.sim(root, id, H);
-function readout(host, main, small) { tex(host, main); if (small) { const n = el('small', null, small); host.appendChild(n); F.renderMath(n); } }
 
 /* ---------- constants and small helpers shared by the figures ---------- */
 const G = 9.80, RHO_AIR = 1.21, RHO_STEEL = 7.8e3, TAU = 2 * Math.PI;
-/* ln(cosh x) without letting cosh overflow, which it does for a slow body falling a long way */
-const lncosh = (x) => { const a = Math.abs(x); return a + Math.log1p(Math.exp(-2 * a)) - Math.LN2; };
-/* how far a body of terminal velocity vt has fallen from rest after the time t, and how fast it is going */
-const fallen = (vt, t) => ((vt * vt) / G) * lncosh((G * t) / vt);
+/* how fast a body of terminal velocity vt is falling a time t after it was let go from rest */
 const speed = (vt, t) => vt * Math.tanh((G * t) / vt);
-/* the time such a body takes to fall the distance s */
-function fallTime(vt, s) {
-  const u = (G * s) / (vt * vt);
-  return (vt / G) * (u > 30 ? u + Math.LN2 : Math.acosh(Math.exp(u)));
-}
 /* draws inside the graph box, so a curve that runs past a fixed range is cut off at the frame
    instead of the frame being stretched to hold it */
 const inbox = (ctx, box, f) => { ctx.save(); ctx.beginPath(); ctx.rect(box.l, box.t, box.r - box.l, box.b - box.t); ctx.clip(); f(); ctx.restore(); };
 /* a number in the book's three significant figures, never in exponent form */
 const sig3 = (x) => (Math.abs(x) >= 100 ? fmt(x, 0) : Math.abs(x) >= 10 ? fmt(x, 1) : Math.abs(x) >= 1 ? fmt(x, 2) : fmt(x, 3));
 /* a mass in the unit that reads best for its size */
-const massLabel = (m) => (m >= 1 ? fmt(m, 1) + ' kg' : m >= 1e-3 ? fmt(m * 1e3, 1) + ' g' : fmt(m * 1e6, 1) + ' mg');
+const massLabel = (m) => (m >= 1 ? fmt(m, m >= 10 ? 0 : 1) + ' kg' : m >= 1e-3 ? fmt(m * 1e3, m >= 1e-2 ? 0 : 1) + ' g' : fmt(m * 1e6, 0) + ' mg');
 /* the same number as LaTeX in scientific form */
 function sciTex(x, d) { const p = Math.floor(Math.log10(Math.abs(x))); return `${fmt(x / Math.pow(10, p), d)} \\times 10^{${p}}`; }
-/* a ratio smaller than one, said the way the book says it: a hundredth, a thousandth */
-const partOf = (x) => { const n = 1 / x; return '1 part in ' + fmt(n, n >= 20 || Math.abs(n - Math.round(n)) < 0.05 ? 0 : 1); };
 
 /* ---------- sprites ---------- */
-/* a skydiver spread-eagled, belly to the earth and seen from below, centred on (x, y): a round head,
-   a solid torso, and arms and legs thrown out as thick rounded strokes bent at the elbow and knee */
-const skydiver = (ctx, x, y, color, s = 1) => F.skydiver(ctx, x, y, s, color);
 /* The body the drag coefficient belongs to, in its referent colour. A car, a cyclist, a sphere, a plate or an
    airfoil travels to the right along the road, (x, y) on the road line; a skydiver falls down the page, (x, y) her
    centre. It returns the box the body fills and the height its arrows act at. */
@@ -69,6 +55,26 @@ function bluff(ctx, x, y, name, col) {
   ctx.fillRect(x - 80, cy - 40, 160, 80); ctx.strokeRect(x - 80, cy - 40, 160, 80); ctx.restore();
   return at(x - 82, x + 82, cy - 42, cy + 42, cy);
 }
+/* A person falling, seen from the side and centred on (x, y): spread eagle, lying belly down across the fall
+   with the head to the right, arms and lower legs lifted by the air, or head first, upright and upside down. The
+   library's silhouette turned a quarter or a half turn, 150 s long. */
+function faller(ctx, x, y, s, posture, col) {
+  ctx.save(); ctx.translate(x, y);
+  if (posture === 'head') {
+    ctx.rotate(Math.PI);
+    F.silhouette(ctx, { x: 0, y: 75 * s, s, pose: 'stand', color: col, feet: [{ x: 5, y: 0 }, { x: -5, y: 0 }], hands: [{ x: 10, y: -66 }, { x: -2, y: -66 }] });
+  } else {
+    ctx.rotate(Math.PI / 2);
+    F.silhouette(ctx, { x: 0, y: 75 * s, s, pose: 'stand', color: col, hip: { x: 0, y: -72 }, shoulder: { x: -8, y: -116 }, head: { x: -20, y: -137 },
+      feet: [{ x: -40, y: -20 }, { x: -46, y: -30 }], hands: [{ x: -36, y: -160 }, { x: -42, y: -150 }], kneeSide: 1, elbowSide: 1 });
+  }
+  ctx.restore();
+}
+/* the same body drawn k times as large about its point on the road */
+function big(ctx, x, y, name, col, k) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(k, k); const b = bluff(ctx, 0, 0, name, col); ctx.restore();
+  return { l: x + k * b.l, r: x + k * b.r, t: y + k * b.t, b: y + k * b.b, ay: y + k * b.ay };
+}
 /* two slashes across an arrow cut short of its length, at (x, y) on the shaft running along (ux, uy) */
 function cut(ctx, x, y, ux, uy, col) {
   for (const o of [-7, 7]) {
@@ -94,7 +100,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
    clock runs in it, so the figure is still and carries no transport.
 ===================================================================== */
 (function () {
-  const d = sim('sim-drag', 850);
+  const d = sim('sim-drag', 770);
   const TABLE = [['an airfoil', 0.05], ['a Toyota Camry', 0.28], ['a Ford Focus', 0.32], ['a Honda Civic', 0.36], ['a Ferrari Testarossa', 0.37],
     ['a Dodge Ram pickup', 0.43], ['a sphere', 0.45], ['a Hummer H2 SUV', 0.64], ['a skydiver feet first', 0.70], ['a bicycle', 0.90],
     ['a skydiver lying horizontal', 1.0], ['a circular flat plate', 1.12]];
@@ -113,33 +119,33 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     const cf = C('force'), cv = C('velocity'), cb = F.ref('body');
     const Fnow = drag(V.v), Fhalf = drag(V.v / 2), who = named();
     const n = headline(ctx, 'At ' + fmt(V.v, 0) + ' km/h the drag is ' + sig3(Fnow) + ' N, four times the ' + sig3(Fhalf) + ' N it would be at half that speed');
-    const lab = F.labeller(ctx, 850, { headline: n }), top = n === 2 ? 106 : 80;
+    const lab = F.labeller(ctx, 770, { headline: n }), top = n === 2 ? 106 : 80;
     const name = who === null ? 'a bluff body with C = ' + fmt(Cd.v, 2) : who + ', C = ' + fmt(Cd.v, 2) + ' in Table 5.2';
     /* the scene. Arrows are to one scale within each scene: along the road 1.2 units a newton and 380 units for
        150 km/h, down the column of air, which is shorter, 0.45 units a newton and 115 units for 150 km/h. A drag
        longer than the room left is cut short with two slashes, and its label still gives its size. */
     let dseg, vseg, box, cutD = false;
     if (who && who.indexOf('skydiver') >= 0) {
-      const cx = 820, cy = 300;
-      ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(cx - 25, top, 50, 490 - top); ctx.restore();
-      line(ctx, cx, top, cx, 490, PAL.panel, 3, [22, 18]);
+      const cx = 700, cy = 280;
+      ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(cx - 25, top, 50, 470 - top); ctx.restore();
+      line(ctx, cx, top, cx, 470, PAL.panel, 3, [22, 18]);
       box = bluff(ctx, cx, cy, who, cb);
       const room = box.t - 6 - top, Ld = Math.min(0.45 * Fnow, room);
       cutD = 0.45 * Fnow > room;
       dseg = { x1: cx, y1: box.t - 6, x2: cx, y2: box.t - 6 - Ld };
       vseg = { x1: cx, y1: box.b + 6, x2: cx, y2: box.b + 6 + (115 * V.v) / VMAX };
-      lab.place(box); lab.place({ l: cx - 25, r: cx + 25, t: top, b: 490 });
+      lab.place(box); lab.place({ l: cx - 25, r: cx + 25, t: top, b: 470 });
       lab.add(name, box.l - 30, cy, -1, 0, cb, 17, 10);
     } else {
-      const yl = 300, cx = 820;
+      const yl = 330, cx = 760;
       strip(ctx, 90, 1340, yl, 50);
-      box = bluff(ctx, cx, yl, who, cb);
+      box = big(ctx, cx, yl, who, cb, 1.3);
       const room = box.l - 6 - 100, Ld = Math.min(1.2 * Fnow, room);
       cutD = 1.2 * Fnow > room;
       dseg = { x1: box.l - 6, y1: box.ay, x2: box.l - 6 - Ld, y2: box.ay };
       vseg = { x1: box.r + 6, y1: box.ay, x2: box.r + 6 + (380 * V.v) / VMAX, y2: box.ay };
       lab.place(box);
-      lab.add(name, cx, yl + 30, 0, 1, cb, 17, 26);
+      lab.add(name, cx, yl + 30, 0, 1, cb, 19, 26);
     }
     arrow(ctx, dseg.x1, dseg.y1, dseg.x2, dseg.y2, cf, 5);
     if (cutD) { const L = Math.hypot(dseg.x2 - dseg.x1, dseg.y2 - dseg.y1); cut(ctx, (dseg.x1 + dseg.x2) / 2, (dseg.y1 + dseg.y2) / 2, (dseg.x2 - dseg.x1) / L, (dseg.y2 - dseg.y1) / L, cf); }
@@ -153,7 +159,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
        206 N, in a seventeenth of the height. So the drag axis is fixed at 0 to 250 N, which holds
        that car comfortably, and a bluffer body climbs off the top as a pinned marker. Neither range
        changes as a slider moves. */
-    const FR = 250, g0 = { l: 200, r: 1300, t: 556, b: 776 };
+    const FR = 250, g0 = { l: 200, r: 1300, t: 500, b: 700 };
     const g = axes(ctx, g0, [0, VMAX], [0, FR],
       { xl: 'v (km/h)', xc: cv, yl: 'F_D (N)', yc: cf, nx: 5, ny: 5, fy: (y) => fmt(y, 0) });
     inbox(ctx, g0, () => {
@@ -174,155 +180,131 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
 })();
 
 /* =====================================================================
-   SIM: a skydiver falling to terminal velocity. The weight stays the
-   same while the drag grows with the speed, and the acceleration falls
-   to zero as the two forces come together. The idea has a clock in it
-   and the run is finite, so it loops with the scrubber.
+   SIM: a skydiver falling to terminal velocity. The skydiver stays in
+   the middle of the scene with the forces drawn to one scale: the weight
+   never changes and the drag grows with the speed until the two arrows
+   are the same length. The position in the air sets the frontal area
+   and the drag coefficient the book gives it (spread eagle, Example 5.2:
+   0.70 m² and 1.0; head first, the text's skydiver: 0.18 m² and 0.70).
+   The idea has a clock in it and the run is finite, so it loops.
 ===================================================================== */
 (function () {
-  const d = sim('sim-terminal', 760);
-  const M = ctl(d.controls, { label: '\\km', cls: 'mass', min: 40, max: 120, step: 1, value: 85, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skydiver' });
-  const Ar = ctl(d.controls, { label: '\\karea', cls: 'area', min: 0.15, max: 1.2, step: 0.01, value: 0.7, unit: 'm²', dec: 2, onInput: reset, aria: 'area facing the fluid' });
-  const Cd = ctl(d.controls, { label: 'C', cls: '', min: 0.4, max: 1.2, step: 0.01, value: 1, unit: '', dec: 2, onInput: reset, aria: 'drag coefficient' });
-  const vt = () => Math.sqrt((2 * M.v * G) / (RHO_AIR * Cd.v * Ar.v));
-  const total = () => (3.5 * vt()) / G;
+  const d = sim('sim-terminal', 700);
+  const POST = { spread: { A: 0.70, C: 1.0, name: 'spread eagle' }, head: { A: 0.18, C: 0.70, name: 'head first' } };
+  const P = F.choice(d.controls, { label: '\\text{position}', options: [{ value: 'spread', label: 'spread eagle' }, { value: 'head', label: 'head first' }], value: 'spread', aria: 'position of the skydiver in the air', onInput: reset });
+  const M = ctl(d.controls, { label: '\\km', cls: 'mass', min: 50, max: 110, step: 1, value: 85, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skydiver', detents: [75, 85] });
+  const vtOf = (p) => Math.sqrt((2 * M.v * G) / (RHO_AIR * POST[p].C * POST[p].A));
+  const total = () => (3.5 * vtOf(P.value)) / G;
   const cy = cycle(total, 1.2);
   function reset() { cy.reset(); }
+  let hits = [];
+  F.hover(d.stage, () => hits);
   function draw() {
     const { ctx } = begin(d.c);
-    const cf = C('force'), cv = C('velocity'), ca = C('acceleration'), ct = C('time');
-    const T = total(), t = cy.now(), V = vt(), v = speed(V, t), w = M.v * G;
-    const FD = w * Math.pow(v / V, 2), a = G * (1 - Math.pow(v / V, 2)), depth = fallen(V, t), deep = fallen(V, T);
-    /* the scene: a column of air with the skydiver falling down it */
-    const top = 170, bot = 690, xl = 180, xr = 460, xc = 310;
-    line(ctx, xl, top, xl, bot, PAL.rule, 2); line(ctx, xr, top, xr, bot, PAL.rule, 2);
-    text(ctx, 'how far the skydiver has fallen', 24, top - 34, PAL.muted, { size: 17 });
-    /* fixed scene scale: the column is ruled 0 to 1000 m and never rescales. The skydiver the figure
-       opens with falls 564 m in the run and so fills most of it; a heavier or sleeker one falls past
-       the bottom, where the drawing holds her at the last mark and the note says how far she has gone. */
-    const DEEP = 1000, Yd = (s) => top + 50 + (Math.min(s, DEEP) / DEEP) * (bot - top - 110);
-    for (let i = 0; i <= 5; i++) {
-      const s = (DEEP * i) / 5;
-      line(ctx, xl, Yd(s), xl + 14, Yd(s), PAL.muted, 2);
-      text(ctx, fmt(s, 0) + ' m', xl - 12, Yd(s), PAL.muted, { size: 17, align: 'right' });
-    }
-    const py = Yd(depth);
-    if (depth > DEEP) text(ctx, 'fallen ' + fmt(depth, 0) + ' m, past the column', xc, bot + 26, PAL.muted, { size: 17, align: 'center' });
-    skydiver(ctx, xc, py, F.ref('skydiver'), 0.8);
-    /* the weight leaves her centre and the drag meets her from below, so it leaves her belly */
-    arrow(ctx, xc, py + 10, xc, py + 56 + 120, cf, 5);
-    text(ctx, 'w = ' + sig3(w) + ' N', xc + 40, py + 120, cf, { size: 20, weight: 600, bg: PAL.panel });
-    if (FD > 1) {
-      const L = 120 * (FD / w);
-      arrow(ctx, xc, py - 10, xc, py - 10 - 50 - L, cf, 5);
-      text(ctx, 'F_D = ' + sig3(FD) + ' N', xc + 40, py - 60 - L / 2, cf, { size: 20, weight: 600, bg: PAL.panel });
-    }
-    if (a > 0.05) {
-      arrow(ctx, xc + 200, py, xc + 200, py + 90 * (a / G), ca, 5);
-      text(ctx, 'a = ' + fmt(a, 2) + ' m/s²', xc + 214, py + 45 * (a / G), ca, { size: 20, weight: 600 });
-    } else text(ctx, 'a = 0', xc + 214, py, ca, { size: 20, weight: 600 });
-    /* the graph: the falling speed against time, levelling on the terminal velocity */
-    /* fixed axes: the smallest, sleekest, heaviest body the sliders allow falls at 180 m/s and takes
-       3.5 vt / g = 64 s to settle there, and a graph that large would leave the skydiver the figure
-       opens with, who reaches 44 m/s in 16 s, in a fifth of its width and a fifth of its height. So
-       the graph is fixed at 0 to 20 s by 0 to 60 m/s, which holds that fall comfortably, and a faster
-       one runs off the edges as a pinned marker. Neither range changes as a slider moves. */
-    const TR = 20, VR = 60, box = { l: 720, r: 1330, t: 200, b: 600 };
-    const g = axes(ctx, box, [0, TR], [0, VR],
-      { xl: 't (s)', xc: ct, yl: 'v (m/s)', yc: cv, nx: 5, ny: 3, fx: (x) => fmt(x, 0), fy: (y) => fmt(y, 0) });
+    const cf = C('force'), cv = C('velocity'), ca = C('acceleration'), ct = C('time'), cb = F.ref('skydiver');
+    const p = P.value, q = POST[p], t = cy.now(), V = vtOf(p), v = speed(V, t), w = M.v * G;
+    const wN = Math.round(w), fN = Math.min(wN, Math.round(w * Math.pow(v / V, 2))), a = G * (1 - Math.pow(v / V, 2));
+    /* the scene: the skydiver seen from the side, held in the middle. One force scale for both arrows
+       (190 units for the 1,078 N of the heaviest skydiver), so equal forces are equal arrows; the speed
+       is 1.7 units a metre per second and the acceleration 12 units a metre per second squared. */
+    const bx = 320, by = 360, S = 1.2, NU = 190 / (110 * G);
+    F.rich(ctx, ['frontal area ', [fmt(q.A, 2) + ' m²', C('area')]], 40, 40, { size: 17 });
+    text(ctx, 'drag coefficient ' + fmt(q.C, 2), 40, 66, PAL.ink, { size: 17 });
+    P.only(ctx, 'spread', () => faller(ctx, bx, by, S, 'spread', cb), [0, 0]);
+    P.only(ctx, 'head', () => faller(ctx, bx, by, S, 'head', cb), [0, 0]);
+    const half = P.mix((k) => (k === 'head' ? 75 * S + 14 : 36));
+    const Lw = NU * wN, Ld = NU * fN;
+    arrow(ctx, bx, by + half, bx, by + half + Lw, cf, 5);
+    text(ctx, 'w = ' + wN + ' N', bx, by + half + Lw + 24, cf, { size: 21, weight: 600, align: 'center' });
+    if (Ld > 16) arrow(ctx, bx, by - half, bx, by - half - Ld, cf, 5);
+    text(ctx, 'F_D = ' + fN + ' N', bx, by - half - Math.max(Ld, 4) - 24, cf, { size: 21, weight: 600, align: 'center' });
+    const xv = bx - 195, xa = bx + 195, y0 = by - 50;
+    if (v > 6) arrow(ctx, xv, y0, xv, y0 + 1.7 * v, cv, 5); else dot(ctx, xv, y0, cv, true, 5);
+    text(ctx, 'v = ' + fmt(v, 1) + ' m/s', xv, y0 - 28, cv, { size: 21, weight: 600, align: 'center' });
+    if (a > 0.9) arrow(ctx, xa, y0, xa, y0 + 12 * a, ca, 5); else dot(ctx, xa, y0, ca, true, 5);
+    text(ctx, 'a = ' + fmt(a, 2) + ' m/s²', xa, y0 - 28, ca, { size: 21, weight: 600, align: 'center' });
+    /* the graph: the falling speed against time. Fixed axes, 0 to 40 s by 0 to 120 m/s: the heaviest
+       skydiver head first settles at 119 m/s in the 42 s her run lasts, and the spread-eagle skydiver the
+       figure opens with levels at 44 m/s in 16 s, so both positions are read on one frame. */
+    const TR = 40, VR = 120, box = { l: 800, r: 1340, t: 110, b: 560 };
+    const g = axes(ctx, box, [0, TR], [0, VR], { xl: 't (s)', xc: ct, yl: 'v (m/s)', yc: cv, nx: 4, ny: 4, fx: (x) => fmt(x, 0), fy: (y) => fmt(y, 0) });
+    const other = p === 'head' ? 'spread' : 'head', Vo = vtOf(other), Vd = P.mix((k) => vtOf(k));
     inbox(ctx, box, () => {
-      line(ctx, g.X(0), g.Y(V), g.X(TR), g.Y(V), cv, 3, [10, 10]);
-      if (V <= VR) text(ctx, 'v_t = ' + fmt(V, 1) + ' m/s', g.X(0) + 16, g.Y(V) - 22, cv, { size: 19, weight: 600 });
-      curve(ctx, (s) => speed(V, s), 0, Math.min(T, TR), g.X, g.Y, cv, 5, 90);
+      line(ctx, g.X(0), g.Y(Vo), g.X(TR), g.Y(Vo), alpha(cv, 0.45), 2, [10, 10]);
+      line(ctx, g.X(0), g.Y(Vd), g.X(TR), g.Y(Vd), cv, 3, [10, 10]);
+      P.curve(ctx, (k) => (s) => speed(vtOf(k), s), 0, TR, g.X, g.Y, cv, 5, 120);
       line(ctx, g.X(t), g.Y(0), g.X(t), g.Y(v), ct, 2, [4, 8]);
     });
-    pinned(ctx, box, g.X, g.Y, t, v, PAL.ink, fmt(v, 1) + ' m/s');
-    if (V > VR) text(ctx, 'v_t = ' + fmt(V, 1) + ' m/s, above this graph', g.X(TR) - 16, box.b - 24, cv, { size: 19, weight: 600, align: 'right', bg: PAL.panel });
-    headline(ctx, t < 0.05 ? 'The skydiver has just been released, so there is no drag yet and the whole weight of ' + sig3(w) + ' N is free to accelerate the fall'
-      : a < 0.05 ? 'After ' + fmt(t, 1) + ' s the drag has grown equal to the weight, ' + sig3(w) + ' N, so the net force is zero and the speed stays at ' + fmt(V, 1) + ' m/s'
-        : 'After ' + fmt(t, 1) + ' s the fall is ' + fmt(v, 1) + ' m/s, the drag is ' + sig3(FD) + ' N against a weight of ' + sig3(w) + ' N, and the acceleration is down to ' + fmt(a, 2) + ' m/s²');
-    readout(d.readout, `\\kvt = \\sqrt{\\frac{2\\km\\kg}{\\krhomat C \\karea}} = \\sqrt{\\frac{2(${fmt(M.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)}{(1.21\\ \\text{kg/m}^3)(${fmt(Cd.v, 2)})(${fmt(Ar.v, 2)}\\ \\text{m}^2)}} = ${fmt(V, 1)}\\ \\text{m/s}`,
-      'That is ' + fmt(V * 3.6, 0) + ' km/h, and the skydiver falls ' + fmt(deep, 0) + ' m in the ' + fmt(T, 1) + ' s it takes to come within a hundredth of it.');
+    text(ctx, 'v_t = ' + fmt(V, 1) + ' m/s', box.r - 12, g.Y(Vd) - 22, cv, { size: 20, weight: 600, align: 'right', bg: PAL.panel });
+    text(ctx, POST[other].name + ', ' + fmt(Vo, 1) + ' m/s', box.r - 12, g.Y(Vo) - 20, PAL.muted, { size: 17, align: 'right', bg: PAL.panel });
+    const pt = pinned(ctx, box, g.X, g.Y, Math.min(t, TR), v, cv);
+    text(ctx, 't = ' + fmt(t, 1) + ' s', Math.min(g.X(Math.min(t, TR)) + 12, box.r - 110), box.b - 20, ct, { size: 19, weight: 600, bg: PAL.panel });
+    hits = [{ x: bx, y: by, r: 90, name: 'the ' + fmt(M.v, 0) + ' kg skydiver, ' + q.name }, { x: pt.x, y: pt.y, r: 18, name: 'the speed after ' + fmt(t, 1) + ' s' }];
+    tex(d.readout, `\\kFnet = \\km\\kg - \\kFD = ${wN}\\ \\text{N} - ${fN}\\ \\text{N} = ${wN - fN}\\ \\text{N} \\\\ `
+      + `\\kvt = \\sqrt{\\frac{2\\km\\kg}{\\krhomat C \\karea}} = \\sqrt{\\frac{2(${fmt(M.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)}{(1.21\\ \\text{kg/m}^3)(${fmt(q.C, 2)})(${fmt(q.A, 2)}\\ \\text{m}^2)}} = ${fmt(V, 1)}\\ \\text{m/s} = ${fmt(V * 3.6, 0)}\\ \\text{km/h}`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => total() / 5), draw });
 })();
 
 /* =====================================================================
-   SIM: the size of the falling body. Two bodies of the same shape and
-   different size are released together; the small one settles early and
-   slowly, since its weight falls as the cube of its length and the area
-   that meets the air only as the square. The fall is finite, so it loops
-   with the scrubber.
+   SIM: the size of the falling body. Haldane's two bodies, one the
+   85 kg spread-eagle skydiver of Example 5.2 and one of the same shape
+   k times as long, so with k³ the weight and k² the frontal area. The
+   graph is the speed each has after falling a height h, beside the speed
+   with no air: the small body leaves the no-air curve within a few
+   metres and never goes faster, however deep the shaft. The idea answers
+   its sliders and no clock runs in it, so the figure is still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-size', 740);
-  const K = ctl(d.controls, { label: 'k', cls: '', min: 0.05, max: 1, step: 0.01, value: 0.1, unit: '', dec: 2, onInput: reset, aria: 'how many times shorter the second body is' });
-  const M = ctl(d.controls, { label: '\\km', cls: 'mass', min: 10, max: 120, step: 1, value: 75, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the full-size body' });
-  const H = ctl(d.controls, { label: 'h', cls: '', min: 20, max: 900, step: 10, value: 200, unit: 'm', dec: 0, onInput: reset, aria: 'height of the drop' });
-  const AREA = 0.7, CD = 1;
-  const vtA = () => Math.sqrt((2 * M.v * G) / (RHO_AIR * CD * AREA));
-  const vtB = () => vtA() * Math.sqrt(K.v);
-  const total = () => Math.max(fallTime(vtA(), H.v), fallTime(vtB(), H.v));
-  const cy = cycle(total, 1.2);
-  function reset() { cy.reset(); }
-  const body = (ctx, x, y, s, col) => (s < 0.2 ? dot(ctx, x, y, col, true, Math.max(4, 46 * s)) : skydiver(ctx, x, y, col, s));
-  function draw() {
-    const { ctx } = begin(d.c);
-    const cv = C('velocity'), ct = C('time');
-    const T = total(), t = cy.now(), VA = vtA(), VB = vtB(), TA = fallTime(VA, H.v), TB = fallTime(VB, H.v);
-    const sA = Math.min(H.v, fallen(VA, t)), sB = Math.min(H.v, fallen(VB, t));
-    const vA = speed(VA, Math.min(t, TA)), vB = speed(VB, Math.min(t, TB));
-    const mB = M.v * Math.pow(K.v, 3);
-    /* the scene: two columns with a body falling down each */
-    const top = 160, bot = 650, xA = 250, xB = 500;
-    line(ctx, 140, top - 26, 610, top - 26, PAL.muted, 3);
-    line(ctx, 140, bot, 610, bot, PAL.muted, 3);
-    const Y = (s) => top + 20 + (s / H.v) * (bot - top - 66);         /* her feet reach the ground line, not past it */
-    const cA = F.ref('body-full'), cB = F.ref('body-small');
-    text(ctx, 'full size, ' + fmt(M.v, 0) + ' kg', xA, top - 54, cA, { size: 19, weight: 600, align: 'center' });
-    text(ctx, fmt(K.v, 2) + ' times the length, ' + massLabel(mB), xB, top - 54, cB, { size: 19, weight: 600, align: 'center' });
-    for (const [x, s, sc, col] of [[xA, sA, 0.8, cA], [xB, sB, 0.8 * K.v, cB]]) {
-      line(ctx, x, top - 26, x, bot, PAL.rule, 1.5);
-      body(ctx, x, Y(s), sc, col);
-    }
-    text(ctx, 'the ground, ' + fmt(H.v, 0) + ' m down', 375, bot + 32, PAL.muted, { size: 17, align: 'center' });
-    /* the graph: the two speeds against time, each levelling on its own terminal velocity */
-    /* fixed axes: the heaviest body the slider allows falls at 53 m/s, and the smallest body dropped
-       from the greatest height takes some four minutes to land, so a graph that wide would leave the
-       200 m drop the figure opens with, which lasts 16 s and reaches 42 m/s, in a sixteenth of its
-       width. So the graph is fixed at 0 to 20 s by 0 to 60 m/s, which holds that drop comfortably,
-       and a longer fall runs off the right edge as a pinned marker. Neither range changes as a
-       slider moves. */
-    const TR = 20, VR = 60, box = { l: 700, r: 1330, t: 200, b: 590 };
-    const g = axes(ctx, box, [0, TR], [0, VR],
-      { xl: 't (s)', xc: ct, yl: 'v (m/s)', yc: cv, nx: 5, ny: 3, fx: (x) => fmt(x, 0), fy: (y) => fmt(y, 0) });
-    inbox(ctx, box, () => {
-      line(ctx, g.X(0), g.Y(VA), g.X(TR), g.Y(VA), cv, 3, [10, 10]);
-      line(ctx, g.X(0), g.Y(VB), g.X(TR), g.Y(VB), alpha(cv, 0.6), 3, [10, 10]);
-      curve(ctx, (s) => speed(VA, s), 0, Math.min(TA, TR), g.X, g.Y, cv, 5, 90);
-      curve(ctx, (s) => speed(VB, s), 0, Math.min(TB, TR), g.X, g.Y, alpha(cv, 0.6), 5, 90);
-      line(ctx, g.X(t), g.Y(0), g.X(t), g.Y(VR), ct, 2, [4, 8]);
-    });
-    /* the names over the middle of their lines, where both curves have levelled below them and clear
-       of the landing marks pinned at the right edge, on panels so the time line never runs through
-       them; when the two terminal velocities lie within a label's height of each other the second
-       name goes under its line at the right end */
-    const vlab = { size: 18, weight: 600, bg: PAL.panel }, close = g.Y(VB) - g.Y(VA) < 44;
-    text(ctx, 'full size, v_t = ' + fmt(VA, 1) + ' m/s', g.X(0.45 * TR), g.Y(VA) - 26, cv, vlab);
-    if (close) text(ctx, 'smaller body, v_t = ' + fmt(VB, 1) + ' m/s', g.X(TR) - 16, g.Y(VB) + 26, cv, { ...vlab, align: 'right' });
-    else text(ctx, 'smaller body, v_t = ' + fmt(VB, 1) + ' m/s', g.X(0.45 * TR), g.Y(VB) - 26, cv, vlab);
-    pinned(ctx, box, g.X, g.Y, TA, speed(VA, TA), cv, 'lands at ' + fmt(TA, 1) + ' s');
-    pinned(ctx, box, g.X, g.Y, TB, speed(VB, TB), cv, 'lands at ' + fmt(TB, 1) + ' s');
-    pinned(ctx, box, g.X, g.Y, t, vA, PAL.ink); pinned(ctx, box, g.X, g.Y, t, vB, PAL.ink);
-    hits = [[TA, VA, 'the full-size body lands at ' + fmt(TA, 1) + ' s'], [TB, VB, 'the smaller body lands at ' + fmt(TB, 1) + ' s']]
-      .filter((q) => q[0] <= TR).map(([tt, vv, name]) => ({ x: g.X(tt), y: g.Y(speed(vv, tt)), r: 20, name }));
-    headline(ctx, sA >= H.v && sB >= H.v ? 'Both have landed: the full-size body hit the ground at ' + fmt(vA, 1) + ' m/s and the smaller one at ' + fmt(vB, 1) + ' m/s'
-      : 'After ' + fmt(t, 1) + ' s the full-size body is falling at ' + fmt(vA, 1) + ' m/s and the smaller one at ' + fmt(vB, 1) + ' m/s');
-    readout(d.readout, `\\kvt \\propto \\sqrt{k}: \\quad (${fmt(VA, 1)}\\ \\text{m/s})\\sqrt{${fmt(K.v, 2)}} = ${fmt(VB, 1)}\\ \\text{m/s}`);
-  }
+  const d = sim('sim-size', 640);
+  const MASS = 85, AREA = 0.70, VT = Math.sqrt((2 * MASS * G) / (RHO_AIR * 1.0 * AREA));
+  const K = ctl(d.controls, { label: 'k', cls: '', min: 0.05, max: 1, step: 0.01, value: 0.1, unit: '', dec: 2, aria: 'length of the smaller body as a fraction of the full-size one', specials: [{ at: 0.1, label: 'a tenth' }] });
+  /* the height on a logarithmic slider, 1 m to 1000 m; the two marked heights are the 5.0 m tree of the
+     squirrel problem and Haldane's thousand-yard mine shaft, 914 m */
+  const hOf = (lg) => (Math.abs(lg - 2.96) < 0.005 ? 914 : Math.abs(lg - 0.7) < 0.005 ? 5 : +Math.pow(10, lg).toPrecision(2));
+  const Hh = ctl(d.controls, { label: 'h', cls: 'position', min: 0, max: 3, step: 0.01, value: 2.96, unit: '', fmt: (lg) => fmt(hOf(lg), hOf(lg) < 10 ? 1 : 0) + ' m', aria: 'height of the fall', detents: [{ v: 0.7, label: 'tree' }, { v: 2.96, label: 'mine shaft' }] });
+  /* the speed after falling the height h from rest, with a drag that goes as the square of the speed */
+  const vOf = (vt, h) => vt * Math.sqrt(1 - Math.exp((-2 * G * h) / (vt * vt)));
+  const areaLabel = (a) => (a >= 0.1 ? fmt(a, 2) + ' m²' : fmt(a * 1e4, a * 1e4 >= 100 ? 0 : 1) + ' cm²');
   let hits = [];
   F.hover(d.stage, () => hits);
-  register(d.fig, { update: (dt) => cy.step(dt, () => total() / 5), draw });
+  function draw() {
+    const { ctx } = begin(d.c);
+    const cv = C('velocity'), cx = C('position'), cm = C('mass'), cAr = C('area'), cA = F.ref('body-full'), cB = F.ref('body-small');
+    const k = K.v, h = hOf(Hh.v), VB = VT * Math.sqrt(k), vA = vOf(VT, h), vB = vOf(VB, h), free = Math.sqrt(2 * G * h);
+    headline(ctx, 'After falling ' + fmt(h, h < 10 ? 1 : 0) + ' m the full-size body lands at ' + fmt(vA, 1) + ' m/s and the smaller one at ' + fmt(vB, 1) + ' m/s; with no air both would land at ' + fmt(free, 1) + ' m/s');
+    /* the scene: the two bodies to one scale (the full-size one 2 m long, as Example 5.2 takes it), each
+       with the velocity it lands at, 4.4 units a metre per second */
+    const xa = 190, xb = 480, yb = 250, S = 1.5, gy = 590;
+    line(ctx, 50, gy, 620, gy, PAL.muted, 3);
+    text(ctx, 'the ground', 335, gy + 24, PAL.muted, { size: 17, align: 'center' });
+    const rows = [[xa, 1, cA, 'full size', vA], [xb, k, cB, fmt(k, 2) + ' times the length', vB]];
+    for (const [x, kk, col, name, vv] of rows) {
+      text(ctx, name, x, 128, col, { size: 20, weight: 600, align: 'center' });
+      F.rich(ctx, [[massLabel(MASS * kk * kk * kk), cm], ', ', [areaLabel(AREA * kk * kk), cAr]], x, 156, { size: 18, align: 'center' });
+      faller(ctx, x, yb, S * kk, 'spread', col);
+      const y1 = yb + 40 * kk + 14;
+      if (vv > 3.5) arrow(ctx, x, y1, x, y1 + 4.4 * vv, cv, 5);
+      text(ctx, fmt(vv, 1) + ' m/s', x, y1 + Math.max(4.4 * vv, 6) + 24, cv, { size: 21, weight: 600, align: 'center' });
+    }
+    /* the graph: the landing speed against the height of the fall, the height on a logarithmic axis
+       from 1 m to 1000 m. Fixed axes: the full-size body never passes 44.4 m/s, so the speed runs 0 to
+       50 m/s and the no-air curve leaves the top at 128 m. */
+    const box = { l: 760, r: 1340, t: 130, b: 520 };
+    const g = axes(ctx, box, [0, 3], [0, 50], { xl: 'height of the fall (m)', xc: cx, yl: 'v (m/s)', yc: cv, nx: 3, ny: 5, fx: (x) => String(Math.round(Math.pow(10, x))), fy: (y) => fmt(y, 0) });
+    F.plot(ctx, g, (lg) => Math.sqrt(2 * G * Math.pow(10, lg)), PAL.muted, { w: 3, dash: [10, 10] });
+    F.plot(ctx, g, (lg) => vOf(VT, Math.pow(10, lg)), cA, { w: 5 });
+    F.plot(ctx, g, (lg) => vOf(VB, Math.pow(10, lg)), cB, { w: 5 });
+    inbox(ctx, box, () => line(ctx, g.X(Hh.v), g.Y(0), g.X(Hh.v), g.Y(Math.min(50, free)), cx, 2, [4, 8]));
+    const pA = pinned(ctx, box, g.X, g.Y, Hh.v, vA, cA), pB = pinned(ctx, box, g.X, g.Y, Hh.v, vB, cB);
+    const pF = free <= 50 ? pinned(ctx, box, g.X, g.Y, Hh.v, free, PAL.muted) : null;
+    F.legend(ctx, g, [{ s: 'no air', color: PAL.muted, w: 3, dash: [10, 10] }, { s: 'full size', color: cA, w: 5 }, { s: 'smaller', color: cB, w: 5 }], { corner: 'tl' });
+    hits = [{ x: pA.x, y: pA.y, r: 16, name: 'the full-size body lands at ' + fmt(vA, 1) + ' m/s' }, { x: pB.x, y: pB.y, r: 16, name: 'the smaller body lands at ' + fmt(vB, 1) + ' m/s' },
+      { x: xa, y: yb, r: 100, name: 'the full-size body, ' + massLabel(MASS) }, { x: xb, y: yb, r: Math.max(24, 100 * k), name: 'the smaller body, ' + massLabel(MASS * k * k * k) }];
+    if (pF) hits.push({ x: pF.x, y: pF.y, r: 16, name: 'with no air, ' + fmt(free, 1) + ' m/s' });
+    tex(d.readout, `\\kvt = \\sqrt{\\frac{2(k^3\\km)\\kg}{\\krhomat C(k^2\\karea)}} = \\sqrt{k}\\,\\sqrt{\\frac{2\\km\\kg}{\\krhomat C\\karea}} = \\sqrt{${fmt(k, 2)}}\\,(${fmt(VT, 1)}\\ \\text{m/s}) = ${fmt(VB, 1)}\\ \\text{m/s}`);
+  }
+  register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
@@ -341,7 +323,6 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
      ρ v (2r) / η is of order one or less. Solving Re = 1 for the radius gives the largest bead this
      oil will carry smoothly, past which the drawing has no claim to make. */
   const rSmooth = () => 1000 * Math.cbrt((9 * ETA.v * ETA.v) / (4 * RHO_OIL * RHO_STEEL * G));
-  const reynolds = (rmm) => (RHO_OIL * steady(rmm) * 2 * (rmm / 1000)) / ETA.v;
   const mass = () => RHO_STEEL * (4 / 3) * Math.PI * Math.pow(R.v / 1000, 3);
   const total = () => DROP / steady(R.v);
   const cy = cycle(total, 1.2);
@@ -397,12 +378,11 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     }
     pinned(ctx, box, g.X, g.Y, R.v, v * 1000, rough ? PAL.muted : cv, fmt(v * 1000, 1) + ' mm/s');
     topline(ctx, rough
-      ? 'A bead of ' + fmt(R.v, 1) + ' mm is too large for this oil to carry smoothly, so Stokes\u2019 law no longer holds and the ' + fmt(v * 1000, 1) + ' mm/s drawn here is only what it would predict'
-      : s >= DROP - 1e-9 ? 'After ' + fmt(T, 1) + ' s the bead has reached the bottom, ' + fmt(DROP * 100, 0) + ' cm down, at the ' + fmt(v * 1000, 1) + ' mm/s it held the whole way'
-        : 'After ' + fmt(t, 1) + ' s the ' + fmt(R.v, 1) + ' mm bead has sunk ' + fmt(s * 100, 1) + ' cm at a steady ' + fmt(v * 1000, 1) + ' mm/s, since the drag matched its weight almost at once');
-    readout(d.readout, `\\kFs = 6\\pi\\krad\\ketav\\kv = 6\\pi(${sciTex(R.v / 1000, 2)}\\ \\text{m})(${fmt(ETA.v, 2)}\\ \\text{kg/(m}\\cdot\\text{s)})(${fmt(v, 4)}\\ \\text{m/s}) = ${sciTex(w, 2)}\\ \\text{N}`,
-      'That is the weight of the bead, ' + massLabel(mass()) + ' of steel, so the speed never changes and the ' + fmt(DROP * 100, 0) + ' cm fall takes ' + fmt(T, 1) + ' s.'
-      + (rough ? ' Here the Reynolds number is ' + fmt(reynolds(R.v), 0) + ', past the one the smooth flow of Stokes\u2019 law needs, so the real bead falls more slowly than the line says.' : ''));
+      ? 'The flow round a ' + fmt(R.v, 1) + ' mm bead in this oil is not smooth, so Stokes\u2019 law no longer holds and ' + fmt(v * 1000, 1) + ' mm/s is only what it would predict'
+      : s >= DROP - 1e-9 ? 'The bead reached the bottom, ' + fmt(DROP * 100, 0) + ' cm down, after ' + fmt(T, 1) + ' s at a steady ' + fmt(v * 1000, 1) + ' mm/s'
+        : 'After ' + fmt(t, 1) + ' s the bead has sunk ' + fmt(s * 100, 1) + ' cm at a steady ' + fmt(v * 1000, 1) + ' mm/s');
+    tex(d.readout, `\\kFs = 6\\pi\\krad\\ketav\\kv = 6\\pi(${sciTex(R.v / 1000, 2)}\\ \\text{m})(${fmt(ETA.v, 2)}\\ \\text{kg/(m}\\cdot\\text{s)})(${fmt(v, 4)}\\ \\text{m/s}) = ${sciTex(w, 2)}\\ \\text{N} \\\\ `
+      + `\\km\\kg = (${sciTex(mass(), 2)}\\ \\text{kg})(9.80\\ \\text{m/s}^2) = ${sciTex(w, 2)}\\ \\text{N}`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => total() / 5), draw });
 })();

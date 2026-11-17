@@ -217,59 +217,66 @@ function crate(ctx, x, y, w, h, col) {
 })();
 
 /* =====================================================================
-   FIGURE 5.4: the skier on a slope, her weight resolved along the slope
-   and into it, and the free-body diagram beside her. Moving: she slides
-   down the slope and gains speed, since the friction is less than the
-   component of her weight along the slope.
+   FIGURE 5.4: the skier of Example 5.1 on her slope. Her weight is split
+   into the part into the slope, which the normal force answers, and the
+   part along it, which the friction opposes. Beside her the two forces
+   along the slope are graphed against the angle, so the angle at which
+   they balance is seen as a crossing. Moving: she comes in at 2.0 m/s
+   and gains or loses speed as the two forces decide.
 ===================================================================== */
 (function () {
-  const d = sim('sim-skier', 740);
-  const m = ctl(d.controls, { label: '\\km', cls: 'mass', min: 40, max: 120, step: 1, value: 62, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skier' });
-  const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 5, max: 45, step: 1, value: 25, unit: '°', dec: 0, onInput: reset, aria: 'angle of the slope' });
-  const fk = ctl(d.controls, { label: '\\kfk', cls: 'force', min: 0, max: 200, step: 0.5, value: 45, unit: 'N', dec: 1, onInput: reset, aria: 'friction on the skier' });
-  const T = 4;
-  const cy = cycle(() => T, 1.2);
+  const d = sim('sim-skier', 780);
+  const atanDeg = (x) => Math.atan(x) / RAD;
+  const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 45, step: 1, value: 25, unit: '°', dec: 0, onInput: reset, aria: 'angle of the slope',
+    specials: [{ at: () => atanDeg(mu.v), label: 'steady speed' }] });
+  const mu = ctl(d.controls, { label: '\\mu_{\\text{k}}', cls: '', key: 'mu-k', min: 0, max: 0.3, step: 0.001, value: 0.082, unit: '', dec: 4, onInput: reset, aria: 'coefficient of kinetic friction',
+    specials: [{ at: () => Math.tan(th.v * RAD), label: 'steady speed' }] });
+  const m = ctl(d.controls, { label: '\\km', cls: 'mass', min: 40, max: 90, step: 1, value: 62, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the skier' });
+  /* Example 5.1 gives the friction as 45.0 N, which is a coefficient of 0.0817; the book rounds it to 0.082 */
+  mu.set(0.0817);
+  /* she comes onto the stretch at 2.0 m/s and covers 7 m of it, or stops on it */
+  const V0 = 2, RUN = 7, PXM = 40;
+  const acc = () => G * (Math.sin(th.v * RAD) - mu.v * Math.cos(th.v * RAD));
+  const Tof = () => {
+    const a = acc(), disc = V0 * V0 + 2 * a * RUN;
+    if (Math.abs(a) < 1e-6) return RUN / V0;
+    if (disc < 0) return V0 / -a + 0.8;
+    return (-V0 + Math.sqrt(disc)) / a;
+  };
+  const cy = cycle(Tof, 1.2);
   function reset() { cy.reset(); }
-  /* one fixed scale in every state, so a heavier skier has longer arrows: 1000 N is 150 units on
-     the slope and 120 on the free-body diagram (her 1176 N at 120 kg is the longest) */
-  const S = 0.15, S2 = 0.12, SC = 1.5;
+  const SF = 0.32;                                 /* 1 N is 0.32 units for every force arrow: her weight at 90 kg is the longest, 282 */
   let hits = [];
   function draw() {
     const { ctx } = begin(d.c);
-    const t = REDUCED ? T : cy.now();
+    const T = Tof(), t = REDUCED ? T : Math.min(cy.now(), T);
     const a0 = th.v * RAD, cs = Math.cos(a0), sn = Math.sin(a0);
-    const w = m.v * G, wp = w * cs, wx = w * sn, a = (wx - fk.v) / m.v, mu = fk.v / wp;
-    const steady = Math.abs(a) < 0.02;
-    /* She starts from rest where the slope will accelerate her. Where the friction balances the
-       weight along the slope she is already gliding at 2.0 m/s, and where the friction is the larger
-       she slides to a stop. */
-    const V0 = a > 0.02 ? 0 : 2;
-    const tStop = a < -0.02 ? V0 / -a : Infinity;
-    const vOf = (q) => Math.max(0, V0 + a * Math.min(q, tStop));
-    const sOf = (q) => { const u = Math.min(q, tStop); return V0 * u + 0.5 * a * u * u; };
-    const frac = Math.min(1, sOf(t) / Math.max(0.01, sOf(T)));
-    const v = vOf(t);
+    const w = m.v * G, wp = w * cs, wx = w * sn, f = mu.v * wp, a = acc();
+    const tStop = a < 0 ? V0 / -a : Infinity, tq = Math.min(t, tStop);
+    const v = Math.max(0, V0 + a * tq), s = Math.min(RUN, V0 * tq + 0.5 * a * tq * tq);
+    const steady = Math.abs(a) < 0.005;
     const hl = headline(ctx, steady
-      ? 'The ' + fmt(fk.v, 1) + ' N of friction balances the ' + fmt(wx, 0) + ' N along the slope, so she glides on down at a steady ' + fmt(V0, 1) + ' m/s'
+      ? 'On a ' + fmt(th.v, th.v % 1 ? 1 : 0) + '° slope the ' + fmt(wx, 0) + ' N of her weight along it only balances the friction, so she keeps her ' + fmt(V0, 1) + ' m/s'
       : a > 0
-        ? 'On a ' + fmt(th.v, 0) + '° slope her ' + fmt(w, 0) + ' N weight gives ' + fmt(wx, 0) + ' N along the slope and ' + fmt(wp, 0) + ' N into it, so $\\mu_{\\text{k}} = ' + fmt(mu, 3) + '$'
-        : v > 0.05
-          ? 'The ' + fmt(fk.v, 1) + ' N of friction is more than the ' + fmt(wx, 0) + ' N along the slope, so the ' + fmt(V0, 1) + ' m/s she was gliding at is falling away'
-          : 'The ' + fmt(fk.v, 1) + ' N of friction is more than the ' + fmt(wx, 0) + ' N along the slope, so she has slid to a stop');
-    const lb = F.labeller(ctx, 740, { headline: hl });
-    /* the slope, kept inside the canvas at every angle; u runs down it and n stands out of it */
-    const bx = 960, by = 600, L = Math.min(700, 340 / sn, 800 / cs);
-    const tx = bx - L * cs, ty = by - L * sn, ux = cs, uy = sn, nx = sn, ny = -cs;
-    ctx.save(); ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(bx, by); ctx.lineTo(bx, by + 70); ctx.lineTo(tx, by + 70); ctx.closePath(); ctx.fill(); ctx.restore();
-    line(ctx, tx, ty, bx, by, PAL.muted, 3);
-    line(ctx, tx, by, bx, by, PAL.rule, 2, [10, 10]);
-    F.angleArc(ctx, { x: bx, y: by }, 80, Math.PI - a0, Math.PI, fmt(th.v, 0) + '°', lb, C('angle'));
-    /* P is the snow under her boots, O the soles on top of the skis */
-    const pos = 100 + (L - 330) * frac;
-    const P = { x: tx + ux * pos, y: ty + uy * pos }, O = { x: P.x + nx * 6, y: P.y + ny * 6 };
+        ? 'On a ' + fmt(th.v, th.v % 1 ? 1 : 0) + '° slope, ' + fmt(wx, 0) + ' N of her weight pulls her along it against ' + fmt(f, 1) + ' N of friction, so she gains speed'
+        : 'On a ' + fmt(th.v, th.v % 1 ? 1 : 0) + '° slope the ' + fmt(f, 1) + ' N of friction is more than the ' + fmt(wx, 0) + ' N of her weight along it, so she slows and stops');
+    const lb = F.labeller(ctx, 780, { headline: hl });
+    const cf = C('force'), c = F.ref('skier');
+    /* the hill: a plateau, the slope through a fixed middle point, and the run-out; u runs down the slope, n stands out of it */
+    const M = { x: 470, y: 410 }, Lh = Math.min(400 / cs, sn > 0 ? 230 / sn : 1e9);
+    const ux = cs, uy = sn, nx = sn, ny = -cs;
+    const A = { x: M.x - Lh * ux, y: M.y - Lh * uy }, E = { x: M.x + Lh * ux, y: M.y + Lh * uy };
+    ctx.save(); ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(40, A.y); ctx.lineTo(A.x, A.y); ctx.lineTo(E.x, E.y); ctx.lineTo(930, E.y); ctx.lineTo(930, 780); ctx.lineTo(40, 780); ctx.closePath(); ctx.fill(); ctx.restore();
+    line(ctx, 40, A.y, A.x, A.y, PAL.muted, 3); line(ctx, A.x, A.y, E.x, E.y, PAL.muted, 3); line(ctx, E.x, E.y, 930, E.y, PAL.muted, 3);
+    if (th.v > 0) {
+      line(ctx, E.x - 230, E.y, E.x, E.y, PAL.rule, 2, [10, 10]);
+      F.angleArc(ctx, E, 110, Math.PI - a0, Math.PI, fmt(th.v, th.v % 1 ? 1 : 0) + '°', lb, C('angle'));
+    }
+    /* P is the snow under her boots */
+    const pos = -170 + PXM * s;
+    const P = { x: M.x + ux * pos, y: M.y + uy * pos }, O = { x: P.x + nx * 6, y: P.y + ny * 6 };
     const along = (q, k, o = 0) => ({ x: q.x + ux * k + nx * o, y: q.y + uy * k + ny * o });
-    const c = F.ref('skier');
-    /* the skis lie along the slope and turn up at the tips; she stands plumb over them, poles back */
+    const SC = 1.25;
     const tail = along(O, -60 * SC), tip = along(O, 52 * SC);
     const POSE = F.silhouette.pose('crouch');
     POSE.hands.forEach((h) => {
@@ -281,62 +288,69 @@ function crate(ctx, x, y, w, h, col) {
     const curl = along(O, 62 * SC, 8 * SC);
     line(ctx, tip.x, tip.y, curl.x, curl.y, c, 5);
     F.silhouette(ctx, { x: O.x, y: O.y, s: SC, pose: 'crouch', color: c, feet: [{ x: 14 * cs, y: 14 * sn }, { x: -14 * cs, y: -14 * sn }] });
-    /* the weight and its two parts leave her hips; the normal force and the friction act where the
-       skis meet the snow. Where an arrow crosses her it is laid on a halo, so it reads in front. */
-    const cm = { x: O.x, y: O.y - 54 * SC };
+    /* the forces, every one at 0.32 units to the newton. The weight is drawn from the snow under her
+       boots, as the book draws it, with its two parts head to tail beside it; the normal force leaves
+       the same point and the friction lies along the skis */
     const seg = (p, dx, dy) => ({ x1: p.x, y1: p.y, x2: p.x + dx, y2: p.y + dy });
-    const sw = seg(cm, 0, w * S), sperp = seg(cm, -nx * wp * S, -ny * wp * S), spar = seg(cm, ux * wx * S, uy * wx * S);
-    const sN = seg(P, nx * wp * S, ny * wp * S);
-    const fl = Math.max(24, fk.v * S), sf = seg(tail, -ux * fl, -uy * fl);
-    const part = (s, k) => { const L3 = Math.hypot(s.x2 - s.x1, s.y2 - s.y1) || 1, q = Math.min(1, k / L3); return { x1: s.x1, y1: s.y1, x2: s.x1 + (s.x2 - s.x1) * q, y2: s.y1 + (s.y2 - s.y1) * q }; };
-    [part(sw, 54 * SC), part(sperp, 36 * SC), part(spar, 36 * SC), part(sN, 100 * SC)].forEach((s) => lb.halo(s, 8));
-    const draws = [[sw, 5], [sperp, 4], [spar, 4], [sN, 5], [sf, 5]];
-    draws.forEach(([s, wd]) => arrow(ctx, s.x1, s.y1, s.x2, s.y2, C('force'), wd));
+    const sw = seg(P, 0, w * SF), sperp = seg(P, -nx * wp * SF, -ny * wp * SF);
+    const spar = { x1: sperp.x2, y1: sperp.y2, x2: sw.x2, y2: sw.y2 };
+    const sN = seg(P, nx * wp * SF, ny * wp * SF);
+    const ft = along(tail, 0, 10), sf = seg(ft, -ux * f * SF, -uy * f * SF);
+    lb.halo({ x1: sN.x1, y1: sN.y1, x2: sN.x2, y2: sN.y2 }, 8);
+    arrow(ctx, sperp.x1, sperp.y1, sperp.x2, sperp.y2, alpha(cf, 0.75), 3);
+    arrow(ctx, spar.x1, spar.y1, spar.x2, spar.y2, alpha(cf, 0.75), 3);
+    arrow(ctx, sw.x1, sw.y1, sw.x2, sw.y2, cf, 5);
+    arrow(ctx, sN.x1, sN.y1, sN.x2, sN.y2, cf, 5);
+    arrow(ctx, sf.x1, sf.y1, sf.x2, sf.y2, cf, 5);
+    /* the slope's own angle again, between the weight and its part into the slope */
+    if (th.v >= 12) {
+      const r = Math.min(120, 0.6 * wp * SF);
+      ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(P.x, P.y, r, Math.PI / 2, Math.PI / 2 + a0); ctx.stroke(); ctx.restore();
+      const bm = Math.PI / 2 + a0 / 2;
+      text(ctx, fmt(th.v, 0) + '°', P.x + (r + 22) * Math.cos(bm), P.y + (r + 22) * Math.sin(bm), C('angle'), { size: 19, weight: 600, align: 'center', base: 'middle' });
+    }
+    const mid = (q) => ({ x: (q.x1 + q.x2) / 2, y: (q.y1 + q.y2) / 2 });
+    lb.add('w', sw.x2, sw.y2 - 0.3 * w * SF, 1, 0, cf, 22, 14);
+    lb.add('w_{⊥}', mid(sperp).x, mid(sperp).y, -ux, -uy, cf, 22, 14);
+    if (wx * SF > 30) lb.add('w_{∥}', mid(spar).x, mid(spar).y, -nx, -ny, cf, 22, 14);
+    lb.add('N', sN.x2, sN.y2, nx, ny, cf, 22, 14);
+    lb.add('f', sf.x2, sf.y2, -ux * 0.7 + nx * 0.7, -uy * 0.7 + ny * 0.7, cf, 22, 14);
     hits = [
-      { x: sw.x2, y: sw.y2, r: 26, name: 'w, her whole weight' },
-      { x: sperp.x2, y: sperp.y2, r: 26, name: 'w⊥, the part of the weight into the slope' },
-      { x: spar.x2, y: spar.y2, r: 26, name: 'w∥, the part of the weight along the slope' },
-      { x: sN.x2, y: sN.y2, r: 26, name: 'N, the normal force of the snow' },
-      { x: sf.x2, y: sf.y2, r: 26, name: 'f, the friction of the snow on her skis' },
-      { x: cm.x, y: cm.y - 30, r: 50, name: 'the skier' },
+      { x: mid(sw).x, y: mid(sw).y, r: 30, name: 'w, her weight, ' + fmt(w, 0) + ' N' },
+      { x: mid(sperp).x, y: mid(sperp).y, r: 30, name: 'w⊥, the part of her weight into the slope, ' + fmt(wp, 0) + ' N' },
+      { x: mid(spar).x, y: mid(spar).y, r: 30, name: 'w∥, the part of her weight along the slope, ' + fmt(wx, 0) + ' N' },
+      { x: mid(sN).x, y: mid(sN).y, r: 30, name: 'N, the normal force of the snow, ' + fmt(wp, 0) + ' N' },
+      { x: sf.x2, y: sf.y2, r: 30, name: 'f, the friction of the snow on her skis, ' + fmt(f, 1) + ' N' },
+      { x: O.x, y: O.y - 90, r: 50, name: 'the skier, ' + fmt(m.v, 0) + ' kg' },
     ];
     if (v > 0.05) {
-      const vl = 40 + 80 * Math.min(1, v / 28), v0 = along(P, 70 * SC, 26), v1 = along(P, 70 * SC + vl, 26);
+      const v0 = along(tip, 40, 34), v1 = along(tip, 40 + 12 * v, 34);
       arrow(ctx, v0.x, v0.y, v1.x, v1.y, C('velocity'), 5);
-      lb.beside({ x1: v0.x, y1: v0.y, x2: v1.x, y2: v1.y }, 'left', 'v = ' + fmt(v, 1) + ' m/s', C('velocity'), 20);
+      lb.add('v = ' + fmt(v, 1) + ' m/s', v1.x, v1.y, ux, uy, C('velocity'), 20, 12);
     }
-    /* the free-body diagram, beside the slope as the book draws it, and the one place the five
-       forces are named and their values written */
-    const bl = 1050, bt = 110, br = 1390, bb = 700, fx = 1220, fy = 330;
-    ctx.save(); ctx.strokeStyle = PAL.rule; ctx.lineWidth = 2; ctx.strokeRect(bl, bt, br - bl, bb - bt); ctx.restore();
-    text(ctx, 'free-body diagram', fx, bt + 26, PAL.muted, { size: 17, align: 'center' });
-    lb.block(fx - 80, bt + 10, fx + 80, bt + 42);
-    line(ctx, fx - 110 * cs, fy - 110 * sn, fx + 110 * cs, fy + 110 * sn, PAL.rule, 2, [8, 8]);
-    line(ctx, fx - 110 * sn, fy + 110 * cs, fx + 110 * sn, fy - 110 * cs, PAL.rule, 2, [8, 8]);
-    const fl2 = Math.max(24, fk.v * S2);
-    const FBD = [
-      { dx: 0, dy: w * S2, s: 'w', val: fmt(w, 0) + ' N', wid: 4 },
-      { dx: -nx * wp * S2, dy: -ny * wp * S2, s: 'w_{⊥}', val: fmt(wp, 0) + ' N', wid: 3 },
-      { dx: ux * wx * S2, dy: uy * wx * S2, s: 'w_{∥}', val: fmt(wx, 0) + ' N', wid: 3 },
-      { dx: nx * wp * S2, dy: ny * wp * S2, s: 'N', val: fmt(wp, 0) + ' N', wid: 4 },
-      { dx: -ux * fl2, dy: -uy * fl2, s: 'f', val: fmt(fk.v, 1) + ' N', wid: 3 },
-    ];
-    FBD.forEach((q) => {
-      arrow(ctx, fx, fy, fx + q.dx, fy + q.dy, C('force'), q.wid);
-      const L4 = Math.hypot(q.dx, q.dy) || 1;
-      lb.add(q.s, fx + q.dx, fy + q.dy, q.dx / L4, q.dy / L4, C('force'), 20, 20);
-    });
-    dot(ctx, fx, fy, c, true, 8);
-    FBD.forEach((q, i) => {
-      text(ctx, q.s, bl + 30, 540 + i * 32, C('force'), { size: 20, weight: 600 });
-      text(ctx, q.val, br - 30, 540 + i * 32, C('force'), { size: 20, weight: 600, align: 'right' });
-    });
+    /* the two forces along the slope against its angle, for her mass and this snow. Fixed axes:
+       0 to 45° and 0 to 700 N, which holds the 624 N of a 90 kg skier's weight along a 45° slope */
+    const box = { l: 1050, r: 1370, t: 190, b: 600 };
+    const ax = axes(ctx, box, [0, 45], [0, 700], { xl: 'angle of the slope (°)', xc: C('angle'), yl: 'force along the slope (N)', yc: cf, nx: 3, ny: 7, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 0) });
+    const fW = (q) => w * Math.sin(q * RAD), fF = (q) => mu.v * w * Math.cos(q * RAD);
+    F.plot(ctx, ax, fW, cf, { w: 5 });
+    F.plot(ctx, ax, fF, cf, { w: 4, dash: [10, 10] });
+    const gx = ax.X(th.v), yW = ax.Y(wx), yF = ax.Y(f);
+    line(ctx, gx, box.b, gx, Math.min(yW, yF), PAL.muted, 2, [4, 8]);
+    line(ctx, gx, yW, gx, yF, PAL.ink, 4);
+    const cross = atanDeg(mu.v);
+    if (mu.v > 0 && cross <= 45) dot(ctx, ax.X(cross), ax.Y(fW(cross)), cf, false, 10);
+    dot(ctx, gx, yW, cf, true, 9); dot(ctx, gx, yF, cf, true, 9);
+    const right = th.v < 30;
+    text(ctx, 'net ' + fmt(Math.abs(wx - f), 0) + ' N', gx + (right ? 16 : -16), (yW + yF) / 2, PAL.ink, { size: 19, weight: 600, align: right ? 'left' : 'right', base: 'middle', bg: PAL.panel });
+    F.legend(ctx, ax, [{ s: 'w_{∥}, her weight along the slope', color: cf, w: 5 }, { s: 'f, the friction', color: cf, w: 4, dash: [10, 10] }], { corner: 'above' });
     lb.flush();
-    readout(d.readout, `\\mu_{\\text{k}} = \\frac{\\kfk}{\\kN} = \\frac{\\kfk}{\\km\\kg\\cos\\ktheta} = \\frac{${fmt(fk.v, 1)}\\ \\text{N}}{(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(${fmt(cs, 3)})} = ${fmt(mu, 3)}`,
-      'Down the slope $\\ka = \\kg\\sin\\ktheta - \\kfk/\\km = ' + fmt(a, 2) + '\\ \\text{m/s}^2$.');
+    const an = fmt(th.v, th.v % 1 ? 1 : 0);
+    tex(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = \\mu_{\\text{k}}\\km\\kg\\cos\\ktheta = (${fmt(mu.v, 4)})(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(\\cos ${an}^\\circ) = ${fmt(f, 1)}\\ \\text{N} \\\\ `
+      + `\\ka = \\frac{\\kwpar - \\kfk}{\\km} = \\frac{${fmt(wx, 0)}\\ \\text{N} - ${fmt(f, 1)}\\ \\text{N}}{${fmt(m.v, 0)}\\ \\text{kg}} = ${fmt(a, 2)}\\ \\text{m/s}^2`);
   }
   hover(d.stage, () => hits);
-  register(d.fig, { update: (dt) => cy.step(dt, () => T / 4.5), draw });
+  register(d.fig, { update: (dt) => cy.step(dt, () => 0.45), draw });
 })();
 
 /* =====================================================================
@@ -390,74 +404,5 @@ function crate(ctx, x, y, w, h, col) {
       'The lean is drawn in proportion to the friction to make it visible; it is not a measured angle.');
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => T / 5), draw });
-})();
-
-/* =====================================================================
-   The figure the last two problems refer to: the block of ice pushed at
-   25° below the horizontal and pulled at 25° above it. A faithful copy,
-   with no sliders and nothing moving.
-===================================================================== */
-(function () {
-  const d = sim('fig-ice', 540);
-  const A = 25 * RAD, ca = Math.cos(A), sa = Math.sin(A);
-  const iceY = 440, s = 1.3, bw = 150;
-  /* one block in both parts, as tall as the pushing hands are high: the push pose's shoulder with
-     the arm reaching 25° below the horizontal puts the hands on the block's top face */
-  const SH = F.silhouette.pose('push').shoulder, REACH = 0.95 * 60;
-  const HAND = { x: SH.x + REACH * ca, y: SH.y + REACH * sa };
-  const bh = -HAND.y * s;
-  let hits = [];
-  function lake(ctx, x0, label) {
-    strip(ctx, x0 + 20, x0 + 640, iceY + 16, 32);
-    text(ctx, 'frozen lake', x0 + 24, iceY + 60, PAL.muted, { size: 17 });
-    text(ctx, label, x0 + 24, 120, PAL.ink, { size: 24, weight: 700 });
-  }
-  function ice(ctx, bx) {
-    block(ctx, bx, iceY - bh / 2, bw, bh, F.ref('ice-block'));
-    text(ctx, '45.0 kg', bx, iceY - 24, C('mass'), { size: 19, weight: 600, align: 'center' });
-    hits.push({ x: bx, y: iceY - bh / 2, r: 60, name: 'the block of ice, 45.0 kg' });
-  }
-  function draw() {
-    const { ctx } = begin(d.c);
-    hits = [];
-    const hl = headline(ctx, 'The same 45.0 kg block of ice is pushed at 25° below the horizontal and pulled at 25° above it');
-    const lb = F.labeller(ctx, 540, { headline: hl });
-    const cc = F.ref('contestant');
-    /* (a) he leans in with his hands on the block's top face, where the push begins */
-    lake(ctx, 20, '(a) pushing');
-    const bxa = 20 + 380, bla = bxa - bw / 2, bta = iceY - bh;
-    const hand = { x: bla + 6, y: bta }, pxa = hand.x - HAND.x * s;
-    F.silhouette(ctx, { x: pxa, y: iceY, s, pose: 'push', color: cc, hands: [HAND, { x: HAND.x + 2, y: HAND.y + 4 }] });
-    hits.push({ x: pxa + 10, y: iceY - 100, r: 70, name: 'the contestant' });
-    ice(ctx, bxa);
-    const pa = { x1: hand.x, y1: hand.y, x2: hand.x + 120 * ca, y2: hand.y + 120 * sa };
-    F.angleArc(ctx, hand, 72, -A, 0, '25°', lb, C('angle'));
-    arrow(ctx, pa.x1, pa.y1, pa.x2, pa.y2, C('force'), 5);
-    lb.beside(pa, 'right', 'F', C('force'), 22, { offset: 0.6 });
-    line(ctx, 700, 100, 700, 500, PAL.rule, 2);
-    /* (b) he strides away with the rope from the block's face over his shoulder to his hands;
-       standing where the rope reaches his shoulder at 25° above the horizontal */
-    lake(ctx, 720, '(b) pulling');
-    const bxb = 720 + 210, brb = bxb + bw / 2;
-    const tie = { x: brb, y: iceY - 60 };
-    const PP = F.silhouette.pose('pull'), top = { x: PP.shoulder.x, y: PP.shoulder.y - 8 };
-    const rise = -top.y * s - (iceY - tie.y), pxb = tie.x + rise / Math.tan(A) - top.x * s;
-    const W = (q) => ({ x: pxb + q.x * s, y: iceY + q.y * s });
-    const handsB = [{ x: PP.shoulder.x + 22, y: PP.shoulder.y + 6 }, { x: PP.shoulder.x + 26, y: PP.shoulder.y + 12 }];
-    const sh = W(top), h0 = W(handsB[0]);
-    ice(ctx, bxb);
-    line(ctx, tie.x, tie.y, sh.x, sh.y, PAL.muted, 3);
-    F.silhouette(ctx, { x: pxb, y: iceY, s, pose: 'pull', color: cc, hands: handsB });
-    line(ctx, sh.x, sh.y, h0.x, h0.y, PAL.muted, 3);
-    hits.push({ x: pxb + 10, y: iceY - 100, r: 70, name: 'the contestant' });
-    const pb = { x1: tie.x, y1: tie.y, x2: tie.x + 120 * ca, y2: tie.y - 120 * sa };
-    F.angleArc(ctx, tie, 72, 0, A, '25°', lb, C('angle'));
-    arrow(ctx, pb.x1, pb.y1, pb.x2, pb.y2, C('force'), 5);
-    lb.beside(pb, 'left', 'F′', C('force'), 22, { offset: 0.6 });
-    lb.flush();
-    readout(d.readout, '\\text{the block of ice: } \\km = 45.0\\ \\text{kg},\\quad \\ktheta = 25^\\circ');
-  }
-  hover(d.stage, () => hits);
-  register(d.fig, { update: () => {}, draw });
 })();
 };

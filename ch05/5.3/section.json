@@ -37,6 +37,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -124,21 +127,12 @@
   },
   {
    "id": "sim-rod",
-   "kind": "sim",
+   "kind": "photo",
    "number": "5.13",
-   "originals": [
-    "/media/ch05/Figure_06_03_03a-d0a3.jpg"
-   ],
-   "original_caption": "(a) Tension. The rod is stretched a length ΔL when a force is applied parallel to its length. (b) Compression. The same rod is compressed by forces with the same magnitude in the opposite direction. For very small deformations and uniform materials, ΔL is approximately the same for the same magnitude of tension or compression. For larger deformations, the cross-sectional area changes as the rod is compressed or stretched.",
    "widths": [
     175
    ],
-   "draws": [
-    "force",
-    "position",
-    "elastic-modulus",
-    "area"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -159,6 +153,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "line names on panels, note cut"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   },
@@ -212,21 +210,12 @@
   },
   {
    "id": "sim-shear",
-   "kind": "sim",
+   "kind": "photo",
    "number": "5.16",
-   "originals": [
-    "/media/ch05/Figure_06_03_06a.jpg"
-   ],
-   "original_caption": "Shearing forces are applied perpendicular to the length L₀ and parallel to the area A, producing a deformation Δx. Vertical forces are not shown, but it should be kept in mind that in addition to the two shearing forces, F, there must be supporting forces to keep the object from rotating. The distorting effects of these supporting forces are ignored in this treatment. The weight of the object also is not shown, since it is usually negligible compared with forces large enough to cause significant deformations.",
    "widths": [
     200
    ],
-   "draws": [
-    "force",
-    "position",
-    "elastic-modulus",
-    "area"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -247,6 +236,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "push arrow and labels clear of the case, note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   },
@@ -890,24 +883,10 @@
    ]
   },
   {
-   "id": "rod",
-   "label": "the rod",
-   "figures": [
-    "sim-rod"
-   ]
-  },
-  {
    "id": "tendon",
    "label": "the tendon",
    "figures": [
     "sim-tendon"
-   ]
-  },
-  {
-   "id": "bookcase",
-   "label": "the bookcase",
-   "figures": [
-    "sim-shear"
    ]
   },
   {
