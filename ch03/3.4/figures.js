@@ -243,10 +243,10 @@ function tower(ctx, x, y, h, color) {
     /* the rock and its velocity; at impact the components and the angle below the horizontal */
     const px = X(x), py = Y(y);
     if (done) {
-      arrow(ctx, px, py, px + vxS * K, py, alpha(cv, 0.6), 3.5); lab.add('v_x = ' + fmt(vxS, 1) + ' m/s', px + vxS * K, py, 0.6, -1, cv, 19, 14);
-      arrow(ctx, px, py, px, py - vyS * K, alpha(cv, 0.6), 3.5); lab.add('v_y = ' + sgn(vyS) + fmt(Math.abs(vyS), 1) + ' m/s', px, py - vyS * K * 0.7, -1, 0, cv, 19, 16);
+      arrow(ctx, px, py, px + vxS * K, py, alpha(cv, 0.6), 3.5); lab.add('v_x', px + vxS * K, py, 0.4, -1, cv, 20, 14);
+      arrow(ctx, px, py, px, py - vyS * K, alpha(cv, 0.6), 3.5); lab.add('v_y', px, py - vyS * K * 0.8, -1, 0, cv, 20, 14);
       arrow(ctx, px, py, px + vxS * K, py - vyS * K, cv, 5);
-      lab.add('v = ' + fmt(vS, 1) + ' m/s', px + vxS * K, py - vyS * K, 0.5, 1, cv, 20, 16);
+      lab.add('v = ' + fmt(vS, 1) + ' m/s', px + vxS * K, py - vyS * K, 0.3, 1, cv, 20, 16);
       ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px, py, 44, 0, -thS * RAD, false); ctx.stroke(); ctx.restore();
       lab.add('θ_v = ' + sgn(thS) + fmt(Math.abs(thS), 1) + '°', px + 44 * Math.cos((thS * RAD) / 2), py - 44 * Math.sin((thS * RAD) / 2), 1, 0.25, C('angle'), 19, 18);
     } else if (tau > 0.05) {
@@ -264,7 +264,7 @@ function tower(ctx, x, y, h, color) {
     ctx.save(); ctx.beginPath(); ctx.rect(bx.l, bx.t, bx.r - bx.l, bx.b - bx.t); ctx.clip();
     curve(ctx, f.y, -3, 0, g.X, g.Y, alpha(cp, 0.45), 4, 60); curve(ctx, f.y, 0, 6, g.X, g.Y, cp, 5, 120); ctx.restore();
     line(ctx, g.X(-3), g.Y(yl.v), g.X(6), g.Y(yl.v), cp, 3, [10, 10]);
-    text(ctx, 'landing level', g.X(6) - 10, g.Y(yl.v) + 20, cp, { size: 17, weight: 600, align: 'right' });
+    text(ctx, 'landing level', g.X(-3) + 12, g.Y(yl.v) - 18, cp, { size: 17, weight: 600 });
     line(ctx, g.X(tp), g.Y(0), g.X(tp), g.Y(yl.v), C('time'), 3, [4, 8]); line(ctx, g.X(tn), g.Y(0), g.X(tn), g.Y(yl.v), PAL.muted, 3, [4, 8]);
     dot(ctx, g.X(tp), g.Y(yl.v), C('time'), true, 10); dot(ctx, g.X(tn), g.Y(yl.v), PAL.muted, false, 10);
     dot(ctx, g.X(tau), g.Y(y), PAL.ink, true, 9);

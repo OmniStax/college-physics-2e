@@ -53,9 +53,11 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     if (dv !== 0) {
       text(ctx, 'v', close ? GX(1) - 14 : GX(1) + 16, close ? GY(v.v) + (up ? -26 : 26) : GY(v.v), C('velocity'), { weight: 600, size: 22, align: close ? 'right' : 'left' });
       text(ctx, 'v₀', GX(0) + 22, GY(v0.v) + ((up ? v0.v >= 10 : v0.v > 70) ? 28 : -28), C('velocity'), { weight: 600, size: 22, bg: alpha(PAL.panel, 0.8) });
+      if (Math.abs(dv) >= 15) {
       const yl = Math.min(box.b - 16, Math.max(box.t + 16, GY(vel(0.25)) + (up ? 42 : -42))), yr = Math.min(box.b - 16, Math.max(box.t + 16, GY(vel(0.75)) + (up ? -42 : 42)));
       text(ctx, (up ? 'slower' : 'faster') + ' than v̄ for the first half', GX(0.25), yl, PAL.ink, { align: 'center', size: 18, bg: alpha(PAL.panel, 0.8) });
       text(ctx, (up ? 'faster' : 'slower') + ' by as much for the second', GX(0.75), yr, PAL.ink, { align: 'center', size: 18, bg: alpha(PAL.panel, 0.8) });
+      }
     }
     tex(d.readout, `\\kvb = \\frac{\\kvo + \\kv}{2} = \\frac{${n(v0.v)}\\ \\text{km/h} + ${n(v.v)}\\ \\text{km/h}}{2} = ${n(vb)}\\ \\text{km/h}`);
   }
@@ -80,21 +82,20 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     headline(ctx, 'After ' + fmt(tau, 0) + ' s the jogger is at $\\kx$ = ' + fmt(xm, 0) + ' m, and a runner twice as fast is twice as far, at ' + fmt(2 * xm, 0) + ' m.');
     strip(ctx, L - 40, R + 40, y, 50);
     for (let m = 0; m <= 1200; m += 100) { line(ctx, X(m), y + 25, X(m), y + 41, PAL.muted, 2); if (m % 200 === 0) text(ctx, m + ' m', X(m), y + 62, PAL.muted, { size: 17, align: 'center' }); }
-    const lab = F.labeller(ctx, 660);
-    lab.block(L - 40, y + 48, R + 40, y + 76);
     dot(ctx, X(0), y + 25, C('position'), false, 8); dot(ctx, X(x), y + 25, C('position'), true, 9); dot(ctx, X(2 * x), y + 25, PAL.muted, true, 9);
-    lab.add('x₀ = 0', X(0), y + 70, 0, 1, C('position'), 20, 28);
-    lab.add('x = ' + fmt(x, 0) + ' m', X(x), y + 70, 0, 1, C('position'), 20, 28);
-    lab.add('twice as far, ' + fmt(2 * x, 0) + ' m', X(2 * x), y + 70, 0, 1, PAL.muted, 20, 28);
+    if (X(x) - X(0) >= 230) {
+      text(ctx, 'x₀ = 0', X(0), y + 98, C('position'), { align: 'center', weight: 600, size: 20 });
+      text(ctx, 'x = ' + fmt(x, 0) + ' m', X(x), y + 98, C('position'), { align: 'center', weight: 600, size: 20 });
+      text(ctx, 'twice as far, ' + fmt(2 * x, 0) + ' m', Math.min(X(2 * x), 1260), y + 98, PAL.muted, { align: 'center', weight: 600, size: 20 });
+    } else rich(ctx, [['x = ' + fmt(x, 0) + ' m', C('position')], ' and, twice as far, ', [fmt(2 * x, 0) + ' m', PAL.muted]], L - 30, y + 98, { size: 20 });
     const run = tau < t.v ? ph : 0, K = 14;
     person(ctx, X(2 * xm), y + 25, PAL.muted, { face: 1, phase: run ? run * 1.3 : 0 });
     person(ctx, X(xm), y + 25, col, { face: 1, phase: run });
-    const fa = X(2 * xm) + 2 * vb.v * K + 150 > 1390;
-    arrow(ctx, X(2 * xm), y - 112, X(2 * xm) + 2 * vb.v * K, y - 112, alpha(C('velocity'), 0.55), 5);
-    text(ctx, '2v̄ = ' + fmt(2 * vb.v, 2) + ' m/s', fa ? X(2 * xm) - 10 : X(2 * xm) + 2 * vb.v * K + 10, y - 112, alpha(C('velocity'), 0.75), { weight: 600, size: 19, align: fa ? 'right' : 'left' });
+    const o2 = Math.min(X(2 * xm), 1385 - 2 * vb.v * K), fa = o2 + 2 * vb.v * K + 170 > 1390;
+    arrow(ctx, o2, y - 112, o2 + 2 * vb.v * K, y - 112, alpha(C('velocity'), 0.55), 5);
+    text(ctx, '2v̄ = ' + fmt(2 * vb.v, 2) + ' m/s', fa ? o2 - 10 : o2 + 2 * vb.v * K + 10, y - 112, alpha(C('velocity'), 0.75), { weight: 600, size: 19, align: fa ? 'right' : 'left' });
     arrow(ctx, X(xm), y - 84, X(xm) + vb.v * K, y - 84, C('velocity'), 5);
     text(ctx, 'v̄', X(xm) + vb.v * K + 10, y - 84, C('velocity'), { weight: 600, size: 22 });
-    lab.flush();
     /* position against average velocity at this instant: a line through the origin whose slope is the time so far */
     const box = { l: 170, r: 1240, t: 420, b: 590 };
     const ax = axes(ctx, box, [0, 10], [0, 1200], { xl: 'v̄ (m/s)', xc: C('velocity'), yl: 'x (m)', yc: C('position'), nx: 5, ny: 4 });
@@ -103,7 +104,8 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     [[vb.v, col, 'the jogger'], [2 * vb.v, PAL.muted, 'twice as fast']].forEach(([u, c, name]) => {
       line(ctx, GX(u), box.b, GX(u), GY(u * tau), alpha(PAL.ink, 0.4), 2, [4, 8]); line(ctx, box.l, GY(u * tau), GX(u), GY(u * tau), alpha(PAL.ink, 0.4), 2, [4, 8]);
       dot(ctx, GX(u), GY(u * tau), c, true, 10);
-      text(ctx, name, GX(u), Math.max(box.t + 48, GY(u * tau) - 32), c, { align: 'center', weight: 600, size: 18 });
+      const hi = GY(u * tau) - 32 < box.t + 14;
+      text(ctx, name, hi ? GX(u) + 16 : GX(u), hi ? GY(u * tau) + 28 : GY(u * tau) - 32, c, { align: hi ? 'left' : 'center', weight: 600, size: 18 });
     });
     rich(ctx, ['slope = time so far = ', [fmt(tau, 0) + ' s', C('time')]], box.l + 18, box.t + 20, { size: 18 });
     tex(d.readout, `\\kx = \\kxo + \\kvb\\kt = 0\\ \\text{m} + (${fmt(vb.v, 2)}\\ \\text{m/s})(${t.v}\\ \\text{s}) = ${fmt(x, 0)}\\ \\text{m}`);
@@ -196,8 +198,8 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
       const tk = (t.v * k) / 4; if (tau < tk - 1e-9) break;
       const x1 = X(pos(tk - t.v / 4)), x2 = X(pos(tk));
       line(ctx, x2, y - 30, x2, y + 30, C('position'), k === 4 ? 5 : 3);
-      if (x2 - x1 >= 50 || k === 4) text(ctx, names[k - 1], x2, y - 48, C('time'), { align: 'center', weight: 600, size: 18 });
-      hbracket(ctx, x1, x2, y + 102, C('position'), x2 - x1 >= 64 ? fmt(pos(tk) - pos(tk - t.v / 4), 0) + ' m' : '', { side: 'below', size: 20 });
+      if (x2 - x1 >= 40 || k === 4) text(ctx, names[k - 1], x2, y - 48, C('time'), { align: 'center', weight: 600, size: 18 });
+      hbracket(ctx, x1, x2, y + 102, C('position'), x2 - x1 >= 40 ? fmt(pos(tk) - pos(tk - t.v / 4), 0) + ' m' : '', { side: 'below', size: 18 });
     }
     const px = X(pos(tau)), ox = Math.min(px, 1390 - Math.max(vv * KV, a.v * KA) - 190);
     dragster(ctx, px, y + 2, col, 0.8);
@@ -211,7 +213,7 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     plot(ctx, ax, pos, C('position'), { x: [0, t.v] });
     for (let k = 1; k <= 3; k++) dot(ctx, GX((t.v * k) / 4), GY(pos((t.v * k) / 4)), C('position'), false, 7);
     dot(ctx, GX(t.v), GY(xe), C('position'), true, 10); dot(ctx, GX(tau), GY(pos(tau)), PAL.ink, true, 7);
-    rich(ctx, ['at t/2, ', [fmt(xh, 0) + ' m', C('position')], ': ' + fmt((100 * xh) / xe, 0) + '% of the way'], GX(th) - 16, GY(xh) - 26, { align: 'right', size: 18, bg: alpha(PAL.panel, 0.85) });
+    rich(ctx, ['at t/2, ', [fmt(xh, 0) + ' m', C('position')], ': ' + fmt((100 * xh) / xe, 0) + '% of the way'], Math.max(GX(th) - 16, box.l + 300), GY(xh) - 26, { align: 'right', size: 18, bg: alpha(PAL.panel, 0.85) });
     text(ctx, 'x = ' + fmt(xe, 0) + ' m', GX(t.v) + 16, GY(xe), C('position'), { weight: 600, size: 20 });
     const rest = v0.v === 0, U = (q, u) => `${q}\\ \\text{${u}}`;
     const half = `\\mk{half}{\\tfrac{1}{2}\\ka\\kt^2}`, halfN = `\\mk{halfn}{\\tfrac{1}{2}(${fmt(a.v, 1)}\\ \\text{m/s}^2)(${fmt(t.v, 2)}\\ \\text{s})^2}`, res = `\\mk{xv}{${U(fmt(xe, 0), 'm')}}`;
