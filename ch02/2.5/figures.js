@@ -256,7 +256,9 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
       text(ctx, sgn(fmt(a, 2)) + ' m/s²', 24, y + 4, C('acceleration'), { weight: 600, size: 17 });
       line(ctx, 150, y + 16, 1370, y + 16, PAL.muted, 3);
       line(ctx, X(stop), y + 6, X(stop), y + 34, C('position'), 4);
-      hbracket(ctx, X(rd), X(stop), y + 46, C('position'), 'braking ' + fmt(b, 1) + ' m', { side: 'below', size: 19 });
+      hbracket(ctx, X(rd), X(stop), y + 46, C('position'));
+      const wide = X(stop) - X(rd) >= 190;
+      text(ctx, 'braking ' + fmt(b, 1) + ' m', wide ? (X(rd) + X(stop)) / 2 : X(rd) + 8, y + 70, C('position'), { align: wide ? 'center' : 'left', weight: 600, size: 19 });
       rich(ctx, ['stops at ', [fmt(stop, 1) + ' m', C('position')]], far ? X(stop) : X(stop) + 56, far ? y - 62 : y - 6, { size: 19, align: far ? 'center' : 'left' });
       const px = X(pos(a, tau));
       car(ctx, px, y - 2, col, 1);
@@ -307,11 +309,11 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     line(ctx, X(0), y - 34, X(0), y + 25, C('position'), 3); line(ctx, X(x.v), y - 34, X(x.v), y + 25, C('position'), 4);
     text(ctx, 'x₀ = 0', X(0), y - 100, C('position'), { align: 'center', weight: 600, size: 20 });
     text(ctx, 'x = ' + x.v + ' m', X(x.v), y - 100, C('position'), { align: 'center', weight: 600, size: 20 });
-    const px = X(pos(tau)), tip = px + vv * 4, cc = past ? alpha(col, 0.35) : col, vc = past ? alpha(C('velocity'), 0.5) : C('velocity');
+    const px = X(pos(tau)), ox = Math.min(px, 1385 - Math.max(0, vv) * 4), tip = ox + vv * 4, cc = past ? alpha(col, 0.35) : col, vc = past ? alpha(C('velocity'), 0.5) : C('velocity');
     car(ctx, px, y - 4, cc, 1);
-    arrow(ctx, px, y - 62, tip, y - 62, vc, 5);
+    arrow(ctx, ox, y - 62, tip, y - 62, vc, 5);
     const s = 'v = ' + sgn(fmt(vv, 1)) + ' m/s', right = vv >= 0 ? tip + 10 + 160 < 1390 : tip - 10 - 160 < 16;
-    text(ctx, s, right ? Math.max(px, tip) + 10 : Math.min(px, tip) - 10, y - 62, vc, { align: right ? 'left' : 'right', weight: 600, size: 20 });
+    text(ctx, s, right ? Math.max(ox, tip) + 10 : Math.min(ox, tip) - 10, y - 62, vc, { align: right ? 'left' : 'right', weight: 600, size: 20 });
     /* x against t on axes fixed at −45 to 30 s, which hold every root the sliders give, and the road's −100 to 300 m */
     const box = { l: 170, r: 1240, t: 380, b: 620 };
     const ax = axes(ctx, box, [-45, 30], [-100, 300], { xl: 't (s)', xc: C('time'), yl: 'x (m)', yc: C('position'), nx: 5, ny: 4, fx: (q) => sgn(fmt(q, 0)), fy: (q) => sgn(fmt(q, 0)) });
