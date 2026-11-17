@@ -82,69 +82,14 @@ the text uses them.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. sim-normal · Figure 4.11 · normal-force, weight · variation by slider: the table sags until its restoring force equals the weight · still · m (1 to 30 kg, mass), k (stiffness) · "A bag of 10.0 kg weighs 98.0 N, and the table sags 2.0 cm until it pushes back with that same 98.0 N" · free-body diagrams under each scene · 2D: the hand in (a) is F.hand (palm view, curl 0.3, palm up under the bag, forearm off to the left); the headline kept to one line by a shorter sentence or the panel titles moved below it; the sag bracket, w and N labels placed through F.labeller so none meets another at m and k extremes; note dropped. No fold or split. Rebuilt from this line on 2026-10-05.
-2. sim-skier · Figure 4.12 · weight-components, normal-force, friction, newtons-second-law · flow by animation and variation: she slides and gathers speed at the rate the slope and friction set · moving · θ (5° to 40°, angle), m (mass), f (0 to 250 N, force) · "After 3.84 s she is 25.0 m down the slope at 13.0 m/s, gaining 3.39 m/s every second" · graph below (v against t) · 2D: the skier drawn with F.silhouette (crouch, phase 0) standing on skis that sit on the slope at every angle; when f ≥ mg sin θ the readout morphs to a static form (f = mg sin θ, a = 0) rather than a negative quotient shown as zero; note cut to the g sin θ fact. No fold or split. Rebuilt from this line on 2026-10-05.
-3. `sim-incline` · replaces Figure 4.13 (the weight resolved on an incline) ·
-   weight-components-on-incline, normal-force · **still**: the figure is the
-   geometry of the resolution and answers its sliders alone · the slope angle
-   $\theta$ (0º to 60º, default 30.0º, ink), mass $m$ (5 to 60 kg, default
-   20.0, ink) · "at 30.0º the weight of 196 N divides into 98.0 N down the
-   slope and 170 N into it" · graph below: the two components against the
-   angle, crossing at 45º, with the set angle marked · no. Readout:
-   $\kwpar = \kwgt\sin\theta = m\kg\sin\theta$ with the numbers; small line
-   on $\kwperp$ and the normal force that balances it. Draws force,
-   acceleration.
-4. `sim-rope` · replaces Figure 4.14 (the hand, the rope and the 5.00 kg
-   mass, with the free-body diagram) · tension, tension-supports-weight ·
-   **still**: the mass hangs at rest, so there is no time in the idea; the
-   spring cut into the rope reads the tension as the text describes · mass
-   $m$ (1 to 20 kg, default 5.00, ink), the acceleration due to gravity
-   $\kg$ (1.60 to 11.0 m/s², default 9.80, acceleration), so that the same
-   mass on the Moon can be seen to need a smaller tension · "a 5.00 kg mass
-   hangs at rest, so the rope carries 49.0 N at every point along it" ·
-   none: the scene is vertical and the free-body diagram stands beside it ·
-   no. Readout: $\kTf = \kwgt = m\kg$ with the numbers; small line on the
-   rope pulling equally on the hand and on the mass. Draws force,
-   acceleration.
-   Revised in the figure-audit pass of 2026-09-12: the gravity slider steps
-   by 0.005 m/s² and carries ticks at the Moon's 1.625 and Earth's 9.80,
-   which the step lands on exactly; the two sit so far apart that a thumb
-   settling on the nearer of them would swallow most of the slider, so
-   nothing is snapped. The headline is one capitalized sentence.
-5. `sim-corners` · replaces Figure 4.15 (the tendon in the finger and the
-   bicycle brake cable) · tension, tension-supports-weight · **still**: a
-   cable at rest round two frictionless corners; nothing travels · mass of
-   the load $m$ (1 to 20 kg, default 5.00, ink), the angle the middle segment
-   is turned through (10º to 80º, default 40.0º, ink) · "the 5.00 kg load
-   makes a tension of 49.0 N, and the same 49.0 N is carried round both
-   corners to the hand" · none · no. Readout: $\kTf = m\kg$ with the numbers;
-   small line saying that a frictionless corner changes the direction of the
-   pull and not its size. Draws force, acceleration.
-   Revised in the figure-audit pass of 2026-09-12: the corner stops at 60°
-   and the load hangs a clear length of cable below the second pulley at
-   every angle, so the pulley never comes down onto the load it carries; a
-   note names the finger tendon and the bicycle brake cable the book draws
-   under this number, which the scene stands for. The headline is one
-   capitalized sentence.
-6. sim-tightrope · Figure 4.16 + 4.17 · tension, vector-components · variation by slider: the straighter the wire, the larger the tension · still · θ (sag angle, angle), m (mass) · "A 70.0 kg walker sags the wire by 5.0°, and each half pulls with 3,935 N, 5.7 times his weight" · graph beside the components diagram · 2D: the walker drawn with F.silhouette (stand, arms out by joints) with both feet on the sag point; TL and TR named through F.labeller on the outside of each half; the components diagram's caption line and title kept inside the stage or dropped (the caption says it); note dropped or cut to one sentence. No fold or split. Rebuilt from this line on 2026-10-05.
-7. `sim-chain` · replaces Figure 4.18 (the chain, the car in the mud and the
-   tree) · tension-from-perpendicular-force · **still**: the push is held and
-   the chain is in equilibrium under it · the perpendicular force $\kFperp$
-   (100 to 1,500 N, default 300, force), the angle $\theta$ the chain makes
-   with the horizontal (0.5º to 15º, default 2.00º, ink) · "a push of 300 N
-   at 2.00º puts 4,300 N on the car, fourteen times the push" · graph below
-   the scene: the tension against the angle for the force that is set · no.
-   Readout: $\kTf = \kFperp / (2\sin\theta)$ with the numbers; small line
-   saying that the equation has no answer at $\theta = 0$, which is why no
-   connector is ever exactly straight. Draws force.
-8. `fig-bridge` · the photograph of Figure 4.19 (the Golden Gate Bridge),
+- sim-skier · Figure 4.12 · weight-components, normal-force, friction, newtons-second-law · flow by animation and variation: she slides and gathers speed at the rate the slope and friction set · moving · θ (5° to 40°, angle), m (mass), f (0 to 250 N, force) · "After 3.84 s she is 25.0 m down the slope at 13.0 m/s, gaining 3.39 m/s every second" · graph below (v against t) · 2D: the skier drawn with F.silhouette (crouch, phase 0) standing on skis that sit on the slope at every angle; when f ≥ mg sin θ the readout morphs to a static form (f = mg sin θ, a = 0) rather than a negative quotient shown as zero; note cut to the g sin θ fact. No fold or split. Rebuilt from this line on 2026-10-05.
+- `fig-bridge` · the photograph of Figure 4.19 (the Golden Gate Bridge),
    **kept**: the text points at it ("such as the chain at the bottom of the
    picture") and it shows the thing the passage is about, a flexible
    connector sagging under its own weight. Its caption and credit line are
    the book's, and its width is the book's 325.
 
-Figure re-examination of 2026-11-17 (Claude Fable 5.2). The lines above stand as the record of what was
-built; what follows is what the page now carries. Each drawn figure was judged against the book's image.
+Figure re-examination of 2026-11-17 (Claude Fable 5.2). Each drawn figure was judged against the book's image.
 
 - sim-normal · Figure 4.11 · normal-force, weight · value add: the book's panels (a) and (b) are the two ends of one act, and the caption's "restoring forces grow as it sags until they supply N equal to the weight" is motion the reader has to imagine; here the hand lowers the bag onto the table, the table sags, its push N grows and the hand's force shrinks, the two always adding up to the weight · arrows: symbolic (the forces on the bag) · moving: one slow lowering per loop (the bag comes down, the table takes the weight, the hand lets go), 6 s · m (1 to 30 kg, default 10, mass), k (3,000 to 20,000 N/m, default 4,000, stiffness) · headline: the sag, the table's push and what the hand still holds, live · graph beside: the push of the table against its sag, a line as steep as the table is stiff, the weight a dashed level, the dot climbing to it · 2D
   works: parts: a table in side view (two legs on a floor, a top that bows at its middle against a dashed unloaded level); a sack standing on the top; a hand gripping the sack's neck from above; a free-body diagram of the bag (weight down, N up from the dot, F_hand standing on N's head) · flow: the bag down 46 units to the top, then the top down by the sag with the bag on it, then the hand up and away · must hold: (1) N + F_hand = w at every instant, the two upward arrows together as long as the weight arrow; (2) N = k × sag, so the dot stays on the line and stops on the weight level; (3) the final sag is w/k (10 kg on 4,000 N/m: 98.0 N, 2.45 cm); (4) the sag is drawn at 7 units to the centimetre at every setting, never capped; (5) with reduced motion the figure rests on the book's panel (b), N = w · read off the image: (a) two hands hold a sack marked BOW WOW CHOW above a table, F_hand up and w down, equal; (b) the sack on a table whose top bows down under it, N up and w down, equal; under each a free-body diagram with the same two arrows. The book gives no mass and no stiffness: 10 kg and 4,000 N/m are the figure's.
@@ -185,32 +130,10 @@ Extra simulations (rule 15), considered and left:
   this section as well as 4.1 and 4.6, and belongs to none of them, as the
   chapter's exploration says. Left.
 - The traction setup of the conceptual questions, with the reader moving the
-  pulleys: the question asks what the tension is, and `sim-corners` already
-  carries the same tension round corners to a load. Left.
+  pulleys: the question asks what the tension is, and Figure 4.15 already
+  shows the same tension carried round corners to a load. Left.
 
 None built.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1). `sim-normal` (Chen's item 7) is redrawn: the
-bag was an ellipse and the hand a blob, and the table's sag could not be seen. The bag is now a
-sack with a gathered top and its name on the front, the hand a palm cupping it from below with a
-forearm running off to the left and fingers curling up its far side, and the table a side view
-with two legs and a top that sags fourteen units to the centimetre, capped so it stays on its
-legs, against a dashed line at the unloaded level with the sag bracketed and named at the left
-end of the top; the free-body diagrams are unchanged. `sim-skier` (item 8): the force diagram
-was five arrows from one point with their labels crowded into two corners; the weight is drawn
-180 units long, a short piece of the slope is drawn under the point instead of a dashed line
-across the whole diagram, and each label is sent off in a direction of its own by the labeller
-so no two share a corner. The skier herself is drawn half again as large, crouched over her skis
-with one pole. `sim-rope` (item 9): the library's person could not reach the rope and the hand
-did not show; the rope is now held by a hand reaching down from the top of the picture, a fist
-closed round it with its fingers drawn across the front, and the two tension arrows are named
-"T, on the hand" and "T, on the mass" beside their arrows. `sim-corners` (item 9): the cable
-ran through the pulley centres and a stick figure held its end; the cable now wraps the outside
-of each pulley and is pulled by a fist with the forearm running down and away, and every tension
-arrow is drawn beside its segment of cable rather than on it (the `tvec` helper gained an
-offset). `sim-incline`: the label of the perpendicular component lay across the face of the
-incline and now sits to the right of its head; every `fvec` label is on a panel the colour of
-the page. `sim-tightrope` and `sim-chain` were looked at and left as built.
 
 ## Exercises
 

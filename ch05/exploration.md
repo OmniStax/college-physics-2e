@@ -213,7 +213,7 @@ values) and Table 5.3 (elastic moduli).
 
 - Two new types and eighteen new symbol rows in `book.json`, listed in
   the config, and no new figlib primitive. The sprites the sims want (a
-  crate, a skier, a skydiver, a rod, a bookcase, a cube) are drawn in the
+  crate, a skier, a skydiver, a nail, a cube) are drawn in the
   section modules.
 - A converter that keeps a table sitting inside a paragraph, which is the
   one defect this chapter found in the tools.

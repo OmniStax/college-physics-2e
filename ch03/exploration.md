@@ -133,8 +133,9 @@ other order.
   with two `:::` lines in a row, which is right.
 - 3.5's problems 12 and 13 refer to a figure of five galaxies and 3.2's
   problems 1 and 2 and 3.3's problems 1 and 2 to a map of paths through a
-  city; both are figures that serve exercises and are copied faithfully,
-  labelled Figure, under rule 14.
+  city. The map is a figure that serves exercises, copied faithfully and
+  labelled Figure, under rule 14; the galaxies are a Sim in 3.5, where the
+  reader chooses the galaxy to observe from.
 
 ## What the tooling needs
 

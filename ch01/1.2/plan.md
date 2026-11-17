@@ -74,61 +74,7 @@ book says to take average speed as given for now.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-light-meter` · replaces Figure 1.18 (the flashlight and the meter
-   stick) · fundamental-units · a pulse of light leaves a flashlight at
-   the left end of a meter stick and runs along it at the speed of
-   light; the stick is drawn 1.5 m long with 10 cm ticks so a longer
-   time runs past the meter mark, a bracket under the stick measures the
-   distance covered, and the elapsed time is written above the pulse ·
-   elapsed time $\kt$ in ns (0.50 to 5.00, step 0.05, default 3.34, time
-   hue) · "in 3.34 ns light travels 1.00 m, which is what the meter is
-   defined to be" · none · no. Finite motion (the pulse stops where the
-   time runs out), one loop in about 5 real seconds, so it gets the
-   scrubber. Readout: $d = \kc\,\kt = (299{,}792{,}458\ \text{m/s})(3.34
-   \times 10^{-9}\ \text{s}) = 1.00\ \text{m}$; small line on the speed
-   of light being exact by definition and the meter being what is
-   measured. The pulse is drawn in the velocity hue, the bracket in ink,
-   the time label in the time hue. Draws time and velocity. Revised 2026-09-28: 1/c = 3.34 ns is a special value on $\kt$ (dashed circle, label "one meter"), the time the text defines the meter by.
-2. `sim-ladder` · new · metric-prefixes, order-of-magnitude · a
-   horizontal logarithmic ladder from $10^{-18}$ m to $10^{26}$ m, a
-   tick per decade and a label every three, the prefixes of Table 1.2
-   written under their powers of 10 (atto at −18 up to exa at 18, on
-   three rows where they crowd), twelve of the lengths of Table 1.3
-   marked above the ladder on three staggered rows (proton, hydrogen
-   atom, cell membrane, visible light, grain of sand, child, football
-   field, Earth, Earth to the Sun, light year, Milky Way, known
-   universe), the decade the value falls in shaded, and a marker at
-   $m \times 10^{n}$ · mantissa m (1.0 to 9.9, step 0.1, default 4.5,
-   ink), exponent n (−18 to 26, step 1, default 2, ink) · "4.5 × 10² m is
-   450 m, or 4.5 hm, and its order of magnitude is 10²"; when n has no
-   prefix of its own the headline says so and gives the nearest prefix
-   below it · none · no. No motion: the figure draws once per slider
-   change. Readout: $4.5 \times 10^{2}\ \text{m} = 450\ \text{m}$ (plain
-   decimal for |n| ≤ 3, the nearest prefix otherwise); small line: every
-   number from 1 × 10² to 9.9 × 10² is of the same order of magnitude,
-   10², just as 800 and 450 are. All ink; draws nothing.
-3. `sim-drive` · new, for Example 1.1 · unit-conversion,
-   conversion-factor, physical-quantity · a car drives from a school at
-   the left to a house at the right along a strip marked in kilometers
-   while a stopwatch beside the strip counts up; a velocity arrow on the
-   car and the speed written in the velocity hue · distance d in km (2.0
-   to 40.0, step 0.5, default 10.0, ink), time $\kt$ in min (5 to 60,
-   step 1, default 20.0, time hue) · "Driving 10.0 km in 20.0 min is an
-   average speed of 0.500 km/min, which is 30.0 km/h, or 8.33 m/s." ·
-   none, since the stopwatch and the strip are the graph · 2D. The strip
-   runs a fixed 0 to 40 km, the distance slider's maximum, so a short
-   trip and a long one are drawn at the same scale, and the house stands
-   at the end of the trip rather than at the end of the road. The
-   velocity arrow is a fixed length per km/h, taken from the fastest trip
-   the sliders allow. Labels on, since the strip names four things once
-   each. Finite motion, one run per set time in
-   about 5 real seconds, so it gets the scrubber. Readout:
-   $\text{average speed} = \frac{10.0\ \text{km}}{20.0\ \text{min}}
-   \times \frac{60\ \text{min}}{1\ \text{h}} = 30.0\ \text{km/h}$; small
-   line: two more conversion factors, hours to seconds and kilometers to
-   meters, turn 30.0 km/h into 8.33 m/s. The stopwatch hand and the
-   elapsed time are in the time hue, the speed in the velocity hue.
-   Draws time and velocity.
+The three drawn figures are planned in the block dated 2026-11-17 below.
 
 The example gets a figure of its own because it adds what the section
 figures do not show: a speed, which is a physical quantity calculated
@@ -164,20 +110,6 @@ Extra simulations (rule 15): none proposed. The chapter is qualitative,
 and the three figures already open the views the text does not give
 (light covering the meter in a set time, a value placed on the ladder of
 powers of 10, a speed carried through a chain of conversion factors).
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-light-meter`: the
-flashlight floated above the stick with the pulse in the air; the lens now
-rests at the stick's left end and the pulse runs along its face, the
-distance bracket sits above the pulse, and the meter-mark callout hangs
-below the tick labels instead of crossing "100 cm". `sim-ladder`: the
-marker's label sat on the leader lines of centi and hecto; the prefix rows
-moved down, the leaders start below the tick labels, and the canvas grew
-to 440. `sim-drive`: the car drove through the house and "home" landed on
-the 15 km tick; the school and the house now stand at the far kerb with
-their names above their roofs, the car drives the near lane in front of
-them, the velocity arrow leaves the front bumper and is held inside the
-canvas, and the speed is written past its tip, or behind the car when the
-tip is near the end of the road.
 
 Figure re-examination, 2026-11-17 (Claude Fable 5.2). All three rebuilt, with the book's image open.
 
@@ -237,8 +169,8 @@ numbers it:
 
 ## Colour
 
-The page binds time and velocity, from the two sims that carry a time
-on a slider and draw a speed: the pulse of light and the car. Every other
-quantity on the page (a length, a mass, a mantissa, an exponent, a
-distance in kilometers) is untyped and in ink, as the chapter config
-says. No new hue, no new macro.
+The page binds time, velocity and position. The light's travel time and
+the drive's time are in the time hue, the speed of the light and of the
+car in the velocity hue, and the distance each covers, with the length
+marked on the ladder, in the position hue. A factor and a power of 10
+are untyped and in ink. No new hue, no new macro.

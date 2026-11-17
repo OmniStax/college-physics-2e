@@ -30,6 +30,22 @@ const RAD = Math.PI / 180;
   const SX = 1070, BASE = 570;        /* the head-to-tail sum and the level it starts from */
   const num = (v) => fmt(v, 0);
   const lead = (ctx, x1, y, x2) => line(ctx, x1, y, x2, y, alpha(C('force'), 0.5), 2, [4, 5]);
+  /* a man seen from the front, hanging by both hands from (x, grip) with his toes at `toes`: arms straight up to
+     the vine, legs hanging loose and feet pointed down, standing on nothing */
+  function hanging(ctx, x, grip, toes, color) {
+    const h = toes - grip, Y = (f) => grip + f * h;
+    ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const limb = (w, pts) => { ctx.lineWidth = w; ctx.beginPath(); pts.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.stroke(); };
+    for (const k of [-1, 1]) {
+      limb(14, [[x + k * 42, Y(0.35)], [x + k * 46, Y(0.17)], [x + k * 7, Y(0.02)]]);                    /* an arm */
+      limb(20, [[x + k * 15, Y(0.57)], [x + k * 19, Y(0.77)], [x + k * 15, Y(0.94)]]);                   /* a leg */
+      limb(12, [[x + k * 15, Y(0.94)], [x + k * 21, Y(1) - 6]]);                                         /* a foot, toes down */
+    }
+    ctx.beginPath(); ctx.arc(x, Y(0.235), 0.062 * h, 0, Math.PI * 2); ctx.fill();                        /* the head, between the arms */
+    ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(x - 40, Y(0.35)); ctx.lineTo(x + 40, Y(0.35)); ctx.lineTo(x + 22, Y(0.58)); ctx.lineTo(x - 22, Y(0.58)); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, grip + 4, 14, 0, Math.PI * 2); ctx.fill();                               /* the two fists on the vine */
+    ctx.restore();
+  }
   function draw() {
     const { ctx } = begin(d.c);
     const m = M.v, a = A.v, still = Math.abs(a) < 1e-9, w = m * G, T = m * (G + a), gap = T - w, way = a > 0 ? 'up' : 'down';
@@ -40,8 +56,8 @@ const RAD = Math.PI / 180;
     const force = C('force'), out = alpha(C('force'), 0.55);
 
     /* the sketch: the vine, the man, the boundary of the system of interest */
-    line(ctx, CX, 78, CX, GRIP + 8, F.ref('vine'), 6);
-    F.person(ctx, CX, FEET, F.ref('tarzan'), { s: S, reach: { x: CX + 2, y: GRIP } });
+    line(ctx, CX, 78, CX, GRIP + 44, F.ref('vine'), 6);
+    hanging(ctx, CX, GRIP, FEET - 14, F.ref('tarzan'));
     ctx.save(); ctx.strokeStyle = PAL.muted; ctx.lineWidth = 3; ctx.setLineDash([12, 10]);
     ctx.beginPath(); ctx.roundRect(CX - 118, GRIP - 22, 236, FEET - GRIP + 34, 26); ctx.stroke(); ctx.restore();
     text(ctx, 'system of interest', CX + 134, FEET - 40, PAL.muted, { size: 20, align: 'left' });

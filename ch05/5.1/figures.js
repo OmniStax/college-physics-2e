@@ -253,7 +253,7 @@ function crate(ctx, x, y, w, h, col) {
   const atanDeg = (x) => Math.atan(x) / RAD;
   /* three decimals, or the four that 0.0817 and a value caught on its dashed circle need */
   const muf = (q) => (Math.abs(q * 1000 - Math.round(q * 1000)) < 1e-6 ? fmt(q, 3) : fmt(q, 4));
-  const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 45, step: 1, value: 25, unit: '°', dec: 0, onInput: reset, aria: 'angle of the slope',
+  const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 45, step: 1, value: 25, unit: '', fmt: (q) => fmt(q, Math.abs(q - Math.round(q)) < 1e-6 ? 0 : 1) + '°', onInput: reset, aria: 'angle of the slope',
     specials: [{ at: () => atanDeg(mu.v), label: 'steady speed' }] });
   const mu = ctl(d.controls, { label: '\\mu_{\\text{k}}', cls: '', key: 'mu-k', min: 0, max: 0.3, step: 0.001, value: 0.082, unit: '', fmt: (q) => muf(q), onInput: reset, aria: 'coefficient of kinetic friction',
     specials: [{ at: () => Math.tan(th.v * RAD), label: 'steady speed' }] });
@@ -373,7 +373,7 @@ function crate(ctx, x, y, w, h, col) {
     lb.flush();
     const an = fmt(th.v, th.v % 1 ? 1 : 0);
     tex(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = \\mu_{\\text{k}}\\km\\kg\\cos\\ktheta = (${muf(mu.v)})(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(\\cos ${an}^\\circ) = ${fmt(f, 1)}\\ \\text{N} \\\\ `
-      + `\\ka = \\frac{\\kwpar - \\kfk}{\\km} = \\frac{${fmt(wx, 0)}\\ \\text{N} - ${fmt(f, 1)}\\ \\text{N}}{${fmt(m.v, 0)}\\ \\text{kg}} = ${fmt(a, 2)}\\ \\text{m/s}^2`);
+      + `\\ka = \\frac{\\kwpar - \\kfk}{\\km} = \\frac{${fmt(wx, 1)}\\ \\text{N} - ${fmt(f, 1)}\\ \\text{N}}{${fmt(m.v, 0)}\\ \\text{kg}} = ${fmt(a, 2)}\\ \\text{m/s}^2`);
   }
   hover(d.stage, () => hits);
   register(d.fig, { update: (dt) => cy.step(dt, () => 0.45), draw });

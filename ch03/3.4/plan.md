@@ -85,121 +85,7 @@ all of which the coverage rows mark as used where the text uses them.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-displacement` · replaces Figure 3.34 (the soccer ball and its
-   total displacement) · projectile-motion, projectile-analysis · **moves**:
-   a ball kicked from the origin flies along its parabola for one flight,
-   and at every instant the total displacement $\mathbf{s}$ is drawn from
-   the kick to the ball with its components $\kx$ and $\ky$ as drop lines
-   and the angle $\theta$ arced at the origin; the idea has a time in it
-   (the ball is somewhere along its path), so it loops once per flight and
-   gets the scrubber · initial speed $\kvo$ (10 to 40 m/s, default 20,
-   velocity), launch angle $\theta_0$ (15º to 80º, default 50º, ink) · "t =
-   1.20 s · the ball is 15.4 m along and 12.5 m up, so s = 19.9 m at 39.0º
-   above the horizontal" · none: the trajectory is the picture · no.
-   Readout: $\ks = \sqrt{\kx^2 + \ky^2}$ with the numbers; small line on
-   $\theta = \tan^{-1}(\ky/\kx)$. Draws position, velocity, time.
-2. `sim-components` · replaces Figure 3.35 (a) to (d) (the velocity and
-   its components along the trajectory) · projectile-horizontal-motion,
-   projectile-vertical-motion, projectile-analysis · **moves**: the
-   projectile flies once from launch to landing on level ground; every
-   frame draws $\kvx$ (constant), $\kvy$ (shrinking, zero at the top, then
-   growing downward) and their resultant $\kv$ with $\theta_v$ at the
-   projectile, and the acceleration arrow $\kay = -\kg$ pointing straight
-   down whatever the velocity does; hollow marks trace the positions
-   already passed, as the book's part (a) does · initial speed $\kvo$ (10
-   to 40 m/s, default 25, velocity), launch angle $\theta_0$ (10º to 80º,
-   default 60º, ink) · "t = 1.50 s · vx stays at 12.5 m/s while vy has
-   fallen from 21.7 m/s to 6.9 m/s" · graph below, two panels side by side:
-   $\kvx$ against $\kt$ (a flat line, the book's part (b)) and $\kvy$
-   against $\kt$ (a line of slope $-\kg$ crossing zero at the apex, the
-   book's part (c)), with the moving point on each · no. Readout: $\kv =
-   \sqrt{\kvx^2 + \kvy^2}$ and $\theta_v = \tan^{-1}(\kvy/\kvx)$ with the
-   live numbers. Draws velocity, acceleration, time.
-3. `sim-fireworks` · replaces Figure 3.36 (the fireworks shell) ·
-   maximum-height, projectile-vertical-motion, projectile-horizontal-motion
-   · **moves**: the shell rises from the launch point to its apex, where
-   the fuse fires and a burst is drawn; the height $\kh$ is bracketed
-   beside the path and the horizontal displacement $\kx$ under it; one
-   run to the apex per loop, with the scrubber · initial speed $\kvo$ (30
-   to 100 m/s, default 70.0, velocity), launch angle $\theta_0$ (30º to
-   89º, default 75.0º, ink) · "t = 6.90 s · the shell reaches its highest
-   point, 233 m up and 125 m along, where vy = 0" · graph beside the tall
-   scene: $\kvy$ against $\kt$ falling from $\kvoy$ to zero at the apex,
-   which is what makes the apex the highest point · no. Readout: $\kh =
-   \kvoy^2 / 2\kg$ with the numbers; small line on the time to the top and
-   the horizontal displacement $\kx = \kvx\kt$. Draws position, velocity,
-   acceleration, time.
-4. `sim-rock` · replaces Figure 3.37 (the hot rock from Kilauea) ·
-   projectile-analysis, projectile-vertical-motion,
-   projectile-horizontal-motion, physical-solution · **moves**: the rock
-   leaves the rim, rises and falls to the slope 20.0 m below, and at
-   impact its velocity is drawn with its components and the angle
-   $\theta_v$ below the horizontal; one flight per loop, with the scrubber
-   · initial speed $\kvo$ (10 to 40 m/s, default 25.0, velocity), launch
-   angle $\theta_0$ (0º to 70º, default 35.0º, ink), the drop to the
-   landing point $\ky$ (−60 to −5 m, default −20.0 m, position) · "t =
-   3.96 s · the rock lands 20.0 m below its start at 31.9 m/s, 50.1º below
-   the horizontal" · graph below: $\ky$ against $\kt$, the parabola
-   crossing the landing level twice, the negative root hollow and greyed
-   as an event before the launch · no. Readout: the quadratic and its two
-   roots; small line with $\kv$ and $\theta_v$ at impact. Draws position,
-   velocity, acceleration, time.
-5. `sim-range` · replaces Figure 3.38 (a) and (b) (trajectories on level
-   ground) · range, maximum-height · **moves**: the projectile flies its
-   trajectory once per loop while the range is bracketed beneath; the
-   complementary angle's trajectory is drawn dashed and lands at the same
-   range, and the 45º trajectory is drawn faint as the farthest; the
-   book's (a) is reproduced by sliding $\kvo$ through 30, 40 and 50 m/s at
-   45º and its (b) by sliding $\theta_0$ through 15º, 45º and 75º at 50
-   m/s · initial speed $\kvo$ (10 to 60 m/s, default 50, velocity), launch
-   angle $\theta_0$ (5º to 85º, default 45º, ink) · "At 45º a 50 m/s
-   launch lands 255 m away, which is the farthest this speed can reach." ·
-   graph below: $\kR$ against $\theta_0$ for the set speed, the arch of
-   $\sin 2\theta_0$ with the current angle and its complement marked at
-   the same height · no. Readout: $\kR = \kvo^2 \sin 2\theta_0 / \kg$
-   with the numbers; small line naming the complementary angle and its
-   different maximum height. Within six degrees of 45º the three arcs
-   share almost one highest point, so only the chosen angle is named
-   there and the other two labels are left off (rule 26.7). Draws
-   position, velocity, acceleration, time. Merged 2026-09-28 with the
-   Manim trial `sim-range-morph`, whose code it now runs: 45º is a
-   special value on $\theta_0$ (dashed circle, slight snap); as the
-   angle nears it the dashed complementary path closes on the chosen one
-   and on it bends into it, the readout morphs by meaning as
-   $\sin 2\theta_0$ becomes 1 and leaves the equation, and leaving 45º
-   the dashed and faint paths arrive drawn along their length. Value
-   add: the book's "every angle but 45º has a partner" is seen as two
-   paths becoming one and a term leaving the equation.
-6. `sim-orbit` · replaces Figure 3.39 (the tower and the satellite) ·
-   range · **moves**: a projectile leaves a tall tower horizontally and
-   falls around the Earth under gravity that always points at the centre,
-   until it hits the surface or completes an orbit; the arc of surface it
-   covers is marked, the paths of a few slower launches are drawn faint,
-   and the acceleration arrow turns as the projectile goes round; one
-   flight, or one orbit, per loop, with the scrubber · launch speed
-   $\kvo$ (1.0 to 9.0 km/s, step 0.1, default 6.0, velocity; above 9
-   km/s the ellipse grows too large for the picture), tower height (200
-   to 3,000 km, default 1,000, ink, since it is a length of the scene) ·
-   "t = 15.1 min · it lands 5,200 km along the curved surface, against
-   2,710 km on level ground"; at orbital speed, "the Earth curves away as
-   fast as the projectile falls: it is in orbit" · none: the Earth is the
-   picture · no. The
-   motion is integrated under the inverse-square attraction with the
-   Earth's radius 6,370 km and $\kg$ = 9.80 m/s² at the surface, which is
-   what the text describes and beyond what it computes; the readout gives
-   the level-ground range $\kR = \kvo\sqrt{2h/\kg}$ for comparison and
-   the small line says how much farther the projectile went. Draws
-   position, velocity, acceleration, time. Merged 2026-09-28 with the
-   Manim trial `sim-orbit-morph`, whose code it now runs: the camera
-   follows the values (manim 1, 7), fitting the tower, the whole
-   predicted path and the landing point and easing to the new fit when
-   a slider moves, so a slow launch is seen close up over what reads as
-   level ground and a fast one needs the whole Earth; the circular-orbit
-   and escape speeds for the set height are special values on $\kvo$,
-   and on the circular one the readout morphs from the level-ground
-   range into the orbit condition.
-
-Figure re-examination (2026-11-17, Claude Fable 5.2). Every figure was judged again beside the book's image; the lines above are superseded where these differ.
+Figure re-examination (2026-11-17, Claude Fable 5.2). Every figure was judged again beside the book's image.
 
 1. `sim-displacement` · Figure 3.34 · reverted to the book's image (a kept `photo` row, same id). The redraw showed the same triangle of $\mathbf{s}$, $x$ and $y$ at a fraction of the size, and its sliders changed no idea; the referent `ball` went with it.
 2. `sim-components` · replaces Figure 3.35 (a) to (d) · projectile-horizontal-motion, projectile-vertical-motion, projectile-analysis · value add: the book's parts (b) and (c) are seen being made, as the two shadows of one flight · kinematic · moving: the projectile leaves a mark every 0.50 s, each mark is cast on a track under the ground (the horizontal motion alone) and on two columns beside the y-axis (the vertical motion alone, rising and falling), every shadow carrying its component arrow · $v_0$ 15 to 25 m/s (default 25, velocity), $\theta_0$ 30° to 75° (default 60°, angle) · headline: the time, $v_x$ unchanged, $v_y$ now · no graph: the tracks are the graphs' content · 2D.
@@ -213,8 +99,8 @@ Figure re-examination (2026-11-17, Claude Fable 5.2). Every figure was judged ag
 6. `sim-orbit` · replaces Figure 3.39 · range · value add: one launch after another on the same Earth, up to the one that never lands · kinematic · moving: one flight or one orbit · $v_0$ 1.0 to 7.4 km/s (default 6.0, velocity), the circular speed 7.11 km/s a special value; the tower is fixed at 1,500 km, since its height changed no idea, and the camera that followed the values is gone, since it hid the comparison between launches · headline: where it lands and the level-ground range beside it · none · 2D.
    works: parts: Earth, tower at the top, launch arrow horizontal at the tower's top, faint paths of launches at 2, 4 and 6 km/s, dashed circular orbit, the surface covered marked along the limb · flow: the projectile from the tower round the Earth · must hold: the acceleration arrow points at the Earth's centre; a faster launch lands farther round; at 7.11 km/s the path lies on the dashed circle · read off the image: four landing paths of growing range, one circle, $\mathbf{v}_0$ horizontal, no numbers.
 
-Every book figure of the section is a sketch and is replaced; no
-photograph to keep or drop. Problems 7 and 8 refer to Figure 3.38, which
+Every book figure of the section is a sketch. Figure 3.34 stays the
+book's image and the others are replaced; no photograph to keep or drop. Problems 7 and 8 refer to Figure 3.38, which
 `sim-range` replaces with the book's numbers reachable on its sliders and
 the book's image as its original, so no separate exercise figure is
 needed.
@@ -232,8 +118,6 @@ Extra simulations (rule 15), considered and left:
   that repeats what every sim already draws. Left.
 
 None built.
-
-Figure pass (2026-09-14, Claude Fable 5.1): every scene is now at one fixed scale stated in a comment, and the sliders were narrowed where the old maximum would have drawn the book's flight tiny: `sim-displacement` and `sim-components` $v_0$ 10 to 30 m/s at 7.4 and 7.2 units to the metre; `sim-fireworks` $v_0$ 40 to 90 m/s at 1.21 units to the metre on a 720-unit canvas, its graph fixed at 0 to 100 m/s and 0 to 10 s; `sim-rock` $v_0$ 10 to 30 m/s, $\theta_0$ 0 to 60° and $y$ −40 to −5 m at 4.5 units to the metre, its graph fixed at −2 to 6 s and −40 to 40 m, and its volcano given a crater behind the rim; `sim-range` $v_0$ 20 to 60 m/s at 1.54 units to the metre with the R graph fixed at 0 to 400 m; `sim-orbit` $v_0$ 1 to 8 km/s and the tower 200 to 1,500 km with the Earth at a fixed 140 units to its radius. The book's numbers stay the defaults everywhere. Velocity arrows in `sim-components` are 9 units per m/s; the launch, angle, velocity and acceleration labels of every figure go through `labeller()`; the soccer ball is a white ball with a pentagon and seams and the tower has stages and a platform. Headlines wrap through `topline()`.
 
 ## Exercises
 
@@ -353,10 +237,9 @@ the tower height stay in ink.
   and `max-height` would do as well.
 
 Decided in the chapter pass (2026-09-11): the thirty-four anchors above
-are written into `chapter.json`, `θ_0` at `range` as proposed. Three
+are written into `chapter.json`, `θ_0` at `range` as proposed. Two
 `draws` lists are trimmed to what the figure actually colours:
-`sim-displacement` draws position and velocity (its headline states the
-time in ink and nothing in it colours time), `sim-range` and `sim-orbit`
+`sim-range` and `sim-orbit`
 draw position, velocity and acceleration (the `\kg` of their readouts);
 the page still binds time through the components, fireworks and rock
 sims, so nothing on the page changes colour. The range sim's caption

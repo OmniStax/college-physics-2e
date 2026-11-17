@@ -126,8 +126,6 @@ horizontal sim already shows what the choice of origin and of positive
 direction does to a position and a displacement, and the feather's
 velocity and acceleration are ideas of 2.3 and 2.4. None built.
 
-Figure pass, 2026-09-14 (Claude Fable 5.1). Both figures stood up to their screenshots at every slider extreme in both themes; the only change is the degree sign, which the thermometer wrote with the ordinal mark and now writes as °C.
-
 Figure re-examination, 2026-11-16 (Claude Fable 5.2). Both rebuilt.
 `sim-vector-scalar` was a small drawing under sentences of canvas text
 with a readout joining two statements; it now fills its stage, opens on

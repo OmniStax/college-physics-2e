@@ -83,200 +83,30 @@ subway examples use `displacement`, `distance-traveled` (2.1),
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-average-acceleration` · new, for the boxed definition ·
-   average-acceleration, acceleration · a car on a strip whose velocity
-   grows by ā every second for 5.0 s; the velocity arrow lengthens each
-   frame and the acceleration arrow keeps its length; every whole second
-   a tick on the v–t graph below is labelled with the gain, so "meters
-   per second per second" is read off the picture · $\kvo$ (0 to 20 m/s,
-   default 5.0, velocity hue), $\kab$ (−5.0 to 5.0 m/s², default 2.5,
-   acceleration hue) · "After 2.0 s the velocity has changed by 2.0 ×
-   +2.5 = +5.0 m/s, to 10.0 m/s." · v–t below (t, v), on axes fixed at 0
-   to 5.0 s and −25 to 45 m/s, which every pair of slider values reaches
-   into and none passes · 2D. The road is a fixed −70 m to 165 m, the
-   stretch the widest slider settings need, so a larger acceleration
-   draws a longer run instead of the road shrinking to fit. Labels on,
-   five of them. Moving: the idea is a
-   change over time, and the quantity that accumulates is the velocity.
-   One run of 5.0 s of model time in about 5 real seconds, so it gets the
-   scrubber. Readout: $\kab = \kdv/\kdt = (17.5 − 5.0)/5.0 = 2.5$ m/s².
-   Draws time, velocity, acceleration.
-2. `sim-turning` · new (rule 15, built; see below) · acceleration · a
-   car seen from above drives a straight road, rounds a quarter circle
-   at constant speed and drives on; the velocity arrow rides on the car,
-   and beside the bend the velocity at the start of the turn and the
-   velocity now are set tail to tail with their difference Δv drawn
-   between the tips, pointing to the inside of the bend · speed (5 to
-   20 m/s, default 10, velocity hue), radius of the bend (20 to 80 m,
-   default 40, ink) · "On the bend the speed stays 10.0 m/s while the
-   direction has turned 45°, so the velocity has changed by 7.7 m/s and
-   the car is accelerating." · none, the scene is the idea · 2D. The
-   acceleration arrow on the car is drawn along Δv, which is what this
-   section defines the average acceleration to be, on a fixed scale from
-   the fastest, tightest bend the sliders allow; the centripetal result
-   that would give its size from the speed and the radius belongs to a
-   later chapter and is not used. Labels on, five of them. Moving: the
-   direction changes as
-   the car goes round. Endless loop of the whole run (straight, bend,
-   straight) in about 5 real seconds. Readout: $|\kdv| = 2\kv\sin(θ/2)$
-   in words: the speed has not changed and the velocity has. Draws
-   velocity, acceleration.
-3. `sim-four-cars` · replaces Figure 2.14 (the four cars) ·
-   acceleration-sign, deceleration · four strips, one per car of the
-   book's figure: (a) moving right and speeding up, (b) moving right and
-   slowing down, (c) moving left and slowing down, (d) moving left and
-   speeding up; each car drives for the time it takes the slowing cars
-   to stop, its velocity arrow growing or shrinking every frame while
-   its acceleration arrow keeps its length and sign · starting speed
-   (5 to 30 m/s, default 15, velocity hue), size of the acceleration
-   (1.0 to 6.0 m/s², default 3.0, acceleration hue)
-   · "After 2.4 s cars (b) and (c) are decelerating, while (b) and (d)
-   are the ones whose acceleration is negative." · none · 2D. The four
-   roads carry no scale and no ticks, since the figure is about the signs
-   of v and a rather than about distance, and every number the reader is
-   meant to take away is written beside the road and in the readout.
-   No letters ride the arrows: eight labels on eight arrows that travel
-   with four cars sit on moving things, so by rule 26.7 they are not
-   drawn; the coloured line of numbers beside each road names v and a
-   by hue, and the hover name over each car says which it is. Moving: speeding up and slowing down are
-   things that happen as time runs. Finite, one loop of v₀/|a| seconds
-   in about 5 real seconds, scrubber. Readout: v = v₀ + at written out
-   with the live numbers for each of the four cars. Draws velocity,
-   acceleration.
-4. `sim-racehorse` · replaces Figure 2.16 (the sketch for Example 2.1) ·
-   average-acceleration, calculate-average-acceleration · a horse runs
-   west along a strip with east positive; its velocity arrow grows from
-   v₀ to v_f over Δt, the acceleration arrow points west with a fixed
-   length, and the v–t graph below runs down to −15.0 m/s · $\kvo$
-   (−20 to 20 m/s, default 0.0), $\kvf$ (−20 to 20 m/s, default −15.0,
-   both velocity hue), $\kdt$ (0.5 to 5.0 s, default 1.80, time hue) ·
-   "After 0.90 s the velocity is −7.5 m/s, and the acceleration points
-   west, the same way as the velocity, so the horse is speeding up." ·
-   v–t below, on axes fixed at 0 to 5.0 s and −20 to 20 m/s, the two
-   slider ranges, so nothing can fall outside them · 2D. The strip is a
-   fixed −45 m to 45 m of road, and a horse that would run past the end
-   of it is held there and the headline says so. Labels on, five of
-   them. Moving, finite, scrubber.
-   Readout: $\kab = \kdv/\kdt = (−15.0 − 0)/1.80 = −8.33$ m/s². Draws
-   time, velocity, acceleration.
-5. `sim-instantaneous` · replaces Figure 2.17 (the two graphs of
-   instantaneous acceleration) · instantaneous-acceleration,
-   average-acceleration · two a–t graphs side by side as the book draws
-   them, (a) the slight wobble about 1.8 m/s² over 5 s and (b) the
-   package on the conveyor belt over 6 s; the interval [t₁, t₂] is
-   marked on both by dashed time lines, the average over it is a dashed
-   level, and as the clock runs from t₁ to t₂ a marker walks along each
-   curve reading the acceleration at that instant. Nothing is shaded:
-   the area under an acceleration-time curve is the change in velocity,
-   but the book does not reach that result until it works with the
-   equations of motion, so the change in velocity is read from the
-   definition of average acceleration in the readout instead · $t_1$ (0
-   to 5.5 s, default 0.0), $t_2$ (0.5 to 6.0 s, default 3.0; both time
-   hue) · "Over 0.0 to 3.0 s the average acceleration is 1.78 m/s² on the
-   left and −0.33 m/s² on the right." · the graphs are the figure, on
-   axes fixed at 0 to 5 s by 0 to 3 m/s² and 0 to 6 s by −6 to 6 m/s²,
-   the ranges the two motions occupy · 2D. Labels on, six of them, each
-   on a panel. Moving: the marker walks the curve as
-   the clock runs. Finite, scrubber. Readout: ā over the interval for
-   both; small line: over 0 to 1.0 s alone the right-hand motion has
-   +3.0 m/s² and over 1.0 to 3.0 s −2.0 m/s², the book's numbers. Draws
-   time, velocity, acceleration.
-6. `sim-subway-displacement` · replaces Figure 2.18 (the train's two
-   trips) · displacement, distance-traveled, coordinate-system · two
-   strips of track marked in kilometers; on each a hollow outline of
-   the train at the initial position, the train itself at the final
-   position and a bracket for the displacement, (a) to the right and
-   (b) to the left · $\kxo$ (default 4.70), $\kxf$ (default 6.70),
-   $\kxo'$ (default 5.25), $\kxf'$ (default 3.75), all 0 to 10 km, step
-   0.05, position hue · "Trip (a) has Δx = 6.70 − 4.70 = +2.00 km, and
-   trip (b) has Δx′ = 3.75 − 5.25 = −1.50 km." · none · 2D, the two
-   strips fixed at 0 to 10 km, the position sliders' range. Labels on,
-   six of them, each on a panel clear of the strip. Still: a
-   displacement is a difference
-   of two positions and has no time in it; the figure answers its four
-   sliders, and Examples 2.2 and 2.3 read straight off it. Readout: the
-   two displacements and the two distances traveled. Draws position.
-7. `sim-subway-speeding-up` · replaces Figure 2.19 (the sketch for
-   Example 2.4) · average-acceleration, calculate-average-acceleration,
-   unit-conversion · the train on a strip moving right, from rest to
-   30.0 km/h in 20.0 s; the velocity arrow grows, the acceleration arrow
-   points right and keeps its length; v–t below in km/h · $\kvo$ (−40
-   to 40 km/h, default 0.0), $\kvf$ (default 30.0; both velocity hue),
-   $\kdt$ (1 to 30 s, default 20.0, time hue) · "After 10.0 s the
-   velocity is 15.0 km/h, and the acceleration points right, the same
-   way as the velocity, so the train is speeding up." · v–t below, on
-   axes fixed at 0 to 30 s and −40 to 40 km/h, the slider ranges · 2D.
-   The strip is a fixed 0 to 240 m of track. Labels on, five of them.
-   Moving, finite, scrubber.
-   Readout: the book's step with the conversion, $(+30.0\ \text{km/h}
-   / 20.0\ \text{s})(10^3\ \text{m}/1\ \text{km})(1\ \text{h}/3600\
-   \text{s}) = 0.417$ m/s². Draws time, velocity, acceleration.
-8. `sim-subway-slowing-down` · replaces Figure 2.20 (the sketch for
-   Example 2.5) · deceleration, average-acceleration,
-   calculate-average-acceleration · the same train, 30.0 km/h to rest
-   in 8.00 s; the velocity arrow shrinks while the acceleration arrow
-   points left · the same three sliders, defaults 30.0, 0.0, 8.00 ·
-   "After 4.00 s the velocity is 15.0 km/h, and the acceleration points
-   left, against the velocity, so the train is decelerating." · v–t
-   below, on the same fixed axes · 2D, the strip a fixed 0 to 120 m of
-   track. Labels on, five of them. Moving,
-   finite, scrubber. Readout: −1.04 m/s² with the conversion. Draws
-   time, velocity, acceleration.
-9. `sim-subway-graphs` · replaces Figure 2.21 (position, velocity and
-   acceleration of the train against time) · average-acceleration,
-   instantaneous-acceleration, deceleration · the whole journey of
-   Examples 2.4 and 2.5 on one clock: the train speeds up for 20 s,
-   cruises for 20 s and brakes for 8 s along a strip, while three
-   stacked graphs of x, v and a against time carry a moving point each,
-   the position curving up then straight then flattening, the velocity
-   a ramp, a plateau and a ramp down, the acceleration three flat steps ·
-   top speed (10 to 40 km/h, default 30.0, velocity hue), time to speed
-   up (5 to 30 s, default 20.0), time at constant velocity (0 to 30 s,
-   default 20.0), time to stop (4 to 15 s, default 8.00; all time hue).
-   The four ranges are cut so that every graph can carry a fixed axis
-   that no setting runs past · "After 30.0 s the velocity is constant, so
-   the acceleration is zero and the position grows at a steady rate." ·
-   three graphs below, on ranges fixed once at 0 to 75 s, 0 to 600 m, 0
-   to 12 m/s and −3 to 3 m/s² · 2D, the strip a fixed 0 to 600 m.
-   Labels on, five of them, three of which name the parts of the
-   journey and sit above the graphs rather than on them.
-   Moving, finite, scrubber. Readout: the two accelerations, +0.417 and
-   −1.04 m/s², each written with the conversion factors carried so that
-   km/h over s really does come out in m/s². Draws time, position,
-   velocity, acceleration.
-10. `sim-subway-velocity` · replaces Figure 2.22 (the train's trip to
-    the left, for Example 2.6) · average-velocity, displacement · the
-    train travels left from x′₀ to x′_f in Δt at a steady rate, its
-    velocity arrow pointing left, while an x–t graph below draws the
-    straight line whose slope is the average velocity · $\kxo'$ (default
-    5.25), $\kxf'$ (default 3.75; both 0 to 10 km, position hue), $\kdt$
-    (1.0 to 15.0 min, default 5.00, time hue) · "After 2.50 min the train
-    is at 4.50 km, 50 percent of the way along a trip of −1.50 km." ·
-    x–t below, on axes fixed at 0 to 15 min and the same 0 to 10 km as
-    the strip above, so the graph and the strip are read on one scale ·
-    2D. The train sprite faces the way it is going, so a trip to the left
-    is not drawn driving backwards. Labels on, five of them.
-    Moving, finite, scrubber. Readout: $\kvb = \kdx'/\kdt = (−1.50\
-    \text{km}/5.00\ \text{min})(60\ \text{min}/1\ \text{h}) = −18.0$
-    km/h. Draws time, position, velocity.
-11. `sim-subway-deceleration` · replaces Figure 2.23 (the sketch for
-    Example 2.7) · acceleration-sign, deceleration, average-acceleration
-    · the train moving left at −20.0 km/h comes to rest in 10.0 s; the
-    velocity arrow points left and shrinks, the acceleration arrow
-    points right; v–t below rises from −20.0 to 0 · the three sliders of
-    figure 7, defaults −20.0, 0.0, 10.0 · "After 5.00 s the velocity is
-    −10.0 km/h, and the acceleration points right, against the velocity,
-    so the train is decelerating." · v–t below, on the same fixed axes ·
-    2D, the strip a fixed −120 m to 0 m of track, with the train sprite
-    facing left as it travels left. Labels on, five of them. Moving,
-    finite, scrubber. Readout: +0.556 m/s² with the
-    conversion. Draws time, velocity, acceleration.
+Five figures are drawn. Figures 1, 3, 5 and 9 are planned in the block
+dated 2026-11-17 below; figure 2 is this line:
 
-(Before the re-examination) Figures 4, 7, 8 and 11 were one shape (a sprite on a strip with v and a
-arrows, a v–t graph below, sliders v₀, v_f, Δt) built by one function
-in `figures.js` with the sprite, the unit and the defaults as its
-arguments; each keeps its own book number, its own original and its
-own headline and readout, since each sits in the example it serves.
+2. `sim-turning` · Sim (rule 15) · acceleration · a car seen from above
+   drives a straight road, rounds a quarter circle at constant speed and
+   drives on; the velocity arrow rides on the car, and beside the bend
+   the velocity at the start of the turn and the velocity now are set
+   tail to tail with their difference Δv drawn between the tips,
+   pointing to the inside of the bend · speed (5 to 15 m/s, default 10,
+   velocity hue), radius of the bend (20 to 60 m, default 40, position
+   hue) · "On the bend the speed stays 10.0 m/s while the direction has
+   turned 45°, so the velocity has changed by 7.7 m/s and the car is
+   accelerating." · none, the scene is the idea · 2D. The acceleration
+   arrow on the car is drawn along Δv with a length proportional to ā,
+   which is what this section defines the average acceleration to be;
+   the centripetal result that would give its size from the speed and
+   the radius belongs to a later chapter and is not used. The velocity
+   arrow is drawn to one scale everywhere. Moving: the direction changes
+   as the car goes round, one run of straight, bend and straight per
+   loop. Readout, one formula: ā = Δv/Δt over the time on the bend.
+   Draws position, velocity, acceleration.
+
+Figures 2.16, 2.18, 2.19, 2.20, 2.22 and 2.23 are the book's images,
+listed at the end of the dated block.
 
 Photographs, three:
 
@@ -309,15 +139,12 @@ opens the one view the section's text gives and its figures do not, a
 change in velocity that is entirely a change in direction. Left: the
 other two.
 
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-average-acceleration`: the whole-second readings and the one-second bracket's label overprinted each other, so all of them go through `labeller()` and the bracket is drawn as a step. `sim-turning`: the headline wraps through `topline()`, the velocity label is kept under it, and the car seen from above is redrawn with tyres, a bonnet and windows (a new sprite, drawn here). `sim-four-cars`: the four velocity lines of the readout ran off the right of the panel in two columns and now stand one to a row. `sim-racehorse` and the three subway sketches: the horse was a box with a wedge for a neck and is redrawn with a barrel, a neck, a head with ears, a mane, a tail and four galloping legs (a new sprite, drawn here); the graph's $v_0$, $v_f$ and slope labels go through `labeller()`. `sim-subway-displacement` and `sim-subway-velocity`: the subscript labels use the drawing layer's `x_f` form on a panel, the slope label goes through `labeller()`, the average-velocity label stays inside the canvas, and every headline wraps. `sim-instantaneous` and `sim-subway-graphs` unchanged except the wrap.
-
 Figure re-examination, 2026-11-17 (Claude Fable 5.2). The eleven drawn
 figures were judged as a set. Six of them were one shape (a sprite on a
 strip, a v–t or x–t line below, sliders for the two end values and the
 time) and repeated `sim-average-acceleration`; the six subway figures
 also repeated each other. What the section teaches is carried by five
-figures now, and the plan lines above for figures 1, 3, 5 and 9 are
-replaced by these:
+figures now:
 
 1. `sim-average-acceleration` · Sim, for the boxed definition ·
    average-acceleration, acceleration · value add: "meters per second per
@@ -382,11 +209,10 @@ replaced by these:
    straight, flattens; v ramp, plateau, ramp; a three steps; the three
    markers share one time; the tangent's slope equals the v reading.
 
-`sim-turning` (figure 2) is kept: the triangle of velocities is larger,
-the speed and radius ranges are cut to 5 to 15 m/s and 20 to 60 m so the
-velocity arrow is drawn to one scale everywhere without being cut short
-under the headline, the acceleration arrow's length is proportional to
-ā, and the readout is the one formula.
+`sim-turning` (figure 2) is kept, with the triangle of velocities
+larger, the velocity arrow on one scale and clear of the headline, and
+the acceleration arrow's length proportional to ā; its plan line is
+under "Figures" above.
 
 Reverted to the book's image, each a kept photograph with its number:
 Figure 2.16 (`sim-racehorse`: the same strip and line as figure 1 with a
@@ -441,13 +267,11 @@ kept so every link holds. The referent `horse` went with its figure.
 
 ## Colour
 
-The page binds time, position, velocity and acceleration: every sim
-carries a velocity or a position on a slider and draws a velocity
-arrow, the moving ones carry a time, and all but the displacement and
-velocity sims draw an acceleration arrow. Speeds of the four cars and
-the turning car are velocities and take that hue; the radius of the
-bend, the length of a strip and the count of a car are untyped and in
-ink.
+The page binds time, position, velocity and acceleration. The cars and
+the train draw a velocity arrow and an acceleration arrow, the moving
+figures carry a time, the two acceleration graphs of Figure 2.17 are in
+the acceleration hue, and the radius of the bend and the train's place on
+its track are positions.
 
 ## Wanted at chapter level
 

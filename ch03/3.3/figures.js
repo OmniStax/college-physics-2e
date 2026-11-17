@@ -22,10 +22,10 @@ function bearing(deg) {
   return m < 90 ? fmt(m, 1) + '° ' + ns + ' of east' : fmt(180 - m, 1) + '° ' + ns + ' of west';
 }
 /* a dashed component vector with a small head, drawn from (x1, y1) to (x2, y2) */
-function darrow(ctx, x1, y1, x2, y2, color, w = 3) {
+function darrow(ctx, x1, y1, x2, y2, color, w = 3, dash = [10, 8]) {
   const L = Math.hypot(x2 - x1, y2 - y1); if (L < 3) return;
   const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(26, L);
-  line(ctx, x1, y1, x2 - ux * h, y2 - uy * h, color, w, [10, 8]);
+  line(ctx, x1, y1, x2 - ux * h, y2 - uy * h, color, w, dash);
   arrow(ctx, x2 - ux * h, y2 - uy * h, x2, y2, color, w);
 }
 /* the right-angle mark at (x, y), opening toward (dx, dy) horizontally and vertically */
@@ -192,25 +192,29 @@ function triangle(ctx, lab, ax, ay, pos, nameA) {
    components. One drawing serves both: `sign` is +1 for A + B and -1 for
    A - B, where the second leg is taken in the opposite direction. Each has
    one fixed scale, set from what its sliders reach.
-   A + B, 6.2 units a metre: A reaches 60 m between east and north and B
-   40 m anywhere north of the east-west line, so the walk stays within 40 m
-   west, 100 m east and 100 m north of the start.
+   A + B, 8.5 units a metre: A reaches 55 m up to 45° north of east and B
+   35 m anywhere north of the east-west line, so the walk stays within 35 m
+   west, 90 m east and 74 m north of the start, and Example 3.3 is two
+   thirds of that height.
    A - B, 7.6 units a metre: A is the leg of Example 3.3 and stays, and B
    turns the whole circle, so B and -B stay within 40 m of the head of A,
    between 22 m south and 58 m north of the start and up to 90 m east.
+   The three vectors share the position hue, so each is told by its line
+   and its components wear the same line: A thin and solid, the second leg
+   dashed, R heavy and solid.
    The x-components sit in rows under the lowest point of the walk and the
    y-components in columns left of its leftmost point, as Figure 3.32 sets
    them. Still: a sum of displacements has no time in it.
 ===================================================================== */
 function walk(id, sign) {
   const add = sign > 0;
-  const S = add ? 6.2 : 7.6, OX = add ? 600 : 552, OY = add ? 716 : 548, H = add ? 932 : 932;
-  const xR = add ? 104 : 94, yT = add ? 102 : 60, yB = add ? -2.5 : -24;   /* how far the axes run, in metres */
+  const S = add ? 8.5 : 7.6, OX = add ? 580 : 552, OY = add ? 716 : 548, H = add ? 932 : 932;
+  const xR = add ? 92 : 94, yT = add ? 75 : 60, yB = add ? -2.5 : -24;   /* how far the axes run, in metres */
   const d = sim(id, H);
   const fixed = (v) => ({ v });
-  const A = add ? ctl(d.controls, { label: '\\kA', cls: 'position', min: 10, max: 60, step: 0.5, value: 53, unit: 'm', dec: 1, aria: 'magnitude of A' }) : fixed(53);
-  const TA = add ? ctl(d.controls, { label: '\\kthetaA', cls: 'angle', min: 0, max: 90, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'angle of A' }) : fixed(20);
-  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 10, max: 40, step: 0.5, value: 34, unit: 'm', dec: 1, aria: 'magnitude of B' });
+  const A = add ? ctl(d.controls, { label: '\\kA', cls: 'position', min: 10, max: 55, step: 0.5, value: 53, unit: 'm', dec: 1, aria: 'magnitude of A' }) : fixed(53);
+  const TA = add ? ctl(d.controls, { label: '\\kthetaA', cls: 'angle', min: 0, max: 45, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'angle of A' }) : fixed(20);
+  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 10, max: add ? 35 : 40, step: 0.5, value: 34, unit: 'm', dec: 1, aria: 'magnitude of B' });
   const TB = ctl(d.controls, { label: '\\kthetaB', cls: 'angle', min: add ? 0 : -180, max: 180, step: 0.5, value: 63, unit: '°', dec: 1, aria: 'angle of B', detents: add ? [90] : [-90, 0, 90] });
   const X = (m) => OX + m * S, Y = (m) => OY - m * S;
   const nb = sign > 0 ? 'B' : '−B';
@@ -239,6 +243,8 @@ function walk(id, sign) {
     text(ctx, 'x', X(xR) + 16, OY + 4, PAL.muted, { size: 24, weight: 600, align: 'center' });
     text(ctx, 'y', OX + 22, Y(yT) + 10, PAL.muted, { size: 24, weight: 600, align: 'center' });
     compass(ctx, 110, 170, 30); lab.block(46, 106, 174, 234);
+    /* one line for each vector and its components: A thin, the second leg dashed, R heavy */
+    const vec = (x1, y1, x2, y2, who) => { if (who === 'R') arrow(ctx, x1, y1, x2, y2, pos, 8); else if (who === 'A') arrow(ctx, x1, y1, x2, y2, pos, 4); else darrow(ctx, x1, y1, x2, y2, pos, 5, [16, 9]); };
     /* faint guides from the points of the walk to the rows and columns that carry their components */
     [[O, r3, c3], [P, r2, c2], [Q, r3, c3]].forEach(([p, row, col]) => { line(ctx, p.x, p.y, p.x, row, guide, 2, [4, 8]); line(ctx, p.x, p.y, col, p.y, guide, 2, [4, 8]); });
     /* the names of the legs and the resultant, queued first so they have the first pick of the slots */
@@ -247,22 +253,22 @@ function walk(id, sign) {
     if (!none) lab.beside(seg(O, Q), away(O, Q, P), 'R', pos, 28);
     /* the components, the legs' dashed and the resultant's solid: a row's name goes under it through the labeller,
        a column's is set upright beside it, where nothing else lands */
-    const comp = (x1, y1, x2, y2, solid, name, row) => {
+    const comp = (x1, y1, x2, y2, who, name, row) => {
       if (Math.hypot(x2 - x1, y2 - y1) < 2) return;
-      if (solid) arrow(ctx, x1, y1, x2, y2, pos, 5); else darrow(ctx, x1, y1, x2, y2, pos, 4);
+      vec(x1, y1, x2, y2, who);
       if (row) { lab.add(name, (x1 + x2) / 2, (y1 + y2) / 2, 0, 1, pos, 24, 26); return; }
       { const half = Math.max(Math.abs(y2 - y1), F.measure(ctx, name, { size: 24, weight: 600 }) + 16) / 2; lab.block(x1 - 44, (y1 + y2) / 2 - half, x1 + 10, (y1 + y2) / 2 + half); }
       ctx.save(); ctx.translate(x1 - 26, (y1 + y2) / 2); ctx.rotate(-Math.PI / 2);
       text(ctx, name, 0, 0, pos, { size: 24, weight: 600, align: 'center', bg: PAL.panel }); ctx.restore();
     };
-    comp(X(0), r1, X(ax), r1, false, 'A_x = ' + m1(ax), true);
-    comp(X(ax), r2, Q.x, r2, false, nb + '_x = ' + m1(bx), true);
-    comp(X(0), r3, Q.x, r3, true, 'R_x = ' + m1(rx), true);
-    comp(c1, Y(0), c1, Y(ay), false, 'A_y = ' + m1(ay), false);
-    comp(c2, Y(ay), c2, Q.y, false, nb + '_y = ' + m1(by), false);
-    comp(c3, Y(0), c3, Q.y, true, 'R_y = ' + m1(ry), false);
+    comp(X(0), r1, X(ax), r1, 'A', 'A_x = ' + m1(ax), true);
+    comp(X(ax), r2, Q.x, r2, 'B', nb + '_x = ' + m1(bx), true);
+    comp(X(0), r3, Q.x, r3, 'R', 'R_x = ' + m1(rx), true);
+    comp(c1, Y(0), c1, Y(ay), 'A', 'A_y = ' + m1(ay), false);
+    comp(c2, Y(ay), c2, Q.y, 'B', nb + '_y = ' + m1(by), false);
+    comp(c3, Y(0), c3, Q.y, 'R', 'R_y = ' + m1(ry), false);
     /* B itself, muted, from the head of A, when the walk takes it the other way */
-    if (sign < 0) { darrow(ctx, P.x, P.y, G.x, G.y, PAL.muted, 3.5); lab.beside(seg(P, G), away(P, G, O), 'B', PAL.muted, 26); blockSeg(lab, P, G); }
+    if (sign < 0) { darrow(ctx, P.x, P.y, G.x, G.y, PAL.muted, 3, [3, 8]); lab.beside(seg(P, G), away(P, G, O), 'B', PAL.muted, 26); blockSeg(lab, P, G); }
     /* the angles, each from a horizontal through its tail and drawn under the arrows. The legs' names go inside
        their arcs on the bisector; the resultant's goes just past its arrow, on the side away from A, as Figure 3.32
        sets it, since A cuts its arc in two */
@@ -278,9 +284,9 @@ function walk(id, sign) {
     arc(P, tb, Math.min(70, b * S * 0.4), 'θ_B');
     arc(O, ta, rA, 'θ_A');
     if (!none) { let dd = th - ta; dd = ((dd + 540) % 360) - 180; arc(O, th, rR, 'θ', dd >= 0 ? 1 : -1); }
-    arrow(ctx, O.x, O.y, P.x, P.y, pos, 5);
-    arrow(ctx, P.x, P.y, Q.x, Q.y, pos, 5);
-    if (Math.hypot(Q.x - O.x, Q.y - O.y) > 4) arrow(ctx, O.x, O.y, Q.x, Q.y, pos, 7);
+    vec(O.x, O.y, P.x, P.y, 'A');
+    vec(P.x, P.y, Q.x, Q.y, 'B');
+    if (Math.hypot(Q.x - O.x, Q.y - O.y) > 4) vec(O.x, O.y, Q.x, Q.y, 'R');
     dot(ctx, O.x, O.y, PAL.ink, true, 6);
     lab.flush();
     /* the readout: steps 2 to 4 with the numbers as they stand */

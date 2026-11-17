@@ -57,59 +57,6 @@ projectile motion and 3.4's page keeps it; `exercise_notes` says so.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-walk` · replaces Figures 3.3, 3.4 and 3.5 (the walk on the grid
-   of blocks, the right triangle of the Pythagorean theorem, and the
-   helicopter's straight-line path; one scene in the book drawn three
-   times, so one sim carries the number 3.3 with the other two images as
-   further originals) · right-triangle-resultant, vector-components · a
-   pedestrian walks east along the bottom of a grid of square blocks and
-   then north up its right edge while a helicopter flies the straight
-   diagonal from the same start at the same speed; the three vectors are
-   drawn as arrows with a hash mark per block, the right triangle they
-   form is shaded, and the angle of the diagonal above east is marked;
-   the helicopter arrives first, because its path is shorter · blocks
-   east (1 to 12, step 1, default 9, position hue), blocks north (1 to 8,
-   step 1, default 5, position hue) · "The walker has gone 6.0 of the 14
-   blocks, and the helicopter 6.0 of its 10.3." At the end, "The walk
-   covers 14 blocks, 9 east and then 5 north, while the straight-line
-   distance is 10.3 blocks." · none, the grid is the scene and the
-   triangle is the idea · 2D. The three sides carry the letters a, b and
-   c that the readout uses, so the Pythagorean theorem can be followed on
-   the drawing. Labels on, eight of them, each beside something that
-   stays put. Moving: two things travel, one loop of
-   about 5 real seconds ending when the walker arrives, so it gets the
-   scrubber. Readout: $c = \sqrt{a^2 + b^2} = \sqrt{(9\ \text{blocks})^2
-   + (5\ \text{blocks})^2} = 10.3\ \text{blocks}$ with the legs in plain
-   LaTeX (`\ka` is the acceleration and `\kc` the speed of light, so
-   neither names a triangle side); small line: the walk covers 14 blocks
-   and the angle of the straight-line path above east is 29.1°. The
-   three displacement arrows and their labels are in the position hue,
-   the walker and the helicopter are ink sprites, the angle is in ink.
-   Draws position.
-2. `sim-two-balls` · replaces Figure 3.6 (the two baseballs under the
-   stroboscope) · independence-of-perpendicular-motions · one ball is
-   dropped from rest and another is thrown horizontally from the same
-   height at the same instant; both fall, and at every flash of the
-   strobe a faint copy of each ball is left behind with its horizontal
-   and vertical velocity arrows and a dashed level line joining the two
-   copies, which are always at the same height; the acceleration arrow
-   on each ball is drawn every frame and never changes · initial
-   horizontal velocity $\kvox$ of the thrown ball (0.5 to 6.0 m/s, step
-   0.1, default 3.0, velocity hue), flash interval $\kdt$ (0.05 to 0.20
-   s, step 0.01, default 0.10, time hue), height $\kyo$ the balls start
-   from (1.0 to 5.0 m, step 0.1, default 1.5, position hue) · "t = 0.30
-   s · both balls are 1.06 m above the ground; the thrown ball has gone
-   0.90 m sideways" and at the end "both balls reach the ground together
-   after 0.55 s, and the thrown one has gone 1.66 m sideways" · none,
-   the strobe copies are the record of the motion · no. Moving: the
-   balls fall, one finite loop of about 5 real seconds, so it gets the
-   scrubber. Readout: $\ky = \kyo - \tfrac{1}{2}\kg\kt^2 = 1.06\
-   \text{m}$ for both balls and $\kx = \kvox\kt = 0.90\ \text{m}$ for
-   the thrown one; small line: the vertical velocities of the two balls
-   are equal at every flash, and the horizontal velocity of the thrown
-   ball is the same between every pair of flashes. Draws time, position,
-   velocity and acceleration.
-
 Photographs, one:
 
 - Figure 3.2, the New York intersection (credit: Margaret W. Carruthers):
@@ -129,9 +76,7 @@ item. The first only redraws the walk sim with a longer path, the second
 needs a drag model the book does not give until Chapter 5, and the third
 adds a ball 2.7 has already shown. None built.
 
-Figure pass (2026-09-14, Claude Fable 5.1): `sim-walk` now draws its grid at a fixed 50 units to the block, anchored at the start, so the scene no longer rescales when a leg changes; the walker is the drawing layer's `person()`, upright on the east leg and turned to walk up the page on the north leg; the helicopter is a new top-view sprite (cabin, boom, tail rotor, two blades over a faint rotor disc); the θ, b, start and destination labels go through `labeller()` so none lands on the helicopter or on one another at a one-block leg. `sim-two-balls` is at a fixed 130 units to the metre and 12 units per m/s of arrow, which needed the sliders narrowed to $y_0$ 1.0 to 3.0 m and $v_{0x}$ 0.5 to 4.0 m/s (the book's 1.5 m and 3.0 m/s stay the defaults); the velocities are named once, on the thrown ball, in panels beside their arrows; the strobe copies are darker; the graph labels sit off their curves. Both headlines wrap through `topline()`.
-
-Figure re-examination (2026-11-17, Claude Fable 5.2). Both figures were looked at beside the book's images and rebuilt; the two plan lines above are superseded by these.
+Figure re-examination (2026-11-17, Claude Fable 5.2). Both figures were looked at beside the book's images and rebuilt.
 
 1. `sim-walk` · Figure 3.3 + 3.4 + 3.5 · right-triangle-resultant, vector-components · value add: the reader moves the destination and sees, on one scale, the blocks walked beside the blocks flown, so "the straight line is shorter" is seen for every pair of legs and not only computed for 9 and 5 · arrows: symbolic (the three displacement vectors, a hash mark per block as the book draws them) · moving: the walker along the streets and the helicopter along the diagonal at one block per unit time, one loop of 5 s · sliders blocks east (2 to 12, default 9, position) and blocks north (2 to 8, default 5, position), which also hold the destination corner the reader drags (`F.drag`) · headline: the blocks each has gone, then "The walk is 14 blocks and the straight line 10.3 blocks, 3.7 blocks shorter." · graph beside: two bars on a 0 to 25 block axis, the whole of each faint and the part travelled solid, the walker's bar split where it turns north · 2D.
    works: parts (the whole city of 12 by 8 square blocks, drawn at every setting so the stage is always full; street numbers along the south and west edges as the book's x and y; the east leg along the south street joined at a right angle to the north leg, the diagonal from start to destination; the compass) · flow (walker east then north, helicopter straight, same speed, the helicopter arrives first) · must hold (c = √(a² + b²) to three figures; a hash mark per whole block on all three arrows; θ = atan(b/a); the walker's bar ends at a + b and the helicopter's at c; both bars and both sprites advance at one rate; the default is the book's 9 east, 5 north, 10.3 blocks, 29.1°) · read off the image (9 blocks east, 5 blocks north, Starting point, Destination, x ticks 0 to 9, y ticks 0 to 5, Helicopter path 10.3 blocks, θ = 29.1°, the right-angle mark, N E S W; the book's city is 9 by 6 blocks with parks and buildings, which are not reproduced).

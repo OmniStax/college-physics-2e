@@ -134,7 +134,11 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
       hits.push({ x: g2.X(t), y: g2.Y(vel(t)), r: 22, name: 'velocity at ' + t + ' s' + who + ', ' + fmt(vel(t), 0) + ' m/s' });
     }
     stub(tau, 4, PAL.ink, 3);
-    drop(ctx, g1.X(tau), b1.t, g1.X(tau), b3.b, C('time'));
+    /* each point is dropped to its own time axis, one under the other; no time line runs above a point,
+       so none crosses the words in the corner of its graph */
+    drop(ctx, g1.X(tau), g1.Y(xt), g1.X(tau), b1.b, C('time'));
+    drop(ctx, g2.X(tau), g2.Y(vt), g2.X(tau), b2.b, C('time'));
+    drop(ctx, g3.X(tau), g3.Y(a.v), g3.X(tau), b3.b, C('time'));
     for (const t of taken) if (t > 0) dot(ctx, g1.X(t), g1.Y(pos(t)), C('position'), true, 6);
     dot(ctx, g1.X(0), g1.Y(x0.v), C('position'), false, 9);
     dot(ctx, g1.X(tau), g1.Y(xt), PAL.ink, true, 9);
@@ -156,7 +160,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     rich(ctx, ['slope of the tangent = ', [fmt(vt, 1) + ' m/s', C('velocity')]], b1.l + 28, b1.t + 30, { size: 22 });
     rich(ctx, ['v = ', [fmt(vt, 1) + ' m/s', C('velocity')]], b2.l + 28, b2.t + 26, { size: 22 });
     rich(ctx, ['slope of the line = ', [fmt(a.v, 1) + ' m/s²', C('acceleration')]], b2.l + 28, b2.t + 58, { size: 22 });
-    rich(ctx, ['a = ', [fmt(a.v, 1) + ' m/s²', C('acceleration')]], b3.l + 28, g3.Y(a.v) + (a.v > 3 ? 26 : -26), { size: 22 });
+    rich(ctx, ['a = ', [fmt(a.v, 1) + ' m/s²', C('acceleration')]], b3.r + 24, g3.Y(a.v), { size: 20 });
     headline(ctx, a.v === 0 ? 'With no acceleration the position graph is a straight line: every tangent has the same slope, ' + fmt(v0.v, 0) + ' m/s.'
       : done ? 'The slopes of the tangents, plotted against time, are the velocity graph, and its slope is the acceleration.'
       : 'At ' + fmt(tau, 1) + ' s the tangent has slope ' + fmt(vt, 1) + ' m/s, which is the velocity plotted below it.');

@@ -67,31 +67,8 @@ to keep or drop. Everything below is a Sim under rule 15.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-frictionless` · new, so it is a Sim with no number ·
-   newtons-first-law · **moves**: the idea has a time in it, since the
-   block slides and loses speed as a clock runs, so the figure runs a
-   finite loop of about five real seconds and takes the app's transport
-   and its scrubber. A block starts at the left of a 60 m surface with a
-   speed you set and slides to the right; the surface slows it at the
-   rate you set, and the picture is drawn until the block either stops or
-   runs off the right-hand end still moving. The current speed is an
-   arrow from the block, the distance covered so far is a bracket under
-   it, and the surface names itself at the value chosen: a rough surface,
-   a surface dusted with talcum powder, a surface rubbed with oil, and at
-   zero a frictionless surface, as on an air hockey table. Below the
-   scene, and sharing its clock, a graph of the speed against time whose
-   line tilts down to zero on a rough surface and lies flat when the
-   friction is gone, which is the first law drawn · $\kvo$ in m/s (2.0 to
-   10.0, step 0.5, default 8.0, velocity hue) and $\ka$, the rate at
-   which the surface slows the block, in m/s² (0 to 3.0, step 0.1,
-   default 2.0, acceleration hue) · while it slides, "the block has
-   covered 12.4 m of the surface and is still moving at 4.8 m/s", and at
-   the end either "on a rough surface the block slides 16.0 m and stops"
-   or "with the friction gone the block leaves the picture at 8.0 m/s,
-   and nothing will stop it" · graph below, speed against time · no.
-   Readout: $\kv = \kvo - \ka\kt$ with the current numbers, and a small
-   line saying how far the block goes as the surface is made smoother.
-   Draws velocity, acceleration, time and position.
+- `sim-frictionless` · Sim · newtons-first-law · value add: the text's argument is a comparison (rough, talcum powder, lubricating oil, frictionless) and the old figure showed one surface at a time, so the reader had to remember the last run; now the four surfaces sit side by side under one push and one clock · arrows: kinematic, the velocity of each block · moving: four blocks slide for 12 s of model time in 6 s, a dot left where each was at every whole second · sliders: $\kvo$ 5.0 to 10.0 m/s (default 8.0, velocity) and $\ka$ of the fourth surface, 0 to 0.9 m/s² (default 0, the frictionless surface, marked; acceleration) · headline: "Halve the slowing and the block slides twice as far; with no slowing it never stops" · graph below, the four speeds against time · 2D. The referent `block` is gone: the blocks wear their surface's colour (`F.cat`), which ties each lane to its line on the graph.
+  works: the book prints no image here, so there is nothing to read off. must hold: the three named surfaces slow the block at 4, 2 and 1 m/s², so the stopping distances v₀²/2a double (8, 16, 32 m at 8.0 m/s) and the stop times v₀/a double (2, 4, 8 s) · every stop the sliders allow on the named surfaces is inside the 60 m drawn (50 m at most) and inside the 12 s clock (10 s at most) · the frictionless block's dots are evenly spaced and its line is flat at v₀ · a block past 60 m is not drawn; its lane says the speed it left at · the readout is the fourth block's v = v₀ − at with the clock's t, frozen at 0 m/s once it stops · each "stops after" label is written from the start.
 
 What the Sim shows that the text cannot (rule 15's test): the paragraph
 asks the reader to imagine the surface being made smoother and smoother
@@ -180,7 +157,3 @@ vary with location, and this is where the text says so.
 
 Revised in the Manim pass of 2026-09-28:
 - `sim-frictionless` · the slowing carries a dashed circle at zero, the frictionless surface the text names; on it the readout morphs v = v₀ − at into v = v₀, the −at term fading toward v₀ (manim-style 8, 11). The clock and transport are unchanged.
-
-Rebuilt in the figure re-examination of 2026-11-16:
-- `sim-frictionless` · Sim · newtons-first-law · value add: the text's argument is a comparison (rough, talcum powder, lubricating oil, frictionless) and the old figure showed one surface at a time, so the reader had to remember the last run; now the four surfaces sit side by side under one push and one clock · arrows: kinematic, the velocity of each block · moving: four blocks slide for 12 s of model time in 6 s, a dot left where each was at every whole second · sliders: $\kvo$ 5.0 to 10.0 m/s (default 8.0, velocity) and $\ka$ of the fourth surface, 0 to 0.9 m/s² (default 0, the frictionless surface, marked; acceleration) · headline: "Halve the slowing and the block slides twice as far; with no slowing it never stops" · graph below, the four speeds against time · 2D. The referent `block` is gone: the blocks wear their surface's colour (`F.cat`), which ties each lane to its line on the graph.
-  works: the book prints no image here, so there is nothing to read off. must hold: the three named surfaces slow the block at 4, 2 and 1 m/s², so the stopping distances v₀²/2a double (8, 16, 32 m at 8.0 m/s) and the stop times v₀/a double (2, 4, 8 s) · every stop the sliders allow on the named surfaces is inside the 60 m drawn (50 m at most) and inside the 12 s clock (10 s at most) · the frictionless block's dots are evenly spaced and its line is flat at v₀ · a block past 60 m is not drawn; its lane says the speed it left at · the readout is the fourth block's v = v₀ − at with the clock's t, frozen at 0 m/s once it stops · each "stops after" label is written from the start.

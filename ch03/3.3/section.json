@@ -188,6 +188,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt at twice the scale; rows and columns beside the walk; units in readout"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "A, B and R told apart by line; scale 8.5 units a metre"
     }
    ]
   },
@@ -230,6 +234,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt larger: A fixed as Example 3.3, B turns full circle, B beside -B"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "A, −B and R told apart by line, B dotted"
     }
    ]
   }

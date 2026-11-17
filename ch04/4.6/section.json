@@ -86,6 +86,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt: one large sketch, free-body diagram, net force in the open sum"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "Tarzan drawn hanging from the vine"
     }
    ]
   },

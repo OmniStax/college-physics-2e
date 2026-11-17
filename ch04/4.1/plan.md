@@ -69,36 +69,6 @@ config).
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-skaters` · Figure 4.3 · force, external-force, free-body-diagram · variation by slider:
-   the total force turns and grows as the two pushes and their angle change · still, no clock in
-   the idea · $\kFone$ (10 to 80 N, force), $\kFtwo$ (10 to 80 N, force), $\theta$ (30° to 150°,
-   angle, dashed circle at 90°) · "A push of 50 N and a push of 40 N, 90° apart, add to a total
-   force of 64.0 N at 38.7° from the first push" · no graph, panels (a) scene and (b) free-body
-   diagram side by side · 2D: the three skaters drawn with F.personTop in their referent colours,
-   the third facing along the total force, each pusher behind her on its line of push (the two
-   lines set apart by the angle so the pushers never meet each other or an arrow), both hands on
-   her; labels F1, F2, Ftot and θ placed through F.labeller with the arrows in its collision set,
-   θ by hover where its wedge is too narrow; the skaters named by hover; no note (the readout
-   morph at 90° already says it). No fold or split. Rebuilt in the review of 2026-10-05.
-2. `sim-spring` · replaces Figure 4.4, whose parts (a), (b) and (c) the
-   book prints as one image under one number · force-standard, force · **still**: the idea has no
-   time in it either. The spring answers its stretch and the scale answers
-   the pull; nothing runs while a clock runs, so no cycle and no transport
-   · $\kx$, the undistorted length of the spring (0.10 to 0.40 m, default
-   0.20, position), $\kdx$, the distance it is stretched (0.00 to 0.10 m,
-   default 0.06, position) · "the spring is stretched 6.0 cm past its
-   relaxed length of 20.0 cm, and the scale reads 6 units of the standard
-   force" · no graph · no. Layout: three panels stacked, the book's (a)
-   the relaxed spring of length $\kx$ fixed at the left, (b) the same
-   spring pulled out by $\kdx$ with the restoring force $\kFres$ drawn
-   back toward the fixed end, and (c) the spring scale with a face marked
-   in standard units and its pointer at the reading. The standard is the
-   restoring force of a one-centimeter stretch, so the default stretch
-   reads six units and reproduces the book's part (c) on load. Readout:
-   $\kFres = (\kdx / \Delta x_{\text{std}})F_{\text{std}}$ with the
-   numbers; small line saying that the face of the scale is marked off in
-   those standard units. Draws force, position.
-
 Both book figures are sketches and both are replaced. The section prints no
 photograph, so there is nothing to keep or drop. No figure of this section
 serves an exercise: the three racetrack drawings of the first AP item go to
@@ -128,19 +98,6 @@ Extra simulations (rule 15), considered and left:
   method, and a third arrow only makes the same drawing busier. Left.
 
 None built.
-   Revised in the figure-audit pass of 2026-09-12: the standard stretch and
-   the standard force in the readout are set in the position and force hues
-   as decorated variants rather than left in ink, the restoring force
-   carries its subscript on the canvas, and the small line says that the
-   relaxed length changes where the spring ends and nothing else, since the
-   standard is fixed by the stretch past that length.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1): the skaters seen from above were rings with two
-sticks and read as nothing; each is now a shoulder bar with the head on it, two arms reaching
-ahead and two skates trailing, drawn at a quarter more than sprite size, and the two pushers
-stand close enough that their hands rest on the third skater's shoulders where the pushes act.
-`sim-spring` was looked at in both themes and at both extremes and left as built.
-
 ## Exercises
 
 - One inline item: the hawk AP item, `ap2` (fs-id1470278), keyed by the
@@ -204,7 +161,7 @@ Revised in the Manim pass of 2026-09-28:
 
 ## Figure re-examination of 2026-11-16 (claude-fable-5-2)
 
-Both figures were judged against the book's images and rebuilt. These lines replace the plan lines above.
+Both figures were judged against the book's images and rebuilt.
 
 1. `sim-skaters` · Figure 4.3 · force, external-force, free-body-diagram · value: the total force
    answers the angle between the pushes, from the two strengths added (same way) through the book's

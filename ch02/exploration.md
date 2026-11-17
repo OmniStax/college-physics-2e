@@ -37,9 +37,10 @@ avoids the scan-ahead problem: every exercise is already in its module.
 | 2.8 Graphical Analysis | m42103 | 100–107 | 3 | 23 | 14 | 4 | 1 | 0 | 6 | 9 | 6 |
 
 Figures counted include sub-figures and solution figures. Most are sketch
-figures (position lines, v–t and x–t graphs) that the figure prompt
-replaces; the photographs (splash images, a runner, a rocket sled) carry no
-physics and are dropped.
+figures (position lines, v–t and x–t graphs). A sketch becomes a drawn
+figure where motion or a slider shows what the still does not, and stays
+as the book's image otherwise (2.3, 2.16, 2.18, 2.19, 2.20, 2.22, 2.23,
+2.44); the splash photographs carry no physics and are dropped.
 
 ## Observations that affect the plan
 

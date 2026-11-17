@@ -316,11 +316,13 @@ function trip(u) {
     /* velocity: positive out, zero at the stop, negative back */
     seg(V, 0, a, vo); seg(V, b, H, -vb); if (ts > 0) { seg(V, a, b, 0); jump(V, a, vo, 0); jump(V, b, 0, -vb); } else jump(V, a, vo, -vb);
     for (const [u, v] of [[0, vo], [a, vo], [b, -vb], [H, -vb]]) dot(ctx, X(u), V.Y(v), vc, true, 6);
-    text(ctx, '+' + vo + ' km/h', X(a / 2), V.Y(vo) - 20, vc, { align: 'center', weight: 600, size: 20 }); text(ctx, '−' + vb + ' km/h', X(b + t2 / 2), V.Y(-vb) + 22, vc, { align: 'center', weight: 600, size: 20 });
+    text(ctx, '+' + vo + ' km/h', X(a / 2), V.Y(vo) - 20, vc, { align: 'center', weight: 600, size: 20 }); text(ctx, '−' + vb + ' km/h', X(b + t2 / 2), V.Y(-vb) + (vb > 15 ? -20 : 22), vc, { align: 'center', weight: 600, size: 20 });
     /* speed: the velocity without its sign, and the average over the whole trip as a dashed level */
     seg(S, 0, a, vo); seg(S, b, H, vb); if (ts > 0) { seg(S, a, b, 0); jump(S, a, vo, 0); jump(S, b, 0, vb); } else jump(S, a, vo, vb);
     for (const [u, v] of [[0, vo], [a, vo], [b, vb], [H, vb]]) dot(ctx, X(u), S.Y(v), vc, true, 6);
-    text(ctx, vo + ' km/h', X(a / 2), S.Y(vo) - 20, vc, { align: 'center', weight: 600, size: 20 }); text(ctx, vb + ' km/h', X(b + t2 / 2), S.Y(vb) - 20, vc, { align: 'center', weight: 600, size: 20 });
+    /* each speed is written on the side of its line away from the dashed average, so the average never runs through it */
+    const off = (v) => (v < avg - 1e-9 ? 22 : -20);
+    text(ctx, vo + ' km/h', X(a / 2), S.Y(vo) + off(vo), vc, { align: 'center', weight: 600, size: 20 }); text(ctx, vb + ' km/h', X(b + t2 / 2), S.Y(vb) + off(vb), vc, { align: 'center', weight: 600, size: 20 });
     line(ctx, X(0), S.Y(avg), X(H), S.Y(avg), vc, 3, [10, 10]);
     text(ctx, 'average speed ' + fmt(avg, 1) + ' km/h', Math.min(X(H) + 20, GR - 250), S.Y(avg) + 18, vc, { align: 'left', weight: 600, size: 20, bg: alpha(PAL.panel, 0.85) });
     /* this instant, on all three */

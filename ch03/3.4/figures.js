@@ -192,7 +192,7 @@ function tower(ctx, x, y, h, color) {
       : 'After ' + fmt(t, 2) + ' s every shell is ' + fmt(y, 0) + ' m up, whatever its angle.');
     tex(d.readout, `\\kh = \\frac{\\kvoy^2}{2\\kg} = \\frac{(${fmt(vy0.v, 1)}\\ \\text{m/s})^2}{2(9.80\\ \\text{m/s}^2)} = ${fmt(h, 0)}\\ \\text{m} \\\\ `
       + `\\kt = \\frac{2\\ky}{\\kvoy + \\kvy} = \\frac{2(${fmt(h, 0)}\\ \\text{m})}{${fmt(vy0.v, 1)}\\ \\text{m/s} + 0} = ${fmt(tT, 2)}\\ \\text{s} \\\\ `
-      + `\\kx = \\kvox\\kt = (${fmt(vx, 1)}\\ \\text{m/s})(${fmt(tT, 2)}\\ \\text{s}) = ${fmt(xT, 0)}\\ \\text{m}`);
+      + `\\kx = \\kvox\\,\\kt = (${fmt(vx, 1)}\\ \\text{m/s})(${fmt(tT, 2)}\\ \\text{s}) = ${fmt(xT, 0)}\\ \\text{m}`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => (tTop() + 0.6) / 5), draw });
 })();
@@ -264,7 +264,10 @@ function tower(ctx, x, y, h, color) {
     ctx.save(); ctx.beginPath(); ctx.rect(bx.l, bx.t, bx.r - bx.l, bx.b - bx.t); ctx.clip();
     curve(ctx, f.y, -3, 0, g.X, g.Y, alpha(cp, 0.45), 4, 60); curve(ctx, f.y, 0, 6, g.X, g.Y, cp, 5, 120); ctx.restore();
     line(ctx, g.X(-3), g.Y(yl.v), g.X(6), g.Y(yl.v), cp, 3, [10, 10]);
-    text(ctx, 'landing level', g.X(-3) + 12, g.Y(yl.v) - 18, cp, { size: 17, weight: 600 });
+    /* the name sits left of the earlier crossing, or at the right end when that crossing comes before −2 s and the
+       faint curve would run through it (the later crossing is then before 2.6 s, so the right end is clear) */
+    if (tn > -2.05) text(ctx, 'landing level', g.X(-3) + 12, g.Y(yl.v) - 18, cp, { size: 17, weight: 600 });
+    else text(ctx, 'landing level', g.X(6) - 12, g.Y(yl.v) - 18, cp, { size: 17, weight: 600, align: 'right' });
     line(ctx, g.X(tp), g.Y(0), g.X(tp), g.Y(yl.v), C('time'), 3, [4, 8]); line(ctx, g.X(tn), g.Y(0), g.X(tn), g.Y(yl.v), PAL.muted, 3, [4, 8]);
     dot(ctx, g.X(tp), g.Y(yl.v), C('time'), true, 10); dot(ctx, g.X(tn), g.Y(yl.v), PAL.muted, false, 10);
     dot(ctx, g.X(tau), g.Y(y), PAL.ink, true, 9);

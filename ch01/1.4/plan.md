@@ -46,58 +46,10 @@ in `book.json`.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-building` · new (Example 1.3 has no figure) · approximation,
-   unit-conversion · a person stands beside a building on a common
-   ground line, and over a finite cycle of about 4 s (scrubber) the
-   stories stack up one by one to the set count while a bracket on the
-   right grows with them and reads the running height; a magnified view
-   of the ground story on the left shows the persons stacked inside one
-   story, which is the scaling step the example turns on · stories
-   (1 to 100, step 1, default 39, ink), height of a person (1.5 to
-   2.0 m, step 0.1, default 2.0, ink), persons per story (1 to 3, step
-   0.5, default 2, ink) · "39 stories of about 4 m each make a building
-   about 156 m tall." · none · 2D. The drawing is scaled once from the
-   tallest the sliders allow, 100 stories of 6 m each, so a one-story
-   building and a hundred-story building are drawn as different as they
-   are and the scale never follows the building. A person to that scale
-   is a few units tall, which is why the magnified ground story stands
-   on the left. Labels on, four of them, each beside something that
-   stays put.
-   Readout: (2 m / 1 person) × (2 persons / 1 story) × 39 stories =
-   156 m, with the live values. Small line: the estimate is only as good
-   as its inputs, and the ranges of the sliders put it within a factor of
-   about two. On reduced motion the finished building is drawn. Revised 2026-09-28: still, no transport. The stories stack as a staggered arrival on first view (lag 0.1, manim 19); after that a slider redraws at once.
-2. `sim-trillion` · new (Example 1.4 has only the photograph) ·
-   approximation, order-of-magnitude, unit-conversion,
-   sig-figs-multiplication · a side view of a football field, 100 yd
-   between the end zones, with a vertical scale in feet on the left and
-   a person 6 ft tall standing in the end zone for scale; over a finite
-   cycle of about 5 s (scrubber) the pile of bills rises on the field to
-   its final height, which is labelled at the top · amount (0.1 to
-   30.0 trillion dollars, step 0.1, default 1.0, ink), thickness of a
-   stack of 100 bills (0.3 to 0.7 in., step 0.05, default 0.5, ink) ·
-   "One trillion dollars in $100 bills covers the field to a height of
-   about 100 in., or about 8 ft." · none · 2D. The feet scale is fixed at
-   0 to 40 ft, which holds the example's pile with room to spare and
-   never follows it; a pile taller than that is drawn to the top of the
-   scale with its true height written above it and said in the headline.
-   The sliders are named for what they set, an amount in trillions of
-   dollars and the thickness of one stack in inches. Labels on, five of
-   them, each beside something that stays put. The height is computed
-   from the set numbers with the field's true area, 6.48 × 10⁶ in.²,
-   and rounded to one significant figure in the headline as the example
-   does, while the unrounded value is drawn and printed on the pile.
-   Readout: height = volume / area with the live numbers, the quotient
-   before rounding, then the one-figure value and its feet. Small line:
-   the unrounded height, and what 28 trillion (the 2021 federal debt the
-   example mentions) comes to at the set thickness. On reduced motion
-   the finished pile is drawn. Revised 2026-09-28: still, no transport. The pile rises as the figure's arrival on first view, and a slider redraws at once; 28 trillion, the 2021 debt the example names, is a special value on the amount.
-
 Figure re-examination, 2026-11-16 (Claude Fable 5.2). Both sims replace no
 book image (Example 1.3 has none; Example 1.4 has only the photograph of a
 bank stack, kept as Figure 1.25). Both were small drawings on scales fixed
-for ranges the examples never reach, and both are rebuilt. The lines above
-are superseded by these:
+for ranges the examples never reach, and both are rebuilt:
 
 1. `sim-building` · Sim · approximation, unit-conversion · value add: the
    scaling step (person to story to building) drawn, every story visible,
@@ -146,8 +98,9 @@ are superseded by these:
    one-figure value in its note. The 28 trillion mark went: on a scale that
    shows a person it is 324 ft, off the stage.
 
-Both sims draw in ink: nothing in the section is a typed quantity, so
-`draws` is `[]` for every figure and the page binds no colour.
+Both sims draw position: the heights of the person, the story, the
+building and the pile, and the thickness of a stack, are lengths and take
+the position hue. A count and a money amount are untyped and in ink.
 
 Photographs, two:
 
@@ -164,19 +117,6 @@ Figures that serve exercises: none kept.
 Extra simulations (rule 15): none proposed. The chapter config says the
 required figures already open the views the text does not, and the
 two sims here are the two examples made live.
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). Both figures drew their own
-stick figure; they now call the library's `F.person()` scaled to the
-height the scene gives it. `sim-building`: the building was a bare grey
-box; it carries a door and a row of windows per story once a story is
-tall enough to hold them (the fixed scale keeps the 39-story default too
-short for them, which is the point of the magnified story), the height
-label of a building under 40 units is written above the top instead of on
-the ground line, and the one-story headline reads "One story of about 4 m
-makes a building about 4 m tall". `sim-trillion`: the headline at 30
-trillion ran off both edges of the canvas; it wraps through `topline()`,
-and the scale's top moved down to 150 so the pile's label clears the
-second line; the person's label is ink.
 
 ## Exercises
 
@@ -212,8 +152,8 @@ second line; the person's label is ink.
 
 ## Colour
 
-Nothing. Every quantity here (a count, a length, a money amount, a
-thickness) is untyped and in ink; the page binds no type.
+The page binds position, for the heights and the stack thickness the two
+sims draw. A count and a money amount are untyped and in ink.
 
 ## Dollar signs
 

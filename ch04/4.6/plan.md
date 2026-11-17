@@ -64,39 +64,6 @@ example of convenient axes).
 id · replaces or Sim · concepts · what moves or still · sliders · headline
 · graph · 3D
 
-1. `sim-tarzan` · Figure 4.20 · problem-solving-strategy, free-body-diagram, tension, weight · standardisation and variation: four panels carry the strategy, the head-to-tail sum closes only at a = 0 · still · m (mass), a (acceleration, dashed circle at 0) · "Tarzan hangs still, so the tension of 784 N is exactly his weight of 784 N" · no graph, four panels · 2D: Tarzan drawn with F.silhouette (stand, both hands raised to the grip by joints, F.hand closed on the vine at small scale if the silhouette's hands read poorly), arrow labels placed through F.labeller beside the shafts; note dropped where it restates the headline. No fold or split. Rebuilt 2026-10-05.
-
-2. `sim-axes` · Sim (it replaces no figure of the book; Step 3 has no
-   drawing of its own) · resolve-forces-into-components, net-force-by-axis
-   · **still**: the idea is which pair of axes to write the equations
-   along, and that has no time in it; the block does not slide, the
-   picture answers its sliders (rule 14) · the angle of the incline
-   $\theta$ (5 to 40°, step 1, default 25, ink), the angle the axes are
-   turned from the horizontal $\varphi$ (0 to 45°, step 1, default 0,
-   ink) and the mass $m$ (10 to 100 kg, step 5, default 40, ink) ·
-   "turned 25° from the slope, the axes split the acceleration into 3.75
-   and −1.75 m/s²", and, once the axes lie along the slope, "along the
-   slope the block accelerates at 4.14 m/s² and not at all across it" ·
-   no graph · 2D. The scene at the left is a block on a frictionless
-   incline, with its weight $\kwgt$ drawn down, the normal force $\kN$
-   drawn away from the surface and the acceleration $\ka$ drawn down the
-   slope. Beside it stands the free-body diagram, which carries only the
-   two forces, since the book says in this very section that only forces
-   are shown on a free-body diagram and not acceleration or velocity; the
-   chosen pair of axes runs through it as two dashed lines, and each
-   force that does not lie along one of them is projected onto both with
-   dashed drop lines and a component arrow along each axis. Under the two
-   drawings a ledger writes what each force contributes along each axis,
-   what the net force along it comes to and what the mass times the
-   acceleration along it comes to, so that the two halves of Newton's
-   second law can be read off against each other. Turning the axes to the
-   angle of the slope leaves only the weight to resolve and drops the
-   acceleration across the slope, and the net force across it, to zero,
-   which is the book's own reason for choosing axes along an incline. The
-   force arrows are drawn to a scale set by the weight, so the picture
-   stays legible at every mass while the labels and the ledger carry the
-   newtons. Draws force and acceleration.
-
 Photographs: none. The section prints no photograph.
 
 Figures that serve exercises: the book draws five figures inside the
@@ -125,19 +92,6 @@ and unknowns" sorter, where the reader drags the numbers of a problem
 into two lists and the usable equations light up, is a quiz rather than a
 simulation of anything physical, and Step 2 says the same thing in a
 sentence.
-   Revised in the figure-audit pass of 2026-09-12: the axes settle onto the
-   slope when the thumb is let go within a degree of it, which is the soft
-   detent a preset that moves with another slider cannot have as a tick on
-   the track; the headline is one capitalized sentence.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1): in `sim-tarzan` the force arrows were drawn
-through the man's body at the body's own width (Chen's item 10), and the library's person could
-not raise its hands to the vine, so the man appeared to hang from nothing. He is now drawn by the
-figure with both arms up along the vine to his hands, a filled torso and free legs, and every
-arrow stands beside the body at 5 px with a faint leader to the point where the force acts: the
-tension and his pull on the vine at the hands, the weight at the middle of the body. The canvas
-is 720 tall to hold the longer arrows. `sim-axes` was looked at and left as built.
-
 ## Exercises
 
 - 3 AP test prep items, all at the end. `ap1` (fs-id1642540, the toboggan

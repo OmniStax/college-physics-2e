@@ -291,6 +291,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt: Earth view to scale above the cabin"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "coin rests on the floor, velocity arrow beside it"
     }
    ]
   },
@@ -324,6 +328,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt as a sim: velocities relative to a chosen galaxy"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "readout shortened to one line"
     }
    ]
   }

@@ -27,7 +27,7 @@ structure, one block per idea:
    (`models`; book: the laws of nature and their discovery, Newton and
    Curie, curiosity and data, the model, the theory in the two
    paragraphs the book prints, the law, principles, the planetary atom
-   as the sim that replaces Figure 1.10, the note "Models, Theories,
+   as Figure 1.10, the book's image, the note "Models, Theories,
    and Laws", the two closing paragraphs on prediction and on science as
    exploration; the Check Your Understanding goes inline at its end)
 4. **The scientific method** (`scientific-method`; book: the boxed note
@@ -80,28 +80,9 @@ generated, so none is.
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
 1. `sim-atom-model` · Figure 1.10 (the planetary model of the atom) ·
-   model · a nucleus at the centre drawn as a cluster of protons, and
-   electrons on circular orbits of increasing radius, filling shells of
-   two, eight and eight, going round endlessly (an endless cycle, so the
-   plain transport with no scrubber) · the number of electrons Z, 1 to
-   18, default 1 for hydrogen, ink, since a count has no type · "In this
-   picture two electrons go round the nucleus of a helium atom, which
-   holds two protons." · none · no (2D; the orbits are circles seen face
-   on and depth would add nothing). Labels on, since the drawing names
-   four kinds once each and nothing moves out from under its name.
-   Readout: the live count, so many electrons going round so many
-   protons, with the shells that hold them. Small line: the atom is about
-   10⁻¹⁰ m across and its nucleus about 10⁵ times smaller, so a drawing to
-   scale would show nothing but the orbits, and the model is a picture
-   that helps explain what we can measure rather than a photograph.
-   The nucleus is said to hold the protons rather than to be made of
-   them, since a helium nucleus holds two neutrons as well and the
-   section has not reached them.
-   The section introduces no physical quantity, so the figure has one
-   slider, and that is enough: what is variable in the idea is which
-   atom the model is a picture of, and the point the book's caption makes
-   is that the drawing is a mental image of something too small to see.
-   Draws nothing: `draws: []`, all ink and rule.
+   model · kept as the book's image, a photograph row under this id and
+   number, with the book's caption. The section introduces no quantity,
+   so the page has no drawn figure and no `figures.js`.
 
 No figure for the other ideas (theory, law, scientific method, classical
 and modern physics): none of them names a quantity, and a drawing would
@@ -131,9 +112,8 @@ Photographs, thirteen:
   of discovering laws.
 - Fig 1.9, Marie Curie (credit: Wikimedia Commons): **keep**,
   `fig-curie`. Named with 1.8.
-- Fig 1.10, the planetary model of the atom: **replaced** by
-  `sim-atom-model`, which keeps the number, the book's image as its
-  original and the book's caption.
+- Fig 1.10, the planetary model of the atom: **keep**, under the id
+  `sim-atom-model`. The paragraph on models points at it.
 - Fig 1.11, Aristotle (credit: Jastrow (2006)/Ludovisi Collection):
   **keep**, `fig-aristotle`. "(See Figure 1.11, Figure 1.12, and
   Figure 1.13.)" on the branching of natural philosophy.
@@ -157,26 +137,13 @@ scientific-method flowchart and a speed ladder for the 1% limit were
 considered; both would be static diagrams of a definition and open no
 view the text does not give.
 
-Figure pass, 2026-09-14 (Claude Fable 5.1): the electrons and the protons of
-`sim-atom-model` were drawn in ink, which root rule 7 does not allow for a
-particle with an identity; they now take `F.el('e-')` and `F.el('p+')`, so
-the reader tells an electron from a proton without the legend. A filled
-orbit is a solid ring at 0.4 alpha and an empty one a dashed ring, and the
-legend says so. The readout was a bare count ("1 electrons go round 1
-protons"); it is now a sentence in the book's voice. The page still binds
-no type: the element palette is not a type hue.
-
 Figure re-examination, 2026-11-16 (Claude Fable 5.2): `sim-atom-model` is
-reverted to the book's image, a kept photograph under the same id and
-number. The sim swapped the book's planetary picture (a nucleus of
-protons and neutrons, three electrons on tilted elliptical orbits) for a
-shell diagram with circular orbits filling two, eight and eight and a
-nucleus of protons only. Its one slider chose an element from hydrogen
-to argon, which the section never discusses, and it said nothing about
-what a model is, which is the book's point here. The section introduces
-no quantity, so the page now has no drawn figure and `figures.js` is
-gone. The lines above on the sim and the "Colour" section describe the
-figure as it was.
+the book's image, a kept photograph under the same id and number. A shell
+diagram from hydrogen to argon with a nucleus of protons only is not the
+book's planetary picture (a nucleus of protons and neutrons, three
+electrons on tilted elliptical orbits), the section never discusses the
+elements, and such a drawing says nothing about what a model is, which is
+the book's point here.
 
 ## Exercises
 
@@ -213,7 +180,6 @@ figure as it was.
 
 ## Colour
 
-The page binds nothing. The one sim draws a count in ink, its orbits in
-the rule colour and its nucleus in ink; no typed symbol appears in the
-text except $F = ma$, whose $F$ and $a$ take their macros and render in
+The page binds nothing and has no drawn figure. No typed symbol appears in
+the text except $F = ma$, whose $F$ and $a$ take their macros and render in
 ink since no figure on the page draws force or acceleration.

@@ -173,7 +173,7 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
    Figure 2.31 + 2.32: the dragster of Examples 2.10 and 2.11. Marks fall
    at each quarter of the time, and the gaps between them grow: from rest
    they are as 1 : 3 : 5 : 7. Starting from rest is a special value on v₀;
-   there x₀ and v₀t leave the equation, which is the book's x = ½at².
+   there v₀t leaves the equation (x₀ = 0 on this road and is not written), which is the book's x = ½at².
 ===================================================================== */
 (function () {
   const d = sim('sim-dragster', 720);
@@ -218,7 +218,7 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     const rest = v0.v === 0, U = (q, u) => `${q}\\ \\text{${u}}`;
     const half = `\\mk{half}{\\tfrac{1}{2}\\ka\\kt^2}`, halfN = `\\mk{halfn}{\\tfrac{1}{2}(${fmt(a.v, 1)}\\ \\text{m/s}^2)(${fmt(t.v, 2)}\\ \\text{s})^2}`, res = `\\mk{xv}{${U(fmt(xe, 0), 'm')}}`;
     const l1 = rest ? `\\mk{x}{\\kx} = ${half} = ${halfN} = ${res}`
-      : `\\mk{x}{\\kx} = \\mk{x0}{\\kxo} + \\mk{v0t}{\\kvo\\kt} + ${half} = \\mk{x0n}{${U(0, 'm')}} + \\mk{v0tn}{(${U(fmt(v0.v, 1), 'm/s')})(${U(fmt(t.v, 2), 's')})} + ${halfN} = ${res}`;
+      : `\\mk{x}{\\kx} = \\mk{v0t}{\\kvo\\kt} + ${half} = \\mk{v0tn}{(${U(fmt(v0.v, 1), 'm/s')})(${U(fmt(t.v, 2), 's')})} + ${halfN} = ${res}`;
     const l2 = `\\kv = \\sqrt{\\kvo^2 + 2\\ka(\\kx - \\kxo)} = \\sqrt{(${U(fmt(v0.v, 1), 'm/s')})^2 + 2(${fmt(a.v, 1)}\\ \\text{m/s}^2)(${U(fmt(xe, 0), 'm')})} = ${U(fmt(ve, 0), 'm/s')}`;
     ro.set(l1 + ' \\\\ ' + l2, '', { form: rest });
   }
@@ -331,7 +331,10 @@ const sgn = (s) => String(s).replace('-', '−');   /* a true minus sign in canv
     line(ctx, GX(rm) - 8, GY(x.v) - 8, GX(rm) + 8, GY(x.v) + 8, PAL.panel, 3); line(ctx, GX(rm) - 8, GY(x.v) + 8, GX(rm) + 8, GY(x.v) - 8, PAL.panel, 3);
     dot(ctx, GX(tau), GY(pos(tau)), PAL.ink, true, 8);
     text(ctx, 't = ' + fmt(rp, 1) + ' s', GX(rp) + 20, GY(x.v) + 28, C('time'), { weight: 600, size: 20, bg: alpha(PAL.panel, 0.85) });
-    text(ctx, 't = ' + sgn(fmt(rm, 1)) + ' s', Math.max(GX(rm) - 20, box.l + 130), GY(x.v) + 28, PAL.muted, { align: 'right', weight: 600, size: 20, bg: alpha(PAL.panel, 0.85) });
+    /* the discarded root's time stands left of its drop line; where the axis leaves no room there, it goes
+       above the level on the right, the one side the curve and the drop line both leave free */
+    const tight = GX(rm) - 20 < box.l + 130, high = GY(x.v) - 24 < box.t + 14;   /* high: level with the axis title, so it starts past it */
+    text(ctx, 't = ' + sgn(fmt(rm, 1)) + ' s', tight ? Math.max(GX(rm) + 20, high ? box.l + 95 : 0) : GX(rm) - 20, GY(x.v) + (tight ? -24 : 28), PAL.muted, { align: tight ? 'left' : 'right', weight: 600, size: 20, bg: alpha(PAL.panel, 0.85) });
     tex(d.readout, `\\kt = \\frac{-\\kvo \\pm \\sqrt{\\kvo^2 + 2\\ka\\kx}}{\\ka} = \\frac{-${fmt(v0.v, 1)}\\ \\text{m/s} \\pm \\sqrt{(${fmt(v0.v, 1)}\\ \\text{m/s})^2 + 2(${fmt(a.v, 2)}\\ \\text{m/s}^2)(${x.v}\\ \\text{m})}}{${fmt(a.v, 2)}\\ \\text{m/s}^2} = ${fmt(rp, 1)}\\ \\text{s}\\ \\text{or}\\ {${fmt(rm, 1)}}\\ \\text{s}`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => (roots()[0] - roots()[1]) / 7), draw });

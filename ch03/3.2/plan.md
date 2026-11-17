@@ -248,18 +248,11 @@ reference points at (the sum $\mathbf{A} + \mathbf{B} = \mathbf{R}'$ of
 Example 3.2), where the section had written 3.19. The unkeyed first AP
 item is held for 3.4 with the second, as the exercises list now says.
 
-Fold pass (2026-09-11): the four sims that stand for a run of book
-figures now say so in their rows. `sim-vector-2d` carries 3.8 with 3.9
-under `folds`, `sim-head-to-tail` carries 3.10 with 3.11 to 3.13,
-`sim-walk` carries 3.14 with 3.15 to 3.17, and `sim-subtraction`
-carries 3.19 with 3.20 to 3.23, so each eyebrow reads every number of its
-run and the text's references to any of them link to the one sim. The
-build links references in the running text only; problem 9's prompt is an
+Folds: the three sims that stand for a run of book figures say so in their
+rows. `sim-head-to-tail` carries 3.10 with 3.11 to 3.13, `sim-walk` carries
+3.14 with 3.15 to 3.18, and `sim-subtraction` carries 3.19 with 3.20 to
+3.23, so each eyebrow reads every number of its run and the text's
+references to any of them link to the one sim. `sim-vector-2d` is the kept
+photograph of Figure 3.8 and `fig-ruler-protractor` that of 3.9. The build
+links references in the running text only; problem 9's prompt is an
 exercise card, and its "Figure 3.23" stays plain there.
-
-Set pass (2026-11-17, claude-fable-5-2): the lines under "Figures" above are
-the current ones; the "Figure pass" and "Fold pass" notes describe the earlier
-build. `sim-vector-2d` is now the kept photograph of Figure 3.8 and
-`fig-ruler-protractor` that of 3.9; `sim-order` is folded into `sim-walk`
-(3.14 with 3.15 to 3.18); the referent `woman` went with the walker the
-merged figure no longer draws.

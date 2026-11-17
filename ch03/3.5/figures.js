@@ -365,8 +365,10 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     F.silhouette(ctx, { x: PX, y: FLOOR, s: SP, face: 1, pose: 'stand', color: F.ref('passenger'), hands: [{ x: (CX - 8 - PX) / SP, y: (top + 6 - FLOOR) / SP }, { x: -6, y: -76 }] });
     line(ctx, CX, top, CX, FLOOR, alpha(PAL.ink, 0.4), 2, [6, 8]); dot(ctx, CX, top, cc, false, 8);
     vbracket(ctx, CX + 96, top, FLOOR, cx, fmt(h.v, 2) + ' m', 1, { H: 730 });
-    const cyy = top + drop * s;
-    if (tau > 0.01) arrow(ctx, CX, cyy, CX, cyy + G * tau * 11, cv, 5);
+    /* the coin comes to rest on the floor, and its velocity is drawn beside it, ending level with it, so that
+       nothing is drawn under the floor */
+    const cyy = Math.min(top + drop * s, FLOOR - 10);
+    if (tau > 0.01) arrow(ctx, CX + 30, cyy - G * tau * 11, CX + 30, cyy, cv, 5);
     dot(ctx, CX, cyy, cc, true, 10);
     /* the coin's velocity at the floor relative to the Earth, to one scale: the fall is a stub beside the plane's speed */
     const kx = 2.3, ox = 650, oy = 560, tipx = ox + vp.v * kx, tipy = oy - vy * kx;
@@ -425,7 +427,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     /* what the numbers say */
     topline(ctx, 'Seen from ' + NAME[o] + ', every other galaxy moves away, and the farther it is, the faster it goes.');
     const j = o <= 2 ? 4 : 0, sub = (i) => (i === 2 ? '\\text{MW}' : String(i + 1));
-    tex(d.readout, `\\text{${NAME[j]} relative to ${NAME[o]}: }\\ \\kv_{${sub(j)}} - \\kv_{${sub(o)}} = ${VEL[j]}\\ \\text{km/s} - ${VEL[o] < 0 ? '(' + VEL[o] + '\\ \\text{km/s})' : VEL[o] + '\\ \\text{km/s}'} = ${VEL[j] - VEL[o]}\\ \\text{km/s}`);
+    tex(d.readout, `\\kv_{${sub(j)}} - \\kv_{${sub(o)}} = ${VEL[j]}\\ \\text{km/s} - ${VEL[o] < 0 ? '(' + VEL[o] + '\\ \\text{km/s})' : VEL[o] + '\\ \\text{km/s}'} = ${VEL[j] - VEL[o]}\\ \\text{km/s}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();

@@ -53,8 +53,7 @@ every later section leans on them.
 Re-examined as a set on 2026-11-17 (Claude Fable 5.2). The section had seven
 drawn figures, six of them a strip over a graph. `sim-notation` was dropped;
 the other six were rebuilt, each round one thing the book's still sketch
-cannot show. The plan lines of 2026-09-12 and the pass of 2026-09-14 are
-replaced by the lines below.
+cannot show.
 
 id · replaces · concepts · value add · arrows · moving or still · controls ·
 headline · graph · 2D or 3D
@@ -119,7 +118,8 @@ headline · graph · 2D or 3D
    the time carries it farther than the last." · x against t below, the
    half-time point dropped to both axes · 2D. Track fixed at 0 to 700 m
    (the farthest run is 660 m). The readout has two lines: Example 2.10's
-   x = ½at² = 402 m (morphing to the full equation off the special) and
+   x = ½at² = 402 m (morphing to x = v₀t + ½at² off the special, x₀ being
+   zero on this track) and
    Example 2.11's v = √(v₀² + 2a(x − x₀)) = 145 m/s, which is what earns
    the fold of 2.32.
    works: read off the image · 2.31: segment x₀ to x = ?, arrow a =

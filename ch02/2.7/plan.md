@@ -173,8 +173,8 @@ example, as a `div.book-table` numbered as openstax.org numbers it.
 
 The page binds time, position, velocity and acceleration: every sim
 carries a time, a position or a velocity on its sliders and draws $g$ in
-the acceleration hue. The drop height of the hammer and the feather is a
-length of the scene and stays in ink. No new hue, no new macro; `\ky`,
+the acceleration hue. The drop height of the hammer and the feather and
+the depth of the shaft are positions. No new hue, no new macro; `\ky`,
 `\kyo` and `\kg` are already in the symbol table.
 
 ## Wanted at chapter level

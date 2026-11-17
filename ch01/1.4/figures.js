@@ -12,7 +12,7 @@ const dec = (x) => (x >= 10 ? fmt(x, 0) : x >= 1 ? fmt(x, 1) : plain(x));
 /* a small decimal with only the digits it needs, for the values that round to less than one */
 function plain(x) { if (x <= 0) return '0'; const d = Math.max(0, -Math.floor(Math.log10(x))); return fmt(x, d); }
 /* a number rounded to one significant figure, as Example 1.4 rounds its result */
-function round1(x) { if (x <= 0) return 0; const p = Math.pow(10, Math.floor(Math.log10(x))); return Math.round(x / p) * p; }
+function round1(x) { if (x <= 0) return 0; const p = Math.pow(10, Math.floor(Math.log10(x))); return Math.round(+(x / p).toPrecision(12)) * p; }
 /* a number in scientific notation with up to three significant figures, trailing zeros dropped, as LaTeX */
 function sci(x) {
   let e = Math.floor(Math.log10(x)); let m = +(x / Math.pow(10, e)).toFixed(2); if (m >= 10) { m = 1; e += 1; }

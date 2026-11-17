@@ -72,7 +72,10 @@ const WORDS = ['', '', 'twice', 'three times', 'four times', 'five times', 'six 
     line(ctx, GX(tau), GY(v), GX(tau), box.b, C('time'), 2, [4, 8]);
     if (crosses) text(ctx, 'reasonable until t = ' + fmt(tc, 0) + ' s', GX(tc) + 16, GY(RUN) + 24, C('time'), { size: 18, weight: 600, align: 'left', bg: PAL.panel });
     dot(ctx, GX(tau), GY(v), C('velocity'), true, 9);
-    lab.add('t = ' + fmt(tau, 0) + ' s', GX(tau), GY(v), GX(tau) + 130 > box.r ? -0.6 : 0.6, -1, C('time'), 20, 24);
+    /* the time is written above and to the left of the point, where the rising line never is; near the
+       start, where that would cover the axis, it stands straight above, high enough to clear the dashed line */
+    const near = GX(tau) - 150 < box.l;
+    lab.add('t = ' + fmt(tau, 0) + ' s', GX(tau), GY(v), near ? 0 : -0.6, -1, C('time'), 20, near ? 38 : 24);
     lab.flush();
     /* what the numbers say */
     const ratio = v / RUN, n = Math.round(ratio);

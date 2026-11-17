@@ -74,70 +74,6 @@ own; nothing is generated for it (rule 13).
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-field` · replaces Figure 4.24 (the electric force field between a
-   positive and a negative charge) · force-field · **still**: the field
-   has no time in it, and the picture answers its sliders and nothing
-   else, so it registers no cycle and carries no transport (rule 14). A
-   positive charge on the left and a negative charge on the right, the
-   field lines traced from one to the other as the book draws them, and a
-   test charge the reader places anywhere in the field; the force on the
-   test charge is drawn along the field line through it, in the force
-   hue, and the field lines never move when the test charge changes ·
-   the test charge's position across the field $x$ (−2.40 to 2.40 m, step
-   0.05, default 0.20, ink) and up the field $y$ (−1.15 to 1.15 m, step
-   0.05, default 0.70, ink), and the size of the test charge $q$ (1.0 to
-   4.0 units, step 0.5, default 2.0, ink) · "the force on the test charge
-   is 1.16 and points 16° below the axis", with the distance to each
-   charge written on the dashed line that runs to it · none:
-   the field is the drawing · no. Readout: $\kF = qE = (2.0)(0.58) =
-   1.16$, with $E$ in units of the field midway between the two charges;
-   small line on the field being a characteristic of the two charges that
-   make it, so that changing $q$ changes the arrow and leaves the lines
-   where they are. Draws force.
-   Revised in the figure-audit pass of 2026-09-12: x and y are bound as
-   positions and their distances colored, the force and the field are
-   stated in the units the figure counts them in, since the charges carry no
-   coulombs, and the headline is one capitalized sentence. Draws force and
-   position.
-2. `sim-exchange` · replaces Figure 4.25 (the basketball thrown and
-   caught, and the meson exchanged between a proton and a neutron) ·
-   carrier-particle · **moving**: the idea is an exchange, which takes
-   time, so the figure runs a finite loop of about five seconds with the
-   scrubber. Two rows in one canvas, the people above and the proton and
-   neutron below, doing the same thing in step: the ball leaves the
-   thrower, who is pushed back; it crosses; the catcher takes it and is
-   pushed back in turn, and the two end further apart than they began,
-   without having touched · the force of the exchange $\kF$ (20 to 200 N,
-   step 5, default 80, force hue) and the separation of the pair $d$ (3.0
-   to 10.0 m, step 0.5, default 6.0, ink) · "the ball is in flight, and
-   the 80 N it carried away has pushed the thrower back from the catcher"
-   · none: the two rows are the drawing · no. Readout: $\kFone = \kFtwo =
-   80\ \text{N}$; small line saying that the thrower is pushed back as
-   the ball leaves and the catcher as it arrives, and that a meson
-   exchanged between a proton and a neutron carries the strong nuclear
-   force the same way. The people, the ball, the proton, the neutron and
-   the meson are ink; the arrows and their labels are the force hue.
-   Draws force.
-   Revised in the figure-audit pass of 2026-09-12: the separation slider is
-   gone, since it changed nothing the reader could read off the figure, and
-   the pair stands at the 6 m the scene needs; the headline is one
-   capitalized sentence.
-3. `sim-strengths` · new, a Sim with no number · four-basic-forces ·
-   **still**: a comparison of four numbers has no time in it. A
-   logarithmic ladder of relative strength from $10^{-40}$ to $10^{0}$
-   with the four forces of Table 4.1 marked on it, each as a bar from the
-   foot of the ladder to its own strength, and a bracket between the two
-   the reader picks that counts the powers of ten between them · force A
-   (1 to 4, step 1, default 4, ink) and force B (1 to 4, step 1, default
-   2, ink), the four numbered on the canvas in the order Table 4.1 prints
-   them · "the strong nuclear force is 10² times the electromagnetic
-   force" · none: the ladder is the graph · no. Readout:
-   $\dfrac{\text{strong nuclear}}{\text{electromagnetic}} =
-   \dfrac{1}{10^{-2}} = 10^{2}$; small line on gravity being the weakest
-   of the four by a very long way and noticed only because it is always
-   attractive and never cancels. All ink, since a relative strength is a
-   dimensionless comparison (chapter config). Draws nothing.
-
 Photographs, three, all kept:
 
 - Figure 4.26, the Large Hadron Collider (credit: Frank Hommes):
@@ -174,16 +110,6 @@ Extra simulations (rule 15). Thought of, judged, and only one built:
   body cancel while its gravitational forces add, which is the answer to
   conceptual question 1: it needs Coulomb's law, which the book does not
   state until Electric Charge and Electric Field.
-   Revised in the figure-audit pass of 2026-09-12: force A and force B are
-   two F.choice rows naming the four forces, not number sliders, and the
-   ladder names each force once; the headline is one capitalized sentence.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1): in `sim-field` the two distance lines were faint
-ink and the names of the charges lay in the field lines (Chen's item 12); the distances are now
-3 px dashed lines in the position hue, and the two charges are named above the field where no
-line runs through the words, on a canvas 620 tall. `sim-exchange` and `sim-strengths` were
-looked at and left as built.
-
 ## Tables
 
 One, Table 4.1 Properties of the Four Basic Forces, in `four-forces`, as
@@ -251,13 +177,14 @@ chapter config sends AP items to the Exercises document.
 
 ## Colour
 
-The page binds one type, force: the arrows on the test charge in
-`sim-field` and on the two partners in `sim-exchange`, and the force
-slider of `sim-exchange`. Everything else on the page is untyped and in
-ink, as the chapter config says: the placement and size of the test
-charge, the separation of the exchanging pair, the numbering of the four
-forces and their dimensionless relative strengths. No new hue, no new
-macro, no new symbol row.
+The page binds three types. Force: the arrow on the test charge in
+`sim-field`, the arrows on the two partners and on the two nucleons in
+`sim-exchange`, and the force slider of `sim-exchange`. Charge: the test
+charge of `sim-field`, its slider and its label. Position: the two sliders
+that place the test charge. Everything else on the page is untyped and in
+ink, as the chapter config says: the two source charges and the field
+lines, and the four forces of `sim-strengths` with their dimensionless
+relative strengths. No new hue.
 
 ## Wanted at chapter level
 
@@ -286,8 +213,7 @@ Revised in the Manim pass of 2026-09-28:
 
 ## Figure re-examination of 2026-11-17 (Claude Fable 5.2)
 
-All three drawn figures were judged against the book's images and rebuilt. The plan lines above are
-superseded by these.
+All three drawn figures were judged against the book's images and rebuilt.
 
 `sim-field` · replaces Figure 4.24 · force-field · value add: the book's still shows the lines, and the
 reader has to imagine a test charge in them; here the reader drags one and sees the force lie along the one

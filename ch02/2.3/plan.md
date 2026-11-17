@@ -75,132 +75,8 @@ contrast the passage draws.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-elapsed-time` · new · time, elapsed-time · a pendulum swings
-   above a time line while a marker runs along the line from $t_0$ to
-   $t_f$; a bracket in the time hue spans the elapsed time; a stopwatch
-   at the right reads zero until the motion starts and then counts up; the
-   swings of the pendulum are counted, since every measurement of time is
-   a count of some change · $\kto$ in s (0 to 60, step 0.5, default 10.0,
-   time hue), $\ktf$ in s (0 to 120, step 0.5, default 40.0, time hue),
-   the time of one swing in s (0.5 to 2.0, step 0.05, default 0.75, time
-   hue, since a period is a time) · "The clock read 10.0 s at the start
-   and 40.0 s at the end, so the elapsed time is 30.0 s and the pendulum
-   made 40 full swings." · none · 2D. The time line is a fixed 0 to 120 s,
-   the range of the two clock sliders. The stopwatch takes one turn of its
-   hand over the whole interval it times, which is the convention every
-   stopwatch on this page keeps. Labels on, six of them, none colliding.
-   Finite motion: the marker runs from
-   $t_0$ to $t_f$ in about 5 real seconds and the loop restarts, so it
-   gets the scrubber. When $t_f$ is set before $t_0$ the headline says
-   the motion has not begun and nothing runs. Readout: $\kdt = \ktf -
-   \kto = 40.0\ \text{s} - 10.0\ \text{s} = 30.0\ \text{s}$; small line:
-   a stopwatch started at the same moment reads zero at $t_0$ and 30.0 s
-   at $t_f$, which is why the text takes $t_0 = 0$ and writes $t$ for the
-   elapsed time. Draws time.
-2. `sim-average-velocity` · new · average-velocity, elapsed-time,
-   displacement · the aisle of an airplane drawn as a strip inside an
-   outline of the fuselage, the nose to the right so that $x$ increases
-   toward the front as in the book; a passenger walks from $x_0$ to
-   $x_f$ while a stopwatch counts the time $t$; a bracket for the
-   displacement in the position hue and a velocity arrow on the passenger;
-   below, a graph of position against time on which the straight line
-   from $(0, x_0)$ to $(t, x_f)$ has slope $\bar v$ and the moving point
-   rides along it · $\kxo$ in m (0 to 10, step 0.5, default 6.0, position
-   hue), $\kxf$ in m (0 to 10, step 0.5, default 2.0, position hue),
-   $\kt$ in s (1 to 20, step 0.5, default 5.0, time hue) · "The
-   passenger moves −4.0 m in 5.0 s, an average velocity of −0.80 m/s, the
-   minus sign meaning toward the rear of the plane." · position against
-   time, on axes fixed at 0 to 20 s and 0 to 10 m from the slider maxima
-   so the line moves and the ticks stand still · 2D. Labels on, six of
-   them, and the two position labels step apart when they crowd. Finite
-   motion, one walk per set time in about 5 real
-   seconds, so it gets the scrubber. Readout: $\kvb = \frac{\kdx}{\kt} =
-   \frac{-4.0\ \text{m}}{5.0\ \text{s}} = -0.80\ \text{m/s}$; small line:
-   velocity is a vector because displacement is one, and the sign of the
-   average velocity is the sign of the displacement. Draws position,
-   time, velocity.
-3. `sim-segments` · replaces Figure 2.9 · instantaneous-velocity,
-   average-velocity · the same passenger on the same aisle, but now his
-   actual trip is recorded: he walks toward the rear, slows, comes forward
-   a step, and goes back again, ending 4.0 m behind where he started after
-   5.0 s; the trip is cut into intervals of a set width, and over each one
-   the average velocity is drawn as a chord on the graph of position
-   against time, with the book's four segments (a, b, c forward, d) as the
-   default cut; the instantaneous velocity at the current instant is the
-   slope of the tangent, drawn on the graph and as the arrow on the
-   passenger · one slider only, the width of one interval $\kdt$ in s
-   (0.1 to 5.0, step 0.05, default 1.25, time hue). The trip keeps the
-   book's 5.0 s: a slider for the whole time only restretched the same
-   curve and changed no picture, so it is gone · "Over the interval from
-   1.25 s to 2.50 s the average velocity is −1.2 m/s, while at the
-   instant 2.30 s the velocity is −1.6 m/s." · position against time, on
-   axes fixed at 0 to 5 s and 0 to 8 m · 2D. Labels on, seven of them,
-   with the chord's label set on a panel so it never sits on the curve.
-   Finite motion, one trip per loop in about 5 real seconds, so it gets
-   the scrubber. Readout: the average velocity over the current interval,
-   $\kvb = \kdx/\kdt$, with the numbers, and the instantaneous velocity
-   $\kv$ beside it; small line: as the interval shrinks, the average
-   velocity over it settles to the instantaneous velocity, which is what
-   the text means by an infinitesimally small interval. Keeps the book's
-   number 2.9, the book's image as its original and the book's caption.
-   Draws position, time, velocity. Revised 2026-09-28: the narrowest interval, 0.10 s, is a special value on $\kdt$ (label "instant"); there the chord lies on the tangent and the readout morphs by meaning, $\kvb = \kdx/\kdt$ bending into $\kv \approx \kdx/\kdt$ and the separate $\kv$ term folding into it (manim 8, 11). Value add: the text's limit is seen in the formula, not only stated.
-4. `sim-store` · replaces Figure 2.10 · average-speed, average-velocity,
-   distance-traveled, displacement · a road from home at the left to the
-   store at the right; a car drives out to the store and part or all of
-   the way back while a stopwatch counts the minutes; an odometer under
-   the road adds up the distance traveled and a bracket in the position
-   hue shows the displacement from home, which vanishes on a full round
-   trip · the distance to the store in km (1.0 to 10.0, step 0.5, default
-   3.0, ink, a length of the scene), the time of the trip $\kt$ in min (10
-   to 120, step 5, default 30, time hue), how far back toward home the
-   car drives, as a percentage of the way (0 to 100, step 10, default 100,
-   ink) · "The odometer reads 6.0 km after 30 min, an average speed of 12
-   km/h, but the car is back where it began, so its average velocity is
-   zero." · none · 2D. The road is a fixed 0 to 10 km, the distance
-   slider's maximum, and the store stands at the distance set rather than
-   at the end of the road, so a short errand is drawn short. Labels on,
-   six of them. Finite motion, one trip per loop in about 5 real
-   seconds, so it gets the scrubber. Readout: $\text{average speed} =
-   \frac{6.0\ \text{km}}{0.50\ \text{h}} = 12\ \text{km/h}$ beside
-   $\kvb = \frac{\kdx}{\kt} = \frac{0\ \text{km}}{0.50\ \text{h}} = 0$;
-   small line: the average speed is not the magnitude of the average
-   velocity, and the two agree only when the car never turns back. The
-   third slider is what earns the figure beyond the book's sketch: with
-   the car stopping halfway home, the displacement is 1.5 km and the
-   average velocity 3.0 km/h away from home while the average speed is
-   9.0 km/h. Keeps the book's number 2.10, the book's image as its
-   original and the book's caption. Draws position, time, velocity. Revised 2026-09-28: 100 % of the way home is a special value (label "round trip"), where the displacement is zero.
-5. `sim-trip-graphs` · replaces Figure 2.11 · average-speed,
-   average-velocity, instantaneous-velocity, instantaneous-speed · the
-   same round trip as Figure 2.10 drawn three ways under a short strip
-   with the car on it: position against time (a tent that rises to the
-   store and comes back), velocity against time (+12 km/h out, −12 km/h
-   back, the jump at the turn), speed against time (12 km/h throughout),
-   with a time cursor and a moving point on each graph · the distance to
-   the store in km (1.0 to 10.0, step 0.5, default 3.0, ink), the time of
-   the trip $\kt$ in min (10 to 120, step 5, default 30, time hue), and
-   how far back toward home the car drives, as a percentage of the way (0
-   to 100, step 10, default 100, ink). The third slider is what keeps this
-   figure from answering the same two questions as the errand a paragraph
-   above: bring the car only part of the way home and the position graph
-   ends above zero while the speed graph does not change at all · "After
-   0.20 h the car is 2.4 km from home, its velocity is +12 km/h and its
-   speed is 12 km/h." · three graphs side by side, position, velocity and
-   speed against time, on ranges fixed once at 0 to 2 h, 0 to 10 km and
-   0 to 40 km/h; a faster trip than the scale holds is drawn against the
-   top of it with the true number written beside the line and said in the
-   readout · 2D. The road is a fixed 0 to 10 km with the store at the
-   distance set. Labels on, eight of them across the three panels, none
-   of them riding a moving thing. Finite motion, one trip per loop in
-   about 5 real seconds, so it gets the scrubber. Readout: $\kv = +12\ \text{km/h}$
-   on the way out and $-12\ \text{km/h}$ on the way back, while the speed
-   is $12\ \text{km/h}$ throughout; small line: the speed graph is the
-   velocity graph with its sign removed, which is what it means for
-   instantaneous speed to be the magnitude of instantaneous velocity.
-   This is the figure that serves `instantaneous-speed`; a figure of its
-   own would only draw the same graph again. Keeps the book's number
-   2.11, the book's image as its original and the book's caption. Draws
-   position, time, velocity. Revised 2026-09-28: 100 % of the way home is a special value (label "round trip").
+The five drawn figures are planned in the block dated 2026-11-17 at the
+end of this file.
 
 Photographs, one:
 
@@ -222,8 +98,6 @@ Extra simulations (rule 15), thought about and judged:
   interval of the trip at once, which is closer to the book's argument.
 
 None built.
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-average-velocity` and `sim-segments`: the passenger was a running stick figure floating above the aisle and is now the library's `person()` walking on it, facing the way he goes; his velocity label no longer leaves the canvas at the fastest setting, the graph's slope and tangent labels go through `labeller()` so they never sit on the line or on each other, and the long headlines wrap through `topline()`. `sim-store` and `sim-trip-graphs`: the house and the store stood on the road over the scale, so the store's name printed across a tick label; both buildings now stand behind the road on its far edge with their names over their roofs, the displacement bracket sits under the scale, and the headline wraps. `sim-trip-graphs`: the velocity and speed readings sit at the ends of their segments on a panel and are held inside the boxes, so a fast trip no longer prints its number over the axis title.
 
 ## Exercises
 
@@ -275,11 +149,10 @@ Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-average-velocity` and `sim-segm
 
 ## Colour
 
-The page binds time, position and velocity, from the five sims: every
-one carries a time on a slider, the passenger and the car are placed by
-position, and the arrows and the graphs of velocity are drawn in the
-velocity hue. The distance to the store, the percentage of the way home
-and the count of swings are untyped and in ink. No new hue, no new macro.
+The page binds time, position and velocity, from the five sims: the
+clock readings and the times are in the time hue, the passenger and the
+car are placed by position, and the arrows and the graphs of velocity are
+drawn in the velocity hue. No new hue, no new macro.
 
 ## Wanted at chapter level
 
@@ -299,7 +172,7 @@ checked against the ids of this section's `text.html`.
 
 ## Figure re-examination, 2026-11-17 (Claude Fable 5.2)
 
-All five drawings were judged against the book's images and rebuilt. They were small on their stages, opened off the book's numbers (elapsed time), disagreed with the image (Figure 2.9's segments), put the store on the road (2.10), and gave 2.10 and 2.11 the same three sliders. The lines below replace the five plan lines above.
+All five drawings were judged against the book's images and rebuilt. They were small on their stages, opened off the book's numbers (elapsed time), disagreed with the image (Figure 2.9's segments), put the store on the road (2.10), and gave 2.10 and 2.11 the same three sliders.
 
 1. `sim-elapsed-time` · Sim · time, elapsed-time · value add: variation, the stopwatch convention seen as a shifted zero · arrows: none · still, it only answers its sliders · $\kto$ (10:30 to 11:20, default 11:00, time) and $\ktf$ (11:30 to 12:30, default 11:50, time), shown as clock readings · headline "A lecture from 11:00 to 11:50 lasts 50 min, and a stopwatch started with it ends on 50 min." · no graph · 2D. The pendulum is gone (it measured nothing in the lecture), and with it the referent `pendulum`.
    works: read off the text (no image): lecture 11:00 A.M. to 11:50 A.M., Δt = 50 min, stopwatch reads zero at the start and 50 min at the end · must hold: the stopwatch's zero stands under t₀ at every setting; the bracket spans the same two instants on both scales; both readout lines give the same Δt.

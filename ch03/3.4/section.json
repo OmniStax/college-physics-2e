@@ -163,6 +163,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt: four shells with one v0y burst level; sliders v0y and angle"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "thin space in the readout"
     }
    ]
   },
@@ -208,6 +212,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt to fill the stage; impact numbers follow the example's rounding"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "landing level label kept clear of the curve"
     }
    ]
   },

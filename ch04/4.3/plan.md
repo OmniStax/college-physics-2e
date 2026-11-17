@@ -84,84 +84,21 @@ where the text uses it.
 id · replaces or Sim · concepts · what moves or still · sliders · headline ·
 graph · 3D
 
-1. sim-wagon · Figure 4.5 · net-external-force, newtons-second-law,
-   system-of-interest · flow by animation and variation by slider: the wagon
-   gathers speed as the net force grows or the mass falls · moving, the wagon
-   rolls for 4 s from rest · F1, F2 (0 to 60 N, force), f (0 to 40 N, force),
-   m (10 to 60 kg, mass) · "After 0.48 s a net force of 43.0 N on 30.0 kg has
-   given the wagon 1.43 m/s² and 0.69 m/s" · graph beside (v against t),
-   free-body diagram under the scene · 2D: the rider drawn with F.silhouette
-   (sit) inside the bed, the two pushers with F.silhouette (push) side by side
-   at full size with their hands on the wagon's back rail, the scene scaled up
-   so forces label beside their arrows through F.labeller; note reduced to the
-   division through the macros (\ka = \kFnet/\km) or dropped. No fold or
-   split.
-2. `sim-mass` · replaces Figure 4.6 (the basketball and the SUV) ·
-   newtons-second-law, net-external-force · **still**: the two accelerations
-   are thousands apart, so no shared strip could carry both, and the idea
-   answers its sliders rather than a clock; the figure registers no cycle
-   and gets no transport · $\kF$ (10 to 500 N, default 200, force), the mass
-   of the ball (0.2 to 3.0 kg, default 0.624, ink), the mass of the SUV (800
-   to 3000 kg, default 1800, ink) · "the same 200 N gives the 0.624 kg ball
-   321 m/s² and the 1800 kg SUV 0.111 m/s²" · graph below: $\ka$ against $m$,
-   both axes stepping by tens from 0.1 kg to 10,000 kg and from 0.01 to
-   10,000 m/s², so the two bodies sit on one straight line and each is
-   marked · no. The scenes above it are the player pushing the ball and the
-   player pushing the SUV, with the same force arrow drawn the same length
-   on each and the acceleration printed over each. Readout: $\ka = \kF/m$
-   twice, once for each body; small line saying the force is the same and
-   only the mass differs. Draws force, acceleration.
-   Revised in the figure-audit pass of 2026-09-12: the book's part (c) is
-   drawn: two identical one-arrow free-body diagrams under the two scenes,
-   the same push on each. The ball and the SUV are marked with pinned(), so
-   a point that falls below the floor of the graph is pinned at that edge
-   with its value rather than drawn outside the frame, and the headline is
-   one capitalized sentence.
-3. `sim-mower` · replaces Figure 4.7 (the lawn mower of Example 4.1) ·
-   newtons-second-law, newton-unit · **moves**: the mower is pushed from rest
-   across the lawn for three seconds under the net force, the velocity arrow
-   growing as it goes and the distance covered bracketed beneath it; the idea
-   has a time in it, so it loops and gets the scrubber · $\kFnet$ (10 to 120
-   N, default 51.0, force), $m$ (5 to 60 kg, default 24.0, ink) · "t = 2.00 s
-   · a net force of 51.0 N on 24.0 kg gives a = 2.13 m/s², so the mower has
-   reached 4.25 m/s and gone 4.25 m" · none: the strip and its bracket carry
-   the reading · no. Readout: $\ka = \kFnet/m$ with the units substituted,
-   51.0 kg·m/s² over 24.0 kg, which is the step the example makes and the
-   place the newton is defined; small line on the direction of the
-   acceleration being the direction of the net force. Draws force,
-   acceleration, velocity, position.
-   Revised in the figure-audit pass of 2026-09-12: the lawn is ruled 0 to 12
-   m at a fixed scale, with a meter scale under the strip; a run that passes
-   the end holds the mower at the last mark and the headline gives its true
-   distance. The arrow labels flip back to the tails of their arrows late in
-   the run, and the headline is one capitalized sentence.
-4. sim-sled · Figure 4.8 · net-external-force, system-of-interest,
+- sim-sled · Figure 4.8 · net-external-force, system-of-interest,
    free-body-diagram · standardisation and a story: the picture of the sled
    bends into its free-body diagram, and the acceleration against rockets
    burning sits beside · still with one story slider (picture to diagram) · T
-   (5000 to 40000 N, force), rockets burning (F.select 1 to 4), f (0 to 2000
+   (5000 to 40000 N, force), rockets burning (a row of buttons, 1 to 4), f (0 to 2000
    N, force) · "Four rockets of 25,900 N against 650 N of friction give the
    2,100 kg sled 49.0 m/s²" · graph beside, its box placed clear of the
    longest 4T arrow at T max · 2D: the rider drawn with F.silhouette (sit) on
    the platform, the flames as the plan's flame shape, f, w and N placed
    through F.labeller off the wheels with N rising from the rail's top face.
    No fold or split.
-5. `sim-weight` · **Sim**, replacing nothing in the book · weight,
-   mass-versus-weight · **still**: the figure answers its sliders and nothing
-   else, since weight has no time in it; a mass sits on a bathroom scale
-   whose dial reads what the book says a scale reads, and a free-body diagram
-   beneath the scene draws the weight down and the support of the scale up,
-   equal and opposite, at a length that follows the gravity · $m$ (0.1 to
-   100 kg, default 1.0, ink), $\kg$ (1.0 to 11.0 m/s², default 9.80,
-   acceleration, with the Moon’s 1.625 and the Earth’s 9.80 both reachable
-   on the slider) · "on Earth, where g = 9.80 m/s², a mass of 1.0 kg weighs
-   9.80 N" · graph beside the upright scene: $\kwgt$ against $\kg$, a straight
-   line through the origin with the Moon and the Earth marked on it · no.
-   Readout: $\kwgt = m\kg$ with the numbers; small line on what the scale is
-   calibrated to show. Draws force, acceleration.
 
-Every book figure of the section is a sketch and is replaced. The section has
-no photograph to keep or drop.
+Every book figure of the section is a sketch. Figure 4.7 stays the book's
+image and the others are replaced. The section has no photograph to keep or
+drop.
 
 Figures that serve exercises, kept on the exercise cards as the book’s own
 images rather than redrawn, since they sit inside the problems rather than
@@ -199,26 +136,9 @@ Extra simulations (rule 15), considered and judged:
   the book. **Left**, and the chapter’s `exploration.md` already holds a
   free-body diagram the reader builds for a later pass.
 
-One built, two left. Of the five figures, three move and two are still
-by the test of rule 14.
-   Revised in the figure-audit pass of 2026-09-12: the mass runs 0.1 to 2.0
-   kg with a detent at the 1.0 kg the section works with, so the fixed 0 to
-   24 N weight axis holds every setting instead of clipping above 1.2 kg;
-   the gravity slider steps by 0.005 m/s² and carries ticks at the Moon's
-   1.625 and Earth's 9.80, which the step lands on exactly, and the headline
-   is one capitalized sentence.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1): in `sim-wagon` the wagon and its rider were a
-blob and the two children a pair of tiny sticks (Chen's item 4); the wagon is redrawn whole as an
-open bed with a rim, spoked wheels and a raised handle, the rider sits in it with a hand on the
-handle, and the two children stand behind it at full sprite size, the farther one in the muted
-ink, both leaning with their hands on the rim. The two pushes now leave from the back of the
-wagon where the hands are, on two rows above it with a faint leader down to the rim, and the
-friction is drawn on the ground at the wheels, since that is where it acts. In `sim-mower` and
-`sim-sled` the arrows floated far above their bodies; the mower's net force now leaves the deck
-and its acceleration and velocity sit just above it, and each thrust of the sled leaves its own
-rocket. `sim-mass` and `sim-weight` were looked at and left as built.
-
+One built, two left. Of the four drawn figures the wagon moves, the sled
+has a story slider, and `sim-mass` and `sim-weight` are still by the test
+of rule 14.
 Figure re-examination of 2026-11-16 (Claude Fable 5.2), each drawing judged against the book's image:
 
 - `sim-wagon` · Figure 4.5 · rebuilt. The scene was small on a long ruled strip and the graph was speed against time, which is Chapter 2's. Now the wagon stays in the frame and the ground's meter marks run back under it, so the bodies and the forces on them are large; beneath, the free-body diagram, the sum laid head to tail as the book's part (b) draws it (the friction back from the tip of the two pushes, the net force from the dot to where it ends), and the acceleration against the net force, the proportionality the text writes beside this figure. The mass slider is gone: the book's caption is "different forces on the same mass", and Figure 4.6 owns the mass.

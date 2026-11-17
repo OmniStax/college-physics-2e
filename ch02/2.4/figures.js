@@ -378,9 +378,9 @@ function topCar(ctx, x, y, heading, color) {
     F.rich(ctx, ['slope = v = ', [fmt(vv, 2) + ' m/s', C('velocity')]], 1250, BOX[0].t - 24, { size: 20, align: 'right' });
     F.rich(ctx, ['slope = a = ', [phase === 'steady' ? '0' : sig3s(aa) + ' m/s²', C('acceleration')]], 1250, BOX[1].t - 24, { size: 20, align: 'right' });
     const GX = AX[0].X;
-    text(ctx, 'speeding up', GX(t1.v / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
-    text(ctx, 'constant velocity', GX(t1.v + TS / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
-    text(ctx, 'stopping', GX(t1.v + TS + t3.v / 2), BOX[0].t + 18, PAL.muted, { size: 18, align: 'center' });
+    text(ctx, 'speeding up', GX(t1.v / 2), BOX[0].t + 13, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'constant velocity', GX(t1.v + TS / 2), BOX[0].t + 13, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'stopping', GX(t1.v + TS + t3.v / 2), BOX[0].t + 13, PAL.muted, { size: 17, align: 'center' });
     topline(ctx, done ? 'After ' + fmt(T(), 1) + ' s the train is at rest again, ' + fmt(pos(T()), 0) + ' m down the track.'
       : phase === 'up' ? 'Speeding up: the velocity rises ' + sig3(a1()) + ' m/s every second, and the position graph steepens.'
         : phase === 'steady' ? 'Constant velocity: the acceleration is zero, and the position graph is a straight line.'

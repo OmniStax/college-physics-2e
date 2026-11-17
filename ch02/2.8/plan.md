@@ -84,106 +84,8 @@ derive-motion-graphs.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-line` · replaces Figure 2.44 (the straight line $y = mx + b$) ·
-   straight-line-graph · **still**: a graph of $y$ against $x$ with the
-   line $y = mx + b$, a rise-over-run triangle drawn on it between
-   $x = 1$ and $x = 3$, and the intercept marked on the vertical axis
-   with a bracket from the origin · slope $m$ (−2.0 to 3.0, step 0.1,
-   default 1.5, ink), intercept $b$ (−3 to 4, step 0.5, default 1.0,
-   ink) · "the line rises 3.0 for a run of 2.0, so its slope is 1.5, and
-   it crosses the $y$-axis at 1.0" · the graph is the figure · no. The
-   idea has no time in it; the figure answers its two sliders. Readout:
-   $y = mx + b = 1.5x + 1.0$ with a small line on the slope being the
-   same between any two points of a straight line. All ink; draws
-   nothing.
-2. `sim-jet-xt` · replaces Figure 2.45 (the jet car's position against
-   time) · x-t-slope-velocity, straight-line-graph · **still**: the
-   straight line $x = x_0 + \bar v t$ on axes fixed at 0 to 8 s and 0 to
-   3800 m, which is the farthest the two sliders reach in 8 s, so a
-   faster car draws a steeper line instead of the axis stretching to
-   keep the line at the same slant; two chosen points on it with drop
-   lines to both axes, the
-   run $\Delta t$ bracketed under the line and the rise $\Delta x$
-   beside it, the intercept marked hollow at $t = 0$ · $\kxo$ (0 to
-   1000 m, step 25, default 400, position), $\kvb$ (50 to 350 m/s, step
-   5, default 250, velocity), the two chosen times $t_1$ (0 to 7.5 s,
-   step 0.1, default 0.50, time) and $t_2$ (0.5 to 8 s, step 0.1,
-   default 6.4, time) · "Between 0.50 s and 6.40 s the car goes from
-   525 m to 2000 m, a rise of 1475 m over a run of 5.90 s, so the
-   slope is 250 m/s." · the graph is the figure · 2D. Labels on, six of
-   them, each on a panel. No time in the
-   idea: the reader chooses the two points and reads the slope, and the
-   slope is the same wherever they are chosen. Readout:
-   $\kvb = \kdx / \kdt = (2000 − 525) / (6.4 − 0.50) = 250$ m/s, with a
-   small line saying the intercept is $x_0$ and so the graph reads
-   $\kx = \kxo + \kvb\kt$. Draws time, position, velocity.
-3. `sim-jet-graphs` · replaces Figure 2.46 (position, velocity and
-   acceleration of the jet car under constant acceleration) ·
-   derive-motion-graphs, tangent-slope, x-t-slope-velocity,
-   v-t-slope-acceleration · **moving**: three graphs stacked on one
-   time axis, 0 to 35 s. As the clock runs a tangent slides along the
-   position curve, its slope is plotted as the point being added to the
-   velocity graph, and the slope of the velocity line is plotted as the
-   level being added to the acceleration graph; the two lower graphs are
-   drawn up to the current time only, so the reader sees them built from
-   the tangents · $\kxo$ (0 to 500 m, step 10, default 200, position),
-   $\kvo$ (0 to 60 m/s, step 1, default 15, velocity), $\ka$ (0 to 8
-   m/s², step 0.1, default 5.0, acceleration) · "After 12.0 s the
-   tangent at P has slope 75 m/s, which is plotted below as the
-   velocity, and the velocity line has slope 5.0 m/s²." · the three
-   graphs are the figure, on ranges fixed once from the slider maxima at
-   0 to 35 s, 0 to 6000 m, 0 to 300 m/s and 0 to 8.0 m/s², with the
-   position curve clipped to its box · 2D. Labels on, six of them, each
-   on a panel. It moves because the derivation the
-   paragraph describes is a process in time: "if this is done at every
-   point on the curve and the values are plotted against time, the
-   graph of velocity versus time is obtained". One sweep from 0 to 30 s
-   in about 5 real seconds, then a hold, so it gets the scrubber.
-   Readout: $\kv = \kvo + \ka\kt = 15 + (5.0)(12.0) = 75$ m/s, with a
-   small line on the velocity line being straight because its slope,
-   the acceleration, is constant. Draws time, position, velocity,
-   acceleration.
-4. `sim-tangent` · replaces Figure 2.48 (Example 2.18, the tangent at Q)
-   · tangent-slope, x-t-slope-velocity · **still**: the same position
-   curve on axes of 0 to 35 s and 0 to 3500 m, the book's table of
-   positions at 0, 5, 10, … 30 s beside it, the point Q at the chosen
-   time with its tangent drawn out to two endpoints, and the rise and
-   run between the endpoints marked with dashed drop lines · $t_Q$ (2 to
-   30 s, step 0.5, default 25, time), the endpoints $t_1$ (0 to 30 s,
-   step 0.5, default 19, time) and $t_2$ (2 to 35 s, step 0.5, default
-   32, time) · "the tangent at Q runs from (19 s, 1298 m) to (32 s,
-   3118 m), so its slope, the velocity at 25 s, is 140 m/s" · the graph
-   is the figure · no. No time in the idea: the reader places the point
-   and the endpoints and reads a slope. Readout:
-   $v_Q = \Delta x_Q / \Delta t_Q = (3118 − 1298) / (32 − 19) = 140$
-   m/s, with a small line saying that moving the endpoints along the
-   tangent does not change the slope, and that a wider interval makes
-   any error in reading the graph proportionally smaller. Draws time,
-   position, velocity.
-5. `sim-jet-top` · replaces Figure 2.49 (velocity and acceleration as
-   the car reaches its top velocity) · v-t-slope-acceleration,
-   tangent-slope · **still**: two graphs stacked on one time axis, 0 to
-   70 s: the velocity curve from 165 m/s levelling out at 250 m/s with a
-   tangent at the chosen time drawn out to two endpoints, and the
-   acceleration curve below falling from 5.0 m/s² to zero at 55 s with
-   the value at the chosen time marked · $t_Q$ (0 to 55 s, step 0.5,
-   default 25, time; it stops at 55 s, where the velocity levels out and
-   the acceleration reaches zero, since past that the curve draws
-   nothing the reader has not already seen), the endpoints $t_1$ (0 to
-   40 s, step 0.5, default
-   1.0, time) and $t_2$ (10 to 70 s, step 0.5, default 51, time) · "The
-   tangent at 25.0 s runs from (1.0 s, 211 m/s) to (51.0 s, 261 m/s), so
-   the acceleration at 25.0 s is 1.0 m/s²." · the graphs are the figure,
-   on axes fixed at 0 to 70 s, 160 to 260 m/s and −1 to 6 m/s² · 2D.
-   Labels on, six of them, each on a panel. Still, for the same reason
-   as the tangent figure. The acceleration is modelled as falling in
-   straight pieces through (0, 5.0), (10, 3.0), (25, 1.0) and (55, 0)
-   m/s², which reproduces the book's velocities (205, 228, 235, 240,
-   246, 250 m/s at 10, 20, 25, 30, 40 and 55 s) and the example's
-   tangent endpoints (210 and 260 m/s at 1.0 and 51 s) to within a
-   meter per second; the book's own curve is drawn from data and is not
-   a formula. Readout: $a = \kdv / \kdt = (261 − 211) / (51 − 1.0) =
-   1.0$ m/s². Draws time, velocity, acceleration.
+The drawn figures are planned in the block dated 2026-11-16 below;
+Figure 2.44 is the book's image.
 
 The three examples: 2.17 is the slope of Figure 2.45 and is served by
 `sim-jet-xt`, whose defaults are its two points; 2.18 gets
@@ -223,16 +125,14 @@ Extra simulations (rule 15), proposed and judged:
 
 None built.
 
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-jet-xt`: with both chosen times near zero the intercept's label, the two coordinate labels and the triangle's rise and run all printed on one another; every label of the figure now goes through `labeller()`, and `triangle()` queues its labels there when given one. `sim-jet-top`: the velocity reading and the rise label collided once the tangent went flat and go through `labeller()` too. `sim-line`, `sim-jet-graphs` and `sim-tangent` unchanged.
-
 ## Figure re-examination, 2026-11-16 (Claude Fable 5.2)
 
-The five drawn figures were judged as a set against the book's images. The lines above stand as history; these replace them where they differ.
+The five drawn figures were judged as a set against the book's images.
 
 1. `sim-line` (Figure 2.44) · **reverted** to the book's image, a kept photograph. Its two sliders, slope and intercept, are the two sliders $\kvb$ and $\kxo$ of `sim-jet-xt` directly below it, with the same rise-and-run triangle, so it taught the same thing twice, once without quantities. The book's sketch names slope, intercept and rise over run and is enough.
 2. `sim-jet-xt` (Figure 2.45) · x-t-slope-velocity, straight-line-graph · value add: the two points are dragged along the line and the ratio of rise to run does not change · arrows: none · still · $\kxo$ (0 to 800 m), $\kvb$ (0 to 300 m/s, 0 giving the level line of a car at rest), $t_1$ (0 to 4 s), $t_2$ (4.5 to 8 s), both points draggable on the graph · headline "Any two points on the line give the same slope: 1475 m ÷ 5.90 s = 250 m/s." · the graph is the figure, on the book's ticks (0 to 3200 m by 800 m, 0 to 8 s) · 2D. Readout, two formulas on two lines: $\kvb = \kdx/\kdt$ and $\kx = \kxo + \kvb\kt$, each whole with its numbers.
    works: read off the image: intercept $x_0 = 400$ m; points (0.50 s, 525 m) and (6.40 s, 2000 m); the line reaches 2400 m at 8 s; position ticks 800, 1600, 2400; labels $x = x_0 + \bar v t$ and slope $= \bar v = \Delta x/\Delta t$ · must hold: (1) on load the two points are Example 2.17's and the slope reads 250 m/s; (2) the slope read is $\kvb$ wherever the points are; (3) the line stays inside the fixed axes at every slider setting (800 + 300 × 8 = 3200 m).
-3. `sim-jet-graphs` (Figure 2.46) · derive-motion-graphs, tangent-slope, x-t-slope-velocity, v-t-slope-acceleration · value add: the derivation the paragraph describes ("if this is done at every point on the curve and the values are plotted against time") happens in front of the reader · arrows: none · moving: a clock sweeps 0 to 30 s in about 6 s; the tangent slides along the position curve, and at each of the book's marker times (every 5 s) it leaves a stub on the curve and a point on the velocity graph, with the book's P (10 s) and Q (25 s) named on both graphs · $\kxo$ (0 to 400 m), $\kvo$ (0 to 20 m/s), $\ka$ (0 to 6 m/s², 0 giving the straight line of Figure 2.45) · headline "At 11.1 s the tangent has slope 70.5 m/s, which is the velocity plotted below it." · three graphs on one time axis, fixed at 0 to 4000 m, 0 to 200 m/s, 0 to 6 m/s², which the slider maxima just reach (3700 m, 200 m/s), so the book's case fills most of each graph (before, on 0 to 6000 m and 0 to 300 m/s, the curves lay along the bottom) · 2D. Each graph says what its slope is, with the value now, in its free corner. Readout: $\kv = \kvo + \ka\kt$ and $\ka = \kdv/\kdt$, each whole with its numbers; the clock is read to the tenth of a second it prints, so the numbers agree.
+3. `sim-jet-graphs` (Figure 2.46) · derive-motion-graphs, tangent-slope, x-t-slope-velocity, v-t-slope-acceleration · value add: the derivation the paragraph describes ("if this is done at every point on the curve and the values are plotted against time") happens in front of the reader · arrows: none · moving: a clock sweeps 0 to 30 s in about 6 s; the tangent slides along the position curve, and at each of the book's marker times (every 5 s) it leaves a stub on the curve and a point on the velocity graph, with the book's P (10 s) and Q (25 s) named on both graphs · $\kxo$ (0 to 400 m), $\kvo$ (0 to 20 m/s), $\ka$ (0 to 6 m/s², 0 giving the straight line of Figure 2.45) · headline "At 11.1 s the tangent has slope 70.5 m/s, which is the velocity plotted below it." · three graphs on one time axis, fixed at 0 to 4000 m, 0 to 200 m/s, 0 to 6 m/s², which the slider maxima just reach (3700 m, 200 m/s), so the book's case fills most of each graph (before, on 0 to 6000 m and 0 to 300 m/s, the curves lay along the bottom) · 2D. Graphs (a) and (b) say what their slope is, with the value now, in their free corner; the acceleration is written at the right end of its level. Each moving point is dropped to its own time axis, so no time line crosses those words. Readout: $\kv = \kvo + \ka\kt$ and $\ka = \kdv/\kdt$, each whole with its numbers; the clock is read to the tenth of a second it prints, so the numbers agree.
    works: read off the image: (a) position 200 m at 0 rising to 2900 m at 30 s, markers every 5 s, P at 10 s and Q at 25 s with tangent triangles, "Slope = v"; (b) a straight line from 15 m/s to 165 m/s, P and Q on it, "Slope = a"; (c) level at 5.0 m/s² · must hold: (1) at 10 s the slope reads 65 m/s and at 25 s 140 m/s, the values of the table in Figure 2.48; (2) the moving point of (b) is at the height the tangent's slope reads; (3) the velocity line ends at 165 m/s and the position curve at 2900 m at 30 s; (4) changing $\kxo$ moves only graph (a).
 4. `sim-tangent` (Figure 2.48, Example 2.18) · tangent-slope, x-t-slope-velocity · value add over `sim-jet-graphs`: the arithmetic of reading one slope between two ends of a tangent, and the table · arrows: none · still · $t_Q$ (0 to 30 s, catching on the table's times), the ends $t_1$ (0 to 20 s) and $t_2$ (21 to 35 s); Q is dragged along the curve and the ends along the tangent; an end that would leave the graph is held at its edge · headline "The tangent at Q rises 1820 m in 13.0 s, so the velocity at 25.0 s is 140 m/s." · the graph with the book's table beside it; the table has a third column, the velocity, which the example's text reads from "this figure's table" though the book's image lacks it: a row fills in once Q has stood on its time, so the reader builds the velocity column tangent by tangent · 2D.
    works: read off the image: table 0, 5, …, 30 s against 200, 338, 600, 988, 1500, 2138, 2900 m; P at 10 s, Q at 25 s; Q's tangent read between 19 s and 32 s (1300 m and 3120 m in the example; the exact tangent gives 1298 m and 3118 m, inside the reading error the section's note allows) · must hold: (1) on load the readout is Example 2.18's, 140 m/s; (2) the table's positions are the book's; (3) the slope is the same wherever the ends sit; (4) the labels of the rise and the run stay clear of Q and the curve.
@@ -287,11 +187,10 @@ The five drawn figures were judged as a set against the book's images. The lines
 
 ## Colour
 
-The page binds time, position, velocity and acceleration: every sim
-but the first carries a time on a slider and draws a position, a
-velocity or an acceleration on an axis. The straight line of Figure 2.44
-is pure mathematics, so $y$, $x$, $m$ and $b$ stay in ink there, as the
-chapter config says for untyped quantities. No new hue, no new macro.
+The page binds time, position, velocity and acceleration: every drawn
+figure is a graph against time of a position, a velocity or an
+acceleration. Figure 2.44 is the book's image, and the $y$, $x$, $m$
+and $b$ of its caption stay in ink. No new hue, no new macro.
 
 ## Wanted at chapter level
 

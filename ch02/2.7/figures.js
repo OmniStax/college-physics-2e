@@ -223,7 +223,7 @@ function feather(ctx, x, y, color, s = 1) {
     /* the two levels, across the scene and the graph */
     line(ctx, SX + 10, Y(0), box.l, Y(0), C('position'), 2, [8, 8]); text(ctx, 'y₀ = 0', SX + 22, Y(0) - 20, C('position'), { size: 20, weight: 600 });
     line(ctx, EDGE + 4, Y(yE.v), box.r, Y(yE.v), C('position'), 2, [8, 8]);
-    text(ctx, 'y = ' + ys + ' m', box.r - 10, Y(yE.v) - 20, C('position'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
+    text(ctx, 'y = ' + ys + ' m', box.r - 10, Y(yE.v) + (yE.v > -1.9 ? 20 : -20), C('position'),   /* under its line where the level is too near y₀ to fit between */ { size: 20, weight: 600, align: 'right', bg: PAL.panel });
     line(ctx, xa, Y(YHI), xa, Y(YLO), PAL.rule, 1.5); line(ctx, xb, Y(YHI), xb, Y(YLO), PAL.rule, 1.5);
     text(ctx, 'thrown up', xa + 14, sTop - 30, F.ref('rock'), { size: 20, weight: 600, align: 'right' }); text(ctx, 'thrown down', xb - 14, sTop - 30, F.ref('rock-down'), { size: 20, weight: 600 });
     /* the marks the rock thrown up leaves each second, with its velocity at each */
@@ -239,12 +239,13 @@ function feather(ctx, x, y, color, s = 1) {
     ctx.restore();
     dot(ctx, A.X(v0.v), Y(0), F.ref('rock'), false, 9); dot(ctx, A.X(-v0.v), Y(0), F.ref('rock-down'), false, 9);
     text(ctx, '+' + fmt(v0.v, 1) + ' m/s', A.X(v0.v) + 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600 });
-    text(ctx, '−' + fmt(v0.v, 1) + ' m/s', A.X(-v0.v) - 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
     dot(ctx, A.X(-vm), Y(yE.v), C('velocity'), false, 9);
-    text(ctx, vs + ' m/s', A.X(-vm) + 16, Y(yE.v) + 24, C('velocity'), { size: 20, weight: 600, bg: PAL.panel });
     /* now */
     if (both) { line(ctx, xa + 12, Y(yA), A.X(vA), Y(yA), C('position'), 2.5, [5, 7]); dot(ctx, A.X(vB), Y(yB), F.ref('rock-down'), false, 15); }
     else line(ctx, xb + 12, Y(yA), A.X(vA), Y(yA), C('position'), 2.5, [5, 7]);
+    /* these two labels go on after the dashed link, on their panels, so the link passes behind them */
+    text(ctx, '−' + fmt(v0.v, 1) + ' m/s', A.X(-v0.v) - 14, Y(0) - 22, C('velocity'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
+    text(ctx, vs + ' m/s', A.X(-vm) + 16, Y(yE.v) + 24, C('velocity'), { size: 20, weight: 600, bg: PAL.panel });
     dot(ctx, A.X(vA), Y(yA), F.ref('rock'), true, 9);
     if (Math.abs(vA) > 0.25) arrow(ctx, xa + 22, Y(yA), xa + 22, Y(yA) - vA * K, C('velocity'), 5);
     dot(ctx, xa, Y(yA), F.ref('rock'), true, 11); dot(ctx, xb, Y(yB), F.ref('rock-down'), both, 11);

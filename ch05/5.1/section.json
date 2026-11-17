@@ -186,6 +186,10 @@
     {
      "model": "claude-fable-5-2",
      "part": "rebuilt: forces to scale, μk on the control, the two forces against angle"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "readout numbers agree at the steady-speed angle"
     }
    ]
   },

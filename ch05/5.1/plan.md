@@ -191,7 +191,7 @@ dated notes further down are the history of the earlier builds.
 
 Photographs: one in the section, the knee X-ray of Figure 5.3, and it is
 kept (above). No splash image to drop. The figures inside the problems: the
-block of ice is kept and copied (above); the two ice skaters of
+block of ice is kept as the book's image (above); the two ice skaters of
 `fs-id1452889` and the mountain climber of `fs-id1615856` belong to
 problems that have no keyed answer and are left out, so their figures are
 left out with them.
@@ -216,10 +216,6 @@ Extra simulations (rule 15), thought through and judged:
 - A car braking on dry, wet and icy concrete, for the problems on maximum
   deceleration — left. Both of those problems are unkeyed and out of the
   page, and 2.5 already built the braking car.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence, and the lead names Problem 18, the one problem of
-   the section that refers to the figure.
-
 ## Exercises
 
 - No Check Your Understanding boxes; nothing inline.

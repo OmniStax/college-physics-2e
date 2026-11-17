@@ -153,23 +153,26 @@ id · replaces · concepts · what moves · sliders · headline · graph · 3D
    analytical-vector-addition, components-from-magnitude-angle,
    magnitude-direction-from-components · value add: each component seen to
    grow, shrink and change sign as a leg is turned, and the sums along each
-   axis kept in step · arrows: symbolic · **still** · $\kA$ 10 to 60 m and
-   $\kB$ 10 to 40 m (step 0.5, defaults 53.0 and 34.0, position),
-   $\theta_A$ 0° to 90° and $\theta_B$ 0° to 180° (step 0.5, defaults 20.0°
+   axis kept in step · arrows: symbolic · **still** · $\kA$ 10 to 55 m and
+   $\kB$ 10 to 35 m (step 0.5, defaults 53.0 and 34.0, position),
+   $\theta_A$ 0° to 45° and $\theta_B$ 0° to 180° (step 0.5, defaults 20.0°
    and 63.0°, angle) · headline "A and B add to R = 81.2 m, 36.6° north of
    east" · graph none · 2D. Rebuilt 2026-11-17: the 120 m disc of the old
    version drew Example 3.3 at a fifth of the stage. The angles are now
-   kept to where a walk stays north of its start, so one scale of 6.2 units
-   a metre (40 m west, 100 m east, 100 m north) draws the example across
-   the stage; the rows sit under the lowest point and the columns left of
+   kept to where a walk stays north of its start and the sliders to a little
+   past the example's values, so one scale of 8.5 units a metre (35 m west,
+   90 m east, 74 m north) draws the example across two thirds of the stage's
+   height; the rows sit under the lowest point and the columns left of
    the leftmost point, as Figure 3.32 has them; the x-axis starts at the
    leftmost point so that it never runs through a column. θ is named just
    past R, as the book does, since A cuts its arc. Readout: steps 2 to 4
    with units on every number, computed from the rounded components so the
    sums hold as written.
    works: parts: A from the origin, B from the head of A, R from the origin
-   to the head of B; $A_x$, $B_x$ dashed and head to tail under the walk,
-   $R_x$ solid under them and as long as the two together; $A_y$, $B_y$,
+   to the head of B, all in the position hue and told apart by line: A thin
+   and solid, B dashed, R heavy and solid; $A_x$ and $B_x$ in their vectors'
+   lines, head to tail under the walk, $R_x$ heavy under them and as long
+   as the two together; $A_y$, $B_y$,
    $R_y$ the same at the left; $\theta_A$ and θ at the origin, $\theta_B$
    at the head of A from a horizontal · flow: none · must hold: every
    component starts and ends level with the points of the walk it belongs
@@ -188,8 +191,8 @@ id · replaces · concepts · what moves · sliders · headline · graph · 3D
    slider, which keeps B and −B within 40 m of one fixed point and lets the
    scale be 7.6 units a metre · headline "A − B gives R = 36.5 m, 19.5°
    south of east" · graph none · 2D. Rebuilt 2026-11-17 from the same
-   function as `sim-add` with sign −1; B itself is drawn muted and dashed
-   from the head of A.
+   function as `sim-add` with sign −1 and the same three lines (A thin, −B
+   dashed, R heavy); B itself is drawn muted and dotted from the head of A.
    works: parts: A from the origin, −B from the head of A, R from the
    origin to the head of −B, B muted from the head of A; rows $A_x$,
    $-B_x$, $R_x$ and columns $A_y$, $-B_y$, $R_y$ · flow: none · must
@@ -240,8 +243,6 @@ Extra simulations (rule 15), thought about and left:
 - A sum of many legs (Gilligan's seven) with a running total of the
   components. The two-leg sim already shows that components along one
   axis add like numbers; a seventh slider adds nothing to the idea. Left.
-
-Figure pass (2026-09-14, Claude Fable 5.1): in `sim-components` and `sim-resultant` the $A_y$ label sits outside the triangle beside the dashed component at every angle, and the numbers panel moved right to make room. In `sim-add` and `sim-subtract` the component rows and columns are spaced 52 units apart with each label beside its dashed arrow rather than on it, and the canvas grew to 760; the scale of these two still follows the sliders, because the two legs may point anywhere and a scale fixed from the 160 m reach would draw the book's walk at a third of the frame. Headlines wrap through `topline()`. (Superseded 2026-10-05: both now take the fixed 120 m scale of their plan lines.)
 
 ## Exercises
 

@@ -106,27 +106,7 @@ weigh moving both nodes to 5.3, as `ch05/exploration.md` proposes.
 id · replaces · concepts · what moves or still · sliders · headline ·
 graph · 3D
 
-1. `sim-hooke-graph` · replaces Figure 5.11 (deformation against applied
-   force) · deformation, elastic-limit, hookes-law · **still**: the idea has
-   no time in it, only a force that is either applied or not, so the figure
-   answers its sliders and registers no cycle and no transport · the applied
-   force $\kF$ (0 to 600 N, default 90, force), the force constant $\kk$
-   (50 to 400 N/m, default 150, stiffness), the force at which the straight
-   segment ends (40 to 300 N, default 120, force, since a metal or a spring
-   has a long straight segment and a bone a short one) · "F = 90 N · the
-   spring has stretched 0.600 m, and the graph is still on its straight
-   segment, where Hooke's law holds" · the graph is the figure, with a
-   spring stretched on a strip above it so that the reader sees what the
-   graph measures, and drawn broken once the fracture force is passed · no.
-   Readout: $\kdL = \kF/\kk$ with the numbers; small line on the slope
-   $1/\kk$ of the straight segment. Draws force, position, stiffness.
-   Revised in the figure-audit pass of 2026-09-12: the three regions of the
-   graph are banded in ink rather than in the position and force hues, since
-   a region is not a quantity, and the spring is drawn against the same
-   fixed 0 to 4 m the graph is ruled to, so a stiffer spring is drawn
-   stretching less instead of filling the same span. The headlines are one
-   capitalized sentence each.
-2. `sim-strings` · replaces Figure 5.12 (the three guitar strings) ·
+- `sim-strings` · replaces Figure 5.12 (the three guitar strings) ·
    youngs-modulus, force-constant · **still**: one weight is hung and the
    three strings stretch by three different amounts, which answers the
    sliders and nothing else · the weight $w$ (2 to 40 N, default 20, force)
@@ -135,94 +115,23 @@ graph · 3D
    nylon string 0.83 mm and the steel string 0.08 mm" · a vertical scene, so the
    graph goes beside it: the change in length against the weight, one line
    for each string, the current weight marked on all three · no. Readout:
-   $\kdL = \frac{1}{\kY}\frac{\kF}{A}\kLo$ for the thin nylon string; small
-   line on why the thicker string and the steel one stretch less. Draws
+   $\kdL = w/k$ for the thin nylon string, each string stating its force
+   constant. Draws
    force, position, elastic-modulus.
-   Revised in the figure-audit pass of 2026-09-12: the stretch is drawn at a
+   The stretch is drawn at a
    fixed seven thousand units per meter, whatever the original length is set
    to, so a longer string really is drawn stretching farther; the headline
    is one capitalized sentence.
-3. `sim-rod` · replaces Figure 5.13 (a) and (b) (a rod in tension and the
-   same rod in compression) · youngs-modulus · **still**: the rod holds
-   whatever deformation the force gives it · the force $\kF$ (0 to 5,000 N,
-   default 1,500, force), the original length $\kLo$ (0.20 to 3.00 m,
-   default 1.00, position), the radius $r$ (0.5 to 5.0 cm, default 1.0,
-   ink) and Young's modulus $\kY$ (1 to 210 in units of $10^9\ \text{N/m}^2$,
-   default 70, elastic-modulus) · "F = 1500 N · a 1.00 m aluminum rod
-   1.0 cm in radius stretches 0.068 mm in tension and is compressed by the
-   same amount" · graph beside the two vertical rods: the change in length
-   against the force, with the line for the modulus set and faint lines for
-   steel, aluminum, bone in compression and nylon from Table 5.3 · no.
-   Readout: $\kdL = \frac{1}{\kY}\frac{\kF}{A}\kLo$ with the numbers.
-   Draws force, position, elastic-modulus.
-   Revised in the figure-audit pass of 2026-09-12: Young's modulus carries a
-   tick at every value Table 5.3 prints, two of them named on the track,
-   and the whole number the slider steps by lands on each exactly. The
-   headline is one capitalized sentence.
-4. `fig-gondolas` · Figure 5.14, the photograph of the gondolas at Gala
+- `fig-gondolas` · Figure 5.14, the photograph of the gondolas at Gala
    Yuzawa · **kept**, because Example 5.3 points the reader at it ("See
    Figure 5.14") and it shows the cable the example is about. The book's
    caption and its credit clause are kept, and the image sits at the 200
    book pixels the CNXML gives it.
-5. `sim-tendon` · replaces Figure 5.15 (the tendon's stress-strain curve) ·
-   stress, strain, elastic-limit · **still**: the curve is a property of the
-   tendon, and the slider walks along it rather than running a clock · the
-   strain (0 to 0.100, default 0.040, ink, since a strain is a ratio and
-   stays in ink) and the tendon's original length $\kLo$ (5 to 40 cm,
-   default 20, position) · "at a strain of 0.040 the tendon carries a stress
-   of 30.0 MN/m², and the slope of the curve there is 1.0 × 10⁹ N/m²" · the graph is the figure, with the tendon drawn
-   stretching on a strip above it · no. The three regions the book names
-   are shaded and labelled, and the slope in the linear region is the
-   $\kY = 1 \times 10^9\ \text{N/m}^2$ that Table 5.3 gives for tendon, so
-   no number is invented, and the tangent drawn at the point is the
-   modulus there. Readout: the stress and the strain with their numbers;
-   small line on what the strain amounts to in millimetres and on where
-   $\text{stress} = \kY \times \text{strain}$ holds. Draws stress, position,
-   elastic-modulus.
-   Revised in the figure-audit pass of 2026-09-12: the tendon is drawn in
-   PAL.soft and the regions of the graph banded in ink, since a body and a
-   region never take a type hue; the tangent follows the slope down through
-   zero in the failure region rather than lying flat; and the word stress in
-   the readout is set in the stress hue through \htmlClass{kv-stress}, since
-   the book gives stress no letter of its own. The headline is one
-   capitalized sentence.
-6. `sim-shear` · replaces Figure 5.16 (the sheared bookcase) ·
-   shear-deformation · **still**: the bookcase leans as far as the force
-   takes it and stays there · the shearing force $\kF$ (0 to 2,000 N,
-   default 800, force), the height $\kLo$ (0.30 to 2.50 m, default 1.80,
-   position), the cross-sectional area $A$ (0.05 to 1.00 m², default 0.30,
-   ink) and the shear modulus $\kS$ (1 to 80 in units of $10^9\
-   \text{N/m}^2$, default 10, elastic-modulus) · "F = 800 N · a hardwood
-   bookcase 1.80 m tall shears sideways by 0.48 µm" · graph beside the
-   vertical scene: the deformation against the shear modulus, the materials
-   of Table 5.3 marked along it, so the reader sees the 1/S fall and where
-   bone and steel sit · no. Readout: $\kdx = \frac{1}{\kS}\frac{\kF}{A}\kLo$
-   with the numbers. Draws force, position, elastic-modulus.
-   Revised in the figure-audit pass of 2026-09-12: the shear modulus carries
-   a tick at every value Table 5.3 prints, two of them named on the track;
-   the four marks on the curve the drawing leaves unnamed give their names
-   under the pointer through F.hover. The headline is one capitalized
-   sentence.
-7. `sim-nail` · replaces Figure 5.17 (the nail bent by the picture) ·
-   shear-deformation · **still**: the picture hangs and the nail holds its
-   flex · the mass of the picture $m$ (0.5 to 20.0 kg, default 5.2, ink),
-   the radius of the nail $r$ (0.25 to 2.00 mm, default 0.750, ink) and the
-   length of nail outside the wall $\kLo$ (2.0 to 20.0 mm, default 5.00,
-   position); the shear modulus is steel's, 80 × 10⁹ N/m², as Example 5.5
-   takes it · "a 5.2 kg picture weighs 51 N and bends the nail 1.80 µm,
-   which is far too small to see" · none: the scene is the figure, with the
-   flex drawn much larger than it is, as the book draws it, and the
-   magnification stated · no. Readout: $\kF = \frac{\kS A}{\kLo}\kdx$ with
-   the numbers; small line on the mass the weight comes from. Draws force,
-   position.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence.
-8. `sim-cube` · replaces Figure 5.18 (the cube compressed on every face) ·
+- `sim-cube` · replaces Figure 5.18 (the cube compressed on every face) ·
    bulk-deformation, stress · **still**: the cube is squeezed and stays
    squeezed · the force per unit area $\kF/A$ (0 to $1.0 \times 10^8\
    \text{N/m}^2$, default $5.0 \times 10^7$, stress, which is the quantity
-   the book applies "evenly" on every surface), the original volume $V_0$
-   (0.1 to 10.0 L, default 1.0, ink) and the bulk modulus $B$ (0.7 to 130
+   the book applies "evenly" on every surface) and the bulk modulus $B$ (0.7 to 130
    in units of $10^9\ \text{N/m}^2$, default 2.2, elastic-modulus, water's
    value) · "a force per unit area of 5.0 × 10⁷ N/m², which is the pressure
    5.00 km down, compresses water by 2.3% of its volume" · graph beside the
@@ -231,28 +140,12 @@ graph · 3D
    marked · no. Readout: $\frac{\Delta V}{V_0} = \frac{1}{\kBb}\frac{\kF}{A}$
    with the numbers. Draws stress, elastic-modulus, position.
 
-   Figure pass of 2026-09-14 (Claude Fable 5.1): `sim-rod` sits higher and a
-   little shorter so the longest force arrow ends above its notes and the
-   captions (a) and (b) at every setting (todolist 17). `sim-shear` names F
-   above its arrow on a panel rather than across it, and its Δx note sits
-   under the floor whatever the height. `sim-nail` is redrawn as a nail
-   (todolist 18): a sharp point driven into a solid wall and showing faintly
-   through it, a round shank shaded along its underside that is straight
-   inside the wall and bends to its flex outside, and a flat head at the free
-   end; the picture is a frame with a mat hung by a wire hooked over the
-   shank behind the head, and the two equal and opposite forces on the nail
-   leave the nail itself, the weight where the wire hangs and the wall's push
-   where the nail leaves the wall. `sim-cube` names the area inside the
-   ghost's top face rather than on its edge. The bookcase and the cube stay
-   on their locked `view()`, as todolist 19 asks.
-
-Every sketch figure of the section is replaced and the one photograph is
-kept, so there is no Sim on this page: every figure carries a book number.
-The three deformations stay three figures rather than one fold, as the
-chapter config decided: they are three equations with three different
-moduli, and folding them would hide that. They share one layout, the scene
-on the left and the graph on the right, so that the reader sees that the
-three say the same thing. Figures 5.11 and 5.15 are both graphs and are
+Figures 5.13 and 5.16 stay the book's images, the other sketches are
+replaced and the one photograph is kept. There is no Sim on this page:
+every figure carries a book number. The three deformations stay three
+figures rather than one fold, as the chapter config decided: they are three
+equations with three different moduli, and folding them would hide that.
+Figures 5.11 and 5.15 are both graphs and are
 not folded either: one is the deformation of a bone against the force on
 it, the other the stress a tendon carries against its strain, and the
 second is not linear.
@@ -274,14 +167,9 @@ Extra simulations (rule 15), considered and left:
   text says the examples are in the problems, and none of this section's
   problems is that one, so anything drawn would be invented. Left.
 - A rod of every material in Table 5.3 under the same force, side by side.
-  `sim-rod` already carries the table's materials on its graph and
   `sim-strings` already makes the comparison the text makes. Left.
 
 None built.
-   Revised in the figure-audit pass of 2026-09-12: the bulk modulus carries
-   a tick at every value Table 5.3 prints, two of them named on the track.
-   The headline is one capitalized sentence.
-
 ## Exercises
 
 - No Check Your Understanding boxes; nothing inline.

@@ -239,9 +239,6 @@ Extra simulations (rule 15), considered and judged:
   the reader rather than a result to draw. Left.
 
 None built.
-   Revised in the figure-audit pass of 2026-09-12: the headline is one
-   capitalized sentence.
-
 ## Exercises
 
 - No Check Your Understanding box; nothing inline. Every item is at the end.

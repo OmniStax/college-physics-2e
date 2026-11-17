@@ -52,9 +52,8 @@ span ids as the chapter's anchors expect them:
 6. `coin` **A coin dropped in an airliner**: Example 3.8 as `ex-coin`,
    with Figure 3.46 and the Relativity and Einstein note inside the
    example, where the module has it.
-7. `galaxies` **The galaxies of the problems**: the faithful copy of
-   the five-galaxy figure that problem 13 takes its data from, as 2.1
-   did for its paths.
+7. `galaxies` **The galaxies of the problems**: the five-galaxy figure
+   that problem 13 takes its data from, as a Sim.
 
 The book's cross-references to 3.2 and 3.3 ("Vector Addition and
 Subtraction: Graphical Methods") stay as the section titles in plain
@@ -201,13 +200,11 @@ Extra simulations (rule 15): thought about and judged:
   the third slider of `sim-boat` rather than a figure of its own; at
   its default of 90° the sim is the book's.
 - The expanding line of galaxies seen from each galaxy in turn, so the
-  reader sees that every observer finds themself at the centre. Left:
-  problem 12, which asks exactly this, is unkeyed and left out, and the
-  faithful figure with the book's numbers is what the kept problem needs.
+  reader sees that every observer finds themself at the centre. Built, as
+  `fig-galaxies`, which opens on the book's numbers that the kept problem
+  needs.
 - The hockey player of one-dimensional addition. Left: two numbers add
   and there is nothing to see that the sentence does not say.
-
-Figure pass (2026-09-14, Claude Fable 5.1): `sim-boat` is at a fixed 14 units to the metre with the river width narrowed to 10 to 30 m (25 m stays the default); a landing beyond the panel is pinned at its edge and named; the boat is a rowing boat with oars and its labels go through `labeller()`, while its velocity triangle still fits its box because the ratio of the two speeds, not their size, is what it shows. `sim-plane` draws its triangle at a fixed 4.2 units per m/s; `sim-components` at 110 units per m/s with $v$ narrowed to 0.2 to 3 m/s; `sim-wind` at 6 units per m/s with the plane small at the origin instead of a ghost under the axes. `sim-binoculars` is at 13 units to the metre and its observers are the drawing layer's `person()`. `sim-coin` draws an airliner cabin (curved wall, bins, windows) with a passenger of the drawing layer holding the coin at the drop height, at 150 units to the metre with $h$ narrowed to 0.5 to 2.0 m, and its graph fixed at 0 to 200 m and 0 to −2 m. The galaxies' longest arrow no longer runs off the canvas. Every headline wraps through `topline()`.
 
 ## Exercises
 

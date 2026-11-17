@@ -18,15 +18,17 @@ built from them.
 
 The chapter is unlike 2 and 16: it is qualitative. 1.1 has no equation at
 all, 1.2 has one worked conversion, 1.3 has one boxed formula (percent
-uncertainty), 1.4 has arithmetic. Nothing in it is a typed physical
-quantity except the times and speeds that pass through the unit
-conversions, so almost every figure draws in ink and the pages bind
-little. What live figures can do here is different from what they do in
+uncertainty), 1.4 has arithmetic. The typed quantities are few: the
+times and speeds that pass through the unit conversions, the lengths a
+figure draws (a distance covered, a stick, the sides of a floor, a
+height), a weight and an area. Counts, percents and bare numbers are in
+ink. What live figures can do here is different from what they do in
 Chapter 16: make a scale visible (the ladder of powers of ten), make an
-abstraction concrete (a model of the atom, a bull's-eye of GPS fixes, a
-band of uncertainty on a number line), and let the reader turn the knobs
-of a worked example (the drive home, the height of a building, a trillion
-dollars on a football field).
+abstraction concrete (a bull's-eye of GPS fixes in meters, a percent
+uncertainty as a curve under the line of weight), and let the reader
+turn the knobs of a worked example (the drive home, the height of a
+building, a trillion dollars on a football field). 1.1 has no drawn
+figure: its planetary atom is the book's image.
 
 ## Chapter 1 modules
 
@@ -65,6 +67,7 @@ one estimate among several.
   built section had one.
 - One new symbol, `c` (velocity type, `\kc`), for the meter sim, and two
   untyped symbols, `A` and `δA`, for the definitions view.
-- No new type, no new hue, no new figlib primitive; the sprites the sims
-  need (a car, a person, a building, a ruler) are drawn in the section
+- No new type, no new hue, no new figlib primitive; the car and the
+  person come from the library, and the other sprites the sims need (a
+  flashlight, a school, a stopwatch, a building, a ruler) are drawn in the section
   modules.
