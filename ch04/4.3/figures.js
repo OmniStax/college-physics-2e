@@ -362,7 +362,11 @@ function suv(ctx, x, y, color, s) {
     const { ctx } = begin(d.c);
     const n = +nn.value, s = st.v, lv = burn.map((b) => b.v), cf = C('force'), cs = F.ref('sled');
     const net = n * Tt.v - ff.v, a = Math.max(0, net) / M;
-    const hl = topline(ctx, WORD[n] + ' of ' + sig3(Tt.v) + ' N against ' + commas(fmt(ff.v, 0)) + ' N of friction ' + (n > 1 ? 'give' : 'gives') + ' the 2,100 kg sled ' + fmt(a, 1) + ' m/s²');
+    const a1 = Math.max(0, Tt.v - ff.v) / M, a4 = Math.max(0, 4 * Tt.v - ff.v) / M, k = n < 4 ? n : 1, ak = n < 4 ? a : a1;
+    const share = ['', 'a quarter', 'half', 'three quarters'][k], cmp = ff.v > 0 ? 'less than ' : 'exactly ';
+    const hl = topline(ctx, n < 4
+      ? WORD[n] + (n > 1 ? ' give ' : ' gives ') + fmt(ak, 1) + ' m/s², ' + cmp + share + ' of the ' + fmt(a4, 1) + ' m/s² that four give (' + fmt(k * a4 / 4, 1) + ' m/s²)'
+      : 'Four rockets give ' + fmt(a4, 1) + ' m/s²; one gives ' + fmt(a1, 1) + ' m/s², ' + cmp + 'a quarter of that (' + fmt(a4 / 4, 1) + ' m/s²)');
     const lb = F.labeller(ctx, 600, { headline: hl });
     const fade = 1 - clamp(s / 0.3), m = sm(clamp((s - 0.2) / 0.35)), t = sm(clamp((s - 0.5) / 0.5));
     const ox = lerp(P0[0] + O[0], DOT[0], t), oy = lerp(P0[1] + O[1], DOT[1], t);
@@ -429,8 +433,8 @@ function suv(ctx, x, y, color, s) {
     }
     const missed = lb.flush();
     d.fig.dataset.missed = missed.join(' | ');
-    ro.set(`\\mk{a}{\\ka} = \\mk{frac}{\\frac{\\kFnet}{\\km}} = \\frac{\\mk{n}{${n}}\\mk{nT}{\\kTf} \\mk{f2}{{}-\\kff}}{\\mk{m}{\\km}}`
-      + ` = \\frac{\\mk{nval}{${n}}\\mk{Tval}{(${tnum(sig3(Tt.v))}\\ \\text{N})} \\mk{fval}{{}-${tnum(commas(fmt(ff.v, 0)))}\\ \\text{N}}}{\\mk{mval}{2{,}100\\ \\text{kg}}} = \\mk{aval}{${fmt(a, 1)}\\ \\text{m/s}^2}`);
+    ro.set(`\\mk{a}{\\ka} = \\mk{frac}{\\frac{\\kFnet}{\\km}} = \\frac{\\mk{n}{${n > 1 ? n : '{}'}}\\mk{nT}{\\kTf} \\mk{f2}{{}-\\kff}}{\\mk{m}{\\km}}`
+      + ` = \\frac{\\mk{nval}{${n > 1 ? n : '{}'}}\\mk{Tval}{(${tnum(sig3(Tt.v))}\\ \\text{N})} \\mk{fval}{{}-${tnum(commas(fmt(ff.v, 0)))}\\ \\text{N}}}{\\mk{mval}{2{,}100\\ \\text{kg}}} = \\mk{aval}{${fmt(a, 1)}\\ \\text{m/s}^2}`);
   }
   const ro = F.readout(d);
   F.hover(d.stage, () => hits);

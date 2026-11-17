@@ -244,7 +244,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
 ===================================================================== */
 (function () {
   const d = sim('sim-binoculars', 690);
-  const ob = F.choice(d.controls, { label: 'watch from', options: [{ value: 'shore', label: 'the shore' }, { value: 'ship', label: 'the ship' }], value: 'shore', aria: 'which observer', onInput: () => {} });
+  const ob = F.choice(d.controls, { label: '\\text{watch from}', options: [{ value: 'shore', label: 'the shore' }, { value: 'ship', label: 'the ship' }], value: 'shore', aria: 'which observer', onInput: () => {} });
   const vs = ctl(d.controls, { label: '\\kv_{\\text{ship}}', cls: 'velocity', min: 0, max: 12, step: 0.5, value: 6, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the ship' });
   /* the book gives no numbers: a 12.0 m mast is assumed, drawn at a fixed 27 units to the metre, which keeps
      the fastest ship (18.8 m of travel in the 1.56 s fall) on the stage; velocity arrows at 6 units per m/s */
@@ -297,7 +297,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     if (ax > 2 && ay > 2) { arrow(ctx, bx, by, bx + ax, by, alpha(cv, 0.55), 3.5); arrow(ctx, bx + ax, by, bx + ax, by + ay, alpha(cv, 0.55), 3.5); }
     if (Math.hypot(ax, ay) > 6) arrow(ctx, bx, by, bx + ax, by + ay, cv, 5);
     binoculars(ctx, bx, by, cb);
-    text(ctx, 'observer on shore', ox + 44, 650, F.ref('shore-observer'), { size: 20 });
+    text(ctx, 'observer on shore', ox + 44, 650, F.ref('shore-observer'), { size: 20, bg: PAL.soft2 });
     hits = [{ x: bx, y: by, r: 22, name: 'the binoculars' }, { x: mast - 120, y: DECK - 26, r: 28, name: 'the observer on the ship' }, { x: ox, y: 610, r: 60, name: 'the observer on shore' }, { x: mast, y: (TOP + DECK) / 2, r: 30, name: 'the mast, ' + fmt(HM, 1) + ' m tall' }];
     /* what the numbers say */
     const ship1 = ob.value === 'ship';
@@ -359,9 +359,9 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     hbracket(ctx, X0, X(Rg), 292, cx, fmt(Rg, 0) + ' m along the ground in ' + fmt(Tc, 3) + ' s', { side: 'below', H: 730 });
     line(ctx, X0, YR + 40, X0, 282, alpha(PAL.ink, 0.35), 2, [4, 8]); line(ctx, X(Rg), YR + 40, X(Rg), 282, alpha(PAL.ink, 0.35), 2, [4, 8]);
     /* relative to the plane: the cabin at 140 units to the metre, the coin let go from the passenger's hand */
-    const s = 140, FLOOR = 700, top = FLOOR - h.v * s, PX = 250, CX = 312, SP = (1.72 * s) / 150;
+    const s = 130, FLOOR = 664, top = FLOOR - h.v * s, PX = 250, CX = 312, SP = (1.72 * s) / 150;
     title(ctx, 'relative to the plane', 40, 396);
-    cabin(ctx, 60, 420, 520, FLOOR, cl);
+    cabin(ctx, 60, 404, 520, FLOOR, cl);
     F.silhouette(ctx, { x: PX, y: FLOOR, s: SP, face: 1, pose: 'stand', color: F.ref('passenger'), hands: [{ x: (CX - 8 - PX) / SP, y: (top + 6 - FLOOR) / SP }, { x: -6, y: -76 }] });
     line(ctx, CX, top, CX, FLOOR, alpha(PAL.ink, 0.4), 2, [6, 8]); dot(ctx, CX, top, cc, false, 8);
     vbracket(ctx, CX + 96, top, FLOOR, cx, fmt(h.v, 2) + ' m', 1, { H: 730 });
@@ -394,7 +394,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
 (function () {
   const d = sim('fig-galaxies', 740);
   const POS = [-300, -150, 0, 190, 450], VEL = [-4500, -2200, 0, 2830, 6700], NAME = ['Galaxy 1', 'Galaxy 2', 'the Milky Way', 'Galaxy 4', 'Galaxy 5'], SHORT = ['Galaxy 1', 'Galaxy 2', 'MW', 'Galaxy 4', 'Galaxy 5'];
-  const ob = F.choice(d.controls, { label: 'seen from', options: SHORT.map((s, i) => ({ value: String(i), label: i === 2 ? 'Milky Way' : s })), value: '2', aria: 'the galaxy the others are seen from', onInput: () => {} });
+  const ob = F.choice(d.controls, { label: '\\text{seen from}', options: SHORT.map((s, i) => ({ value: String(i), label: i === 2 ? 'Milky Way' : s })), value: '2', aria: 'the galaxy the others are seen from', onInput: () => {} });
   /* the least-squares line through the origin of the book's four pairs, 14.9 km/s for each Mly */
   const HUB = POS.reduce((a, p, i) => a + p * VEL[i], 0) / POS.reduce((a, p) => a + p * p, 0);
   function galaxy(ctx, x, y, color) {
@@ -418,7 +418,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     });
     /* the same galaxies as points: velocity against position, both relative to the observer */
     const box = { l: 190, r: 1300, t: 400, b: 660 };
-    const ax = axes(ctx, box, [-800, 800], [-12000, 12000], { xl: 'position relative to the observer (Mly)', xc: cx, yl: 'velocity (km/s)', yc: cv, nx: 8, ny: 4, fx: (q) => sf(q, 4), fy: (q) => sf(q, 5) });
+    const ax = axes(ctx, box, [-800, 800], [-12000, 12000], { xl: 'position relative to the observer (Mly)', xc: cx, yl: 'velocity (km/s)', yc: cv, nx: 8, ny: 4, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 0) });
     F.plot(ctx, ax, (q) => HUB * q, alpha(PAL.ink, 0.5), { w: 2.5, dash: [10, 10] });
     POS.forEach((p, i) => { const col = i === 2 ? cm : PAL.ink; dot(ctx, ax.X(p - po), ax.Y(VEL[i] - vo), col, i !== o, i === o ? 11 : 9); });
     F.legend(ctx, ax, [{ s: 'velocity in proportion to distance', color: alpha(PAL.ink, 0.5), dash: [10, 10], w: 2.5 }, { s: 'the observer', kind: 'dot', color: PAL.ink, hollow: true }], { corner: 'tl', size: 19 });

@@ -358,7 +358,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     dot(ctx, ox, oy, PAL.ink, true, 7);
     const lab = labeller(ctx, HH);
     lab.add('D = ' + fmt(Dm, 1) + ' blocks', (ox + hx) / 2, (oy + hy) / 2, -sin(th) * (west ? -1 : 1), -cos(th) * (west ? -1 : 1), cp, 24, 30);
-    if (Math.abs(ex) > 0.3) text(ctx, fmt(Math.abs(ex), 1) + (west ? ' blocks west' : ' blocks east'), ox + (ex * b) / 2, oy - 26, cp, { weight: 600, size: 22, align: 'center', bg: PAL.panel });
+    if (Math.abs(ex) > 0.3) text(ctx, fmt(Math.abs(ex), 1) + (west ? ' blocks west' : ' blocks east'), ox + (ex * b) / 2, oy + 58, cp, { weight: 600, size: 22, align: 'center', bg: PAL.panel });
     if (no > 0.3) text(ctx, fmt(no, 1) + ' blocks north', hx + (west ? -18 : 18), oy - (no * b) / 2, cp, { weight: 600, size: 22, align: west ? 'right' : 'left', bg: PAL.panel });
     if (th > 3) lab.add('θ = ' + fmt(th, 1) + '°', ox + 110 * cos(th / 2), oy - 110 * sin(th / 2), cos(th / 2), -sin(th / 2), ca, 22, 22);
     lab.flush();
