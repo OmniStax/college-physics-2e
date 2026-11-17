@@ -430,7 +430,7 @@ function basketball(ctx, x, y, color, r) {
    SIM: one mass on one scale, on Earth and somewhere else. Weight has no
    time in it, so the figure is still. The left scale stays on Earth; the
    right one goes where the slider sends it. The block is the same on
-   both, the weight arrows are to one scale, and each dial shows what a
+   both, the weight arrows share one scale, and each dial shows what a
    scale built for Earth prints: the weight divided by 9.80 m/s².
 ===================================================================== */
 (function () {
@@ -440,30 +440,31 @@ function basketball(ctx, x, y, color, r) {
   /* 9.80 and 1.625 are the two the book names, so each is printed as the book prints it */
   const gtxt = (g) => (Math.abs(g * 100 - Math.round(g * 100)) < 1e-9 ? fmt(g, 2) : fmt(g, 3));
   const where = (g) => (Math.abs(g - 9.8) < 0.003 ? 'On Earth' : Math.abs(g - 1.625) < 0.003 ? 'On the Moon' : 'Elsewhere');
-  /* fixed scales: 2.0 kg at 11 m/s² weighs 22 N, drawn at 8 units to the newton (176 units), and
+  /* fixed scales: 2.0 kg at 11 m/s² weighs 22 N, drawn at 10 units to the newton (220 units), and
      the dial runs 0 to 2.5 kg, past the 2.24 kg it would print there */
-  const KW = 8, DMAX = 2.5, fy = 480;
+  const KW = 10, DMAX = 2.5, fy = 480;
   let hits = [];
   function panel(ctx, cx, g, lb) {
     const w = mm.v * g, read = w / G, cf = C('force'), ca = C('acceleration'), cs = F.ref('scale'), cl = F.ref('load');
     text(ctx, where(g), cx + 60, 56, PAL.ink, { size: 26, weight: 600, align: 'center' });
     F.rich(ctx, ['g = ', [gtxt(g) + ' m/s²', ca]], cx + 60, 92, { size: 21, align: 'center' });
-    fixed(ctx, cx - 260, fy, 640, 26);
+    fixed(ctx, cx - 250, fy, 500, 26);
     /* the scale: a cabinet with a dial in its face and a platform on top */
-    const bw = 300, bh = 130, top = fy - bh;
+    const bw = 340, bh = 170, top = fy - bh;
     ctx.save(); ctx.strokeStyle = cs; ctx.fillStyle = PAL.panel; ctx.lineWidth = 4; ctx.lineJoin = 'round';
     ctx.beginPath(); ctx.rect(cx - bw / 2, top, bw, bh); ctx.fill(); ctx.stroke();
     ctx.fillStyle = F.mixColor(cs, PAL.panel, 0.6); ctx.beginPath(); ctx.rect(cx - bw / 2 - 16, top - 14, bw + 32, 14); ctx.fill(); ctx.stroke();
-    const R = 92, oy = fy - 18;
+    const R = 128, oy = fy - 22;
     ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, oy, R, Math.PI, TAU); ctx.closePath(); ctx.stroke();
     ctx.restore();
     for (let i = 0; i <= 25; i++) {
-      const th = Math.PI * (1 - i / 25), big = i % 5 === 0, r0 = R - (big ? 16 : 9);
+      const th = Math.PI * (1 - i / 25), big = i % 5 === 0, r0 = R - (big ? 18 : 10);
       line(ctx, cx + r0 * Math.cos(th), oy - r0 * Math.sin(th), cx + (R - 2) * Math.cos(th), oy - (R - 2) * Math.sin(th), cs, big ? 2.5 : 1.5);
-      if (big) text(ctx, fmt(i / 10, 1), cx + (R - 32) * Math.cos(th), oy - (R - 32) * Math.sin(th) + 2, PAL.muted, { size: 15, align: 'center' });
+      if (i % 10 === 0 || i === 25) text(ctx, fmt(i / 10, i === 25 ? 1 : 0), cx + (R - 36) * Math.cos(th), oy - (R - 36) * Math.sin(th) - 2, PAL.muted, { size: 17, align: 'center' });
     }
     const th = Math.PI * (1 - Math.min(read, DMAX) / DMAX);
-    line(ctx, cx, oy, cx + (R - 20) * Math.cos(th), oy - (R - 20) * Math.sin(th), PAL.ink, 4);
+    line(ctx, cx, oy, cx + (R - 54) * Math.cos(th), oy - (R - 54) * Math.sin(th), PAL.ink, 5);
+    text(ctx, 'kg', cx, oy - 30, PAL.muted, { size: 17, align: 'center' });
     dot(ctx, cx, oy, PAL.ink, true, 6);
     F.rich(ctx, ['the dial reads ', [sig3(read) + ' kg', PAL.ink]], cx, fy + 52, { size: 21, align: 'center', weight: 600 });
     /* the block, the same size in both places */
@@ -471,10 +472,10 @@ function basketball(ctx, x, y, color, r) {
     block(ctx, cx, by, kw, kh, cl);
     text(ctx, fmt(mm.v, 1) + ' kg', cx, by, C('mass'), { size: 23, weight: 600, align: 'center' });
     /* the two forces on the block, from a dot beside the scene */
-    const dx = cx + 300, dy = 300, L = w * KW;
+    const dx = cx + 310, dy = 330, L = w * KW;
     arrow(ctx, dx, dy, dx, dy + L, cf, 6); lb.add('w = ' + sig3(w) + ' N', dx, dy + Math.max(L, 20), 1, 0, cf, 23, 16);
     arrow(ctx, dx, dy, dx, dy - L, cf, 6); lb.add('N = ' + sig3(w) + ' N', dx, dy - Math.max(L, 20), 1, 0, cf, 23, 16);
-    dot(ctx, dx, dy, cl, true, 9);
+    dot(ctx, dx, dy, cl, true, 6);
     hits.push({ x: dx, y: dy + L / 2 + 8, r: 24, name: 'w, the weight of the block' }, { x: dx, y: dy - L / 2 - 8, r: 24, name: 'N, the scale pushing up on the block' },
       { x: cx, y: by, r: 50, name: 'the block, ' + fmt(mm.v, 1) + ' kg wherever it goes' }, { x: cx, y: fy - 60, r: 80, name: 'a scale built for Earth: it prints the weight divided by 9.80 m/s²' });
   }
