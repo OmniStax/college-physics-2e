@@ -124,7 +124,7 @@ function jet(ctx, x, y, heading, s) {
   /* a vertical coordinate line: sign +1 has up positive */
   function axisV(ctx, x, sign, title, g, o) {
     const pc = C('position');
-    text(ctx, title, x + 44, 118, PAL.ink, { size: 20, weight: 600 });
+    text(ctx, title, x + 64, T0 - 32, PAL.ink, { size: 20, weight: 600 });
     if (sign > 0) arrow(ctx, x, B0 + 24, x, T0 - 28, PAL.muted, 3); else arrow(ctx, x, T0 - 24, x, B0 + 28, PAL.muted, 3);
     text(ctx, sign > 0 ? '+y' : '−y', x + 14, T0 - 32, PAL.ink, { size: 22, weight: 600 });
     text(ctx, sign > 0 ? '−y' : '+y', x + 14, B0 + 32, PAL.ink, { size: 22, weight: 600 });

@@ -29,7 +29,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
    reader's one outlined; a tap on a case sets it. Still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-target', 640);
+  const d = sim('sim-target', 700);
   const S = ctl(d.controls, { label: '\\text{spread}', cls: '', key: 'spread', min: 2, max: 25, step: 1, value: 20, unit: 'm', dec: 0, specials: [{ at: 20, label: 'Figure 1.23' }, { at: 6, label: 'Figure 1.24' }], aria: 'spread of the attempts about their average' });
   const O = ctl(d.controls, { label: '\\text{offset}', cls: '', key: 'offset', min: 0, max: 35, step: 1, value: 4, unit: 'm', dec: 0, specials: [{ at: 4, label: 'Figure 1.23' }, { at: 33, label: 'Figure 1.24' }], aria: 'offset of the average from the restaurant' });
   /* read off Figure 1.23: the four dots about their average, in image pixels, scaled to a root-mean-square distance of one */
@@ -67,7 +67,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
   function draw() {
     const { ctx } = begin(d.c);
     const lowP = S.v > LIMIT, lowA = O.v > LIMIT;
-    target(ctx, 350, 322, 5, S.v, O.v, true);
+    target(ctx, 360, 350, 5.8, S.v, O.v, true);
     /* the four cases */
     for (const c of CASES) {
       const [x, y] = cellXY(c), on = (c.s > LIMIT) === lowP && (c.o > LIMIT) === lowA;
@@ -76,7 +76,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
       text(ctx, (c.o > LIMIT ? 'low' : 'high') + ' accuracy, ' + (c.s > LIMIT ? 'low' : 'high') + ' precision', x + G.w / 2, y + 172, on ? PAL.ink : PAL.muted, { size: 19, weight: on ? 700 : 400, align: 'center' });
       if (c.tag) text(ctx, c.tag, x + G.w / 2, y + 196, PAL.muted, { size: 16, align: 'center' });
     }
-    F.legend(ctx, { l: G.x - 8, r: 1380, t: 2 * G.h + G.gy + G.y + 6, b: 636 }, [
+    F.legend(ctx, { l: G.x - 8, r: 1380, t: 2 * G.h + G.gy + G.y + 6, b: 696 }, [
       { s: 'the restaurant', draw: (g, px, py) => shop(g, px, py + 2, 0.4, F.ref('restaurant')) },
       { s: 'one attempt of the GPS', kind: 'dot', color: PAL.ink },
       { s: 'the average of the four attempts', kind: 'dot', hollow: true, color: PAL.ink },
@@ -97,11 +97,11 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
    50% (δA = 1 lb at A = 2 lb); a point above it is pinned. Still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-percent', 650);
+  const d = sim('sim-percent', 600);
   const A = ctl(d.controls, { label: 'A', cls: 'force', min: 2, max: 10, step: 0.1, value: 5.1, unit: 'lb', dec: 1, specials: [{ at: 5.1, label: 'Example 1.2' }], aria: 'average weight' });
   const dA = ctl(d.controls, { label: '\\delta A', cls: '', min: 0.1, max: 1, step: 0.1, value: 0.4, unit: 'lb', dec: 1, aria: 'uncertainty in the weight' });
   const WEEKS = [4.8, 5.3, 4.9, 5.4];
-  const BOX = { l: 170, r: 1300, t: 280, b: 560 }, YS = 150;
+  const BOX = { l: 170, r: 1300, t: 240, b: 510 }, YS = 116;
   function draw() {
     const { ctx } = begin(d.c);
     const a = A.v, u = dA.v, half = a / 2, p = (100 * u) / a, wt = C('force');
@@ -118,7 +118,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     F.plot(ctx, ax, (w) => (100 * u) / w, PAL.ink, { x: [0.01, 11] });
     if (Math.abs(a - 5.1) < 0.05) {
       for (const w of WEEKS) line(ctx, X(w), YS - 18, X(w), YS + 18, wt, 3);
-      F.label(ctx, 'the weekly weights: 4.8, 5.3, 4.9 and 5.4 lb', X(a + u) + 4, YS, { side: 'right', size: 18, weight: 400, color: PAL.ink, gap: 16 });
+      text(ctx, 'weekly weights: 4.8, 5.3, 4.9, 5.4 lb', X(a) + 120, YS - 56, wt, { size: 18 });
     }
     dot(ctx, X(half), YS, PAL.panel, true, 9); dot(ctx, X(half), YS, wt, false, 9); dot(ctx, X(a), YS, wt, true, 10);
     hbracket(ctx, X(a - u), X(a + u), YS - 34, wt, fmt(a, 1) + ' lb ± ' + fmt(u, 1) + ' lb', { size: 20 });
@@ -142,12 +142,15 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
    again five times larger. Still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-area', 690);
-  const pL = ctl(d.controls, { label: '\\text{uncertainty in length}', cls: '', key: 'length', min: 0, max: 10, step: 1, value: 2, unit: '%', dec: 0, specials: [{ at: 2, label: 'the book’s floor' }], aria: 'percent uncertainty in the length' });
-  const pW = ctl(d.controls, { label: '\\text{uncertainty in width}', cls: '', key: 'width', min: 0, max: 10, step: 1, value: 1, unit: '%', dec: 0, specials: [{ at: 1, label: 'the book’s floor' }], aria: 'percent uncertainty in the width' });
-  const LEN = 4, WID = 3, K = 140, BX = 240, BY = 588;
-  /* the magnified corner: 0.60 m by 0.47 m about the corner, five times the floor's scale */
-  const IN = { l: 900, r: 1320, t: 70, b: 400, k: 700, x0: 3.88, y0: 2.9 };
+  const d = sim('sim-area', 670);
+  const pL = ctl(d.controls, { label: '\\text{uncertainty in length}', cls: '', key: 'length', min: 0, max: 5, step: 0.5, value: 2, unit: '%', dec: 1, specials: [{ at: 2, label: 'the book’s floor' }], aria: 'percent uncertainty in the length' });
+  const pW = ctl(d.controls, { label: '\\text{uncertainty in width}', cls: '', key: 'width', min: 0, max: 5, step: 0.5, value: 1, unit: '%', dec: 1, specials: [{ at: 1, label: 'the book’s floor' }], aria: 'percent uncertainty in the width' });
+  const pc = (p) => (Number.isInteger(p) ? fmt(p, 0) : fmt(p, 1));
+  const m3 = (x) => (Math.abs(x * 100 - Math.round(x * 100)) < 1e-6 ? fmt(x, 2) : fmt(x, 3));
+  const sig = (x) => (x ? String(+x.toPrecision(3)) : '0');
+  const LEN = 4, WID = 3, K = 140, BX = 240, BY = 560;
+  /* the magnified corner: 0.30 m by 0.24 m about the corner, ten times the floor's scale, wide enough for 5% of each side */
+  const IN = { l: 900, r: 1320, t: 70, b: 400, k: 1400, x0: 3.94, y0: 2.93 };
   function pieces(ctx, X, Y, dl, dw, lw) {
     const cl = F.cat(0), cw = F.cat(1);
     ctx.save();
@@ -158,7 +161,6 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     ctx.restore();
     if (dl || dw) {
       rect(ctx, X(0), Y(WID + dw), X(LEN + dl) - X(0), Y(0) - Y(WID + dw), null, C('area'), lw * 0.6, [9, 7]);
-      rect(ctx, X(0), Y(WID - dw), X(LEN - dl) - X(0), Y(0) - Y(WID - dw), null, C('area'), lw * 0.6, [9, 7]);
     }
     rect(ctx, X(0), Y(WID), X(LEN) - X(0), Y(0) - Y(WID), null, C('area'), lw);
   }
@@ -168,8 +170,8 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     const X = (m) => BX + m * K, Y = (m) => BY - m * K;
     pieces(ctx, X, Y, dl, dw, 4);
     text(ctx, '12.0 m²', X(2), Y(1.5), C('area'), { size: 30, weight: 600, align: 'center' });
-    hbracket(ctx, X(0), X(LEN), BY + 36, C('position'), '4.00 m ± ' + pL.v + '%', { side: 'below' });
-    vbracket(ctx, BX - 36, Y(WID), Y(0), C('position'), '3.00 m ± ' + pW.v + '%', -1);
+    hbracket(ctx, X(0), X(LEN), BY + 36, C('position'), '4.00 m ± ' + pc(pL.v) + '%', { side: 'below' });
+    vbracket(ctx, BX - 36, Y(WID), Y(0), C('position'), '3.00 m ± ' + pc(pW.v) + '%', -1);
     /* the window on the corner, and the corner again */
     const wx0 = X(IN.x0), wx1 = X(IN.x0 + (IN.r - IN.l) / IN.k), wy0 = Y(IN.y0 + (IN.b - IN.t) / IN.k), wy1 = Y(IN.y0);
     rect(ctx, wx0, wy0, wx1 - wx0, wy1 - wy0, null, PAL.muted, 1.5);
@@ -177,20 +179,20 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     rect(ctx, IN.l, IN.t, IN.r - IN.l, IN.b - IN.t, PAL.panel, PAL.muted, 1.5);
     const XI = (m) => IN.l + (m - IN.x0) * IN.k, YI = (m) => IN.b - (m - IN.y0) * IN.k;
     ctx.save(); ctx.beginPath(); ctx.rect(IN.l, IN.t, IN.r - IN.l, IN.b - IN.t); ctx.clip(); pieces(ctx, XI, YI, dl, dw, 5); ctx.restore();
-    text(ctx, 'the corner, 5 times larger', IN.l, IN.t - 22, PAL.muted, { size: 18 });
-    if (dl) hbracket(ctx, XI(LEN), XI(LEN + dl), YI(WID + dw) - 22, PAL.ink, fmt(dl, 2) + ' m', { size: 19 });
-    if (dw) vbracket(ctx, XI(LEN + dl) + 22, YI(WID + dw), YI(WID), PAL.ink, fmt(dw, 2) + ' m', 1, { size: 19 });
+    text(ctx, 'the corner, 10 times larger', IN.l, IN.t - 22, PAL.muted, { size: 18 });
+    if (dl) hbracket(ctx, XI(LEN), XI(LEN + dl), YI(WID + dw) - 22, PAL.ink, m3(dl) + ' m', { size: 19 });
+    if (dw) vbracket(ctx, XI(LEN + dl) + 22, YI(WID + dw), YI(WID), PAL.ink, m3(dw) + ' m', 1, { size: 19 });
     F.legend(ctx, { l: IN.l - 20, r: 1390, t: IN.b + 26, b: 680 }, [
       { s: 'floor as measured: 4.00 m × 3.00 m = 12.0 m²', kind: 'swatch', color: alpha(C('area'), 0.25) },
-      { s: 'length + ' + pL.v + '%: ' + fmt(dl, 2) + ' m × 3.00 m = ' + fmt(sL, 2) + ' m²', kind: 'swatch', color: alpha(F.cat(0), 0.6) },
-      { s: 'width + ' + pW.v + '%: 4.00 m × ' + fmt(dw, 2) + ' m = ' + fmt(sW, 2) + ' m²', kind: 'swatch', color: alpha(F.cat(1), 0.6) },
-      { s: 'corner: ' + fmt(dl, 2) + ' m × ' + fmt(dw, 2) + ' m = ' + fmt(sC, 4) + ' m²', kind: 'swatch', color: alpha(PAL.ink, 0.75) },
-      { s: 'largest and smallest floors allowed', color: C('area'), w: 2.5, dash: [9, 7] },
+      { s: 'length + ' + pc(pL.v) + '%: ' + m3(dl) + ' m × 3.00 m = ' + m3(sL) + ' m²', kind: 'swatch', color: alpha(F.cat(0), 0.6) },
+      { s: 'width + ' + pc(pW.v) + '%: 4.00 m × ' + m3(dw) + ' m = ' + m3(sW) + ' m²', kind: 'swatch', color: alpha(F.cat(1), 0.6) },
+      { s: 'corner: ' + m3(dl) + ' m × ' + m3(dw) + ' m = ' + sig(sC) + ' m²', kind: 'swatch', color: alpha(PAL.ink, 0.75) },
+      { s: 'largest floor the uncertainties allow', color: C('area'), w: 2.5, dash: [9, 7] },
     ], { corner: 'tl', size: 18, panel: false });
     const dA = (12 * pA) / 100;
-    tex(d.readout, `\\%\\,\\text{unc in } \\karea = ${pL.v}\\% + ${pW.v}\\% = ${pA}\\% \\\\ \\delta \\karea = ${pA}\\% \\times 12.0\\ \\text{m}^2 = ${fmt(dA, 2)}\\ \\text{m}^2 \\approx ${fmt(dA, 1)}\\ \\text{m}^2`);
+    tex(d.readout, `\\%\\,\\text{unc in } \\karea = ${pc(pL.v)}\\% + ${pc(pW.v)}\\% = ${pc(pA)}\\% \\\\ \\delta \\karea = ${pc(pA)}\\% \\times 12.0\\ \\text{m}^2 = ${fmt(dA, 2)}\\ \\text{m}^2 \\approx ${fmt(dA, 1)}\\ \\text{m}^2`);
     const small = d.readout.querySelector('small') || d.readout.appendChild(document.createElement('small'));
-    small.textContent = 'Largest floor: 12.0 m² + ' + fmt(sL, 2) + ' m² + ' + fmt(sW, 2) + ' m² + ' + fmt(sC, 4) + ' m² = ' + fmt(12 + sL + sW + sC, 4) + ' m², which is ' + fmt((100 * (sL + sW + sC)) / 12, 2) + '% more.';
+    small.textContent = 'Largest floor: 12.0 m² + ' + m3(sL) + ' m² + ' + m3(sW) + ' m² + ' + sig(sC) + ' m² = ' + fmt(12 + sL + sW + sC, 4) + ' m², which is ' + fmt((100 * (sL + sW + sC)) / 12, 2) + '% more.';
   }
   register(d.fig, { update: () => {}, draw });
 })();
@@ -245,7 +247,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
       line(ctx, lx, y + 64, lx + lw, y + 64, C('position'), 3);
       F.rich(ctx, [[words(n), PAL.ink, 700], ' significant figures'], rx, y + 90, { size: 19 });
     });
-    F.rich(ctx, [['underlined', C('position'), 700], ': the digit estimated between two marks'], RR + 36, RT - 40, { size: 18 });
+    text(ctx, 'Underlined: the digit estimated between two marks.', RL, 682, PAL.muted, { size: 17 });
     tex(d.readout, `\\kLlen = ${L.toFixed(2)}\\ \\text{cm} \\approx ${L.toFixed(1)}\\ \\text{cm} \\approx ${L.toFixed(0)}\\ \\text{cm}`);
   }
   register(d.fig, { update: () => {}, draw, arrive: false });

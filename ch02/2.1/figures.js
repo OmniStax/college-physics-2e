@@ -49,7 +49,7 @@ function bicycle(ctx, x, y, s, dir, crank, frame, rider) {
    line centred on cx and kept between lo and hi; an arrow too short to draw leaves the value alone */
 function named(ctx, words, value, cx, y, lo, hi) {
   const w = measure(ctx, words, { size: 22 }) + measure(ctx, value, { size: 22, weight: 600 });
-  rich(ctx, [words, [value, C('position')]], Math.min(Math.max(cx, lo + w / 2), hi - w / 2), y, { size: 22, align: 'center' });
+  rich(ctx, [words, [value, C('position')]], Math.min(Math.max(cx, lo + w / 2), hi - w / 2), y, { size: 22, align: 'center', bg: alpha(PAL.panel, 0.85) });
 }
 
 /* =====================================================================
@@ -166,7 +166,9 @@ function named(ctx, words, value, cx, y, lo, hi) {
     const dir = (onLeg2 ? d2 || d1 : d1 || d2) || 1;
     /* the road is the axis, east positive as the book's compass has it */
     line(ctx, L - 60, y, R + 60, y, PAL.muted, 3); scale(ctx, X, -5, 5, 1, y, 'km', 1);
-    text(ctx, 'west (−)', 16, y + 62, PAL.muted, { size: 17 }); text(ctx, 'east (+)', 1384, y + 62, PAL.muted, { size: 17, align: 'right' });
+    text(ctx, 'west (−)', 16, y - 26, PAL.muted, { size: 17 }); text(ctx, 'east (+)', 1384, y - 26, PAL.muted, { size: 17, align: 'right' });
+    /* start and finish dropped to the displacement's row, under everything else */
+    line(ctx, X(x0.v), y + 84, X(x0.v), yd, pos, 2, [4, 8]); if (s >= total() - 1e-6) line(ctx, X(xf.v), y + 84, X(xf.v), yd, pos, 2, [4, 8]);
     /* the path's two legs, each on its own row: a faint track, the arrow drawn as far as the ride has got */
     const gap = Math.abs(X(xt.v) - X(x0.v)) < 150 ? -1 : 0;
     if (leg1() > 0) {
@@ -178,8 +180,7 @@ function named(ctx, words, value, cx, y, lo, hi) {
       if (s2 > 0.05) arrow(ctx, X(xt.v), y2, X(xt.v + d2 * s2), y2, pos, 4);
       named(ctx, '', 'Δx_2 = ' + sgn(xf.v - xt.v, 1) + ' km', (X(xt.v) + X(xf.v)) / 2, y2 + 30, 16, 1384);
     }
-    /* start and finish on the axis, dropped to the displacement's row */
-    line(ctx, X(x0.v), y + 84, X(x0.v), yd, pos, 2, [4, 8]); if (s >= total() - 1e-6) line(ctx, X(xf.v), y + 84, X(xf.v), yd, pos, 2, [4, 8]);
+    /* start and finish on the axis */
     dot(ctx, X(x0.v), y, pos, false, 11); dot(ctx, X(xf.v), y, pos, true, 11);
     const apart = Math.abs(X(xf.v) - X(x0.v)) > 60;
     text(ctx, 'x_0', X(x0.v) + (apart ? 0 : -24), y + 64, pos, { align: 'center', weight: 600, size: 24 });
@@ -199,7 +200,7 @@ function named(ctx, words, value, cx, y, lo, hi) {
       ? 'The cyclist never leaves the start, so the distance traveled and the displacement are both zero.'
       : straight
       ? 'The cyclist never turns back, so the ' + fmt(total(), 1) + ' km traveled is also the magnitude of the ' + sgn(D, 1) + ' km displacement.'
-      : 'The cyclist travels ' + fmt(total(), 1) + ' km, but the displacement is only ' + (Math.abs(D) < 0.05 ? 'zero.' : sgn(D, 1) + ' km, whose magnitude is ' + fmt(Math.abs(D), 1) + ' km.'));
+      : 'The cyclist travels ' + fmt(total(), 1) + ' km, but ' + (Math.abs(D) < 0.05 ? 'ends at the start, so the displacement is zero.' : 'the displacement is only ' + sgn(D, 1) + ' km, whose magnitude is ' + fmt(Math.abs(D), 1) + ' km.'));
     const km = (v) => `${v < 0 ? '-' : ''}${fmt(Math.abs(v), 1)}\\ \\text{km}`, neg = (v) => (v < 0 ? `(${km(v)})` : km(v));
     tex(d.readout, `\\kdx = \\kxf - \\kxo = ${km(xf.v)} - ${neg(x0.v)} = ${D > 0 ? '+' : ''}${km(D)} \\\\ \\text{distance traveled} = |\\kdx_1| + |\\kdx_2| = ${km(leg1())} + ${km(leg2())} = ${km(total())}`);
   }
