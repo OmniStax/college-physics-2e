@@ -218,7 +218,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
 (function () {
   const HH = 800;
   const d = sim('sim-subtraction', HH);
-  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 10, max: 35, step: 0.5, value: 30, unit: 'm', dec: 1, aria: 'second leg' });
+  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 15, max: 35, step: 0.5, value: 30, unit: 'm', dec: 1, aria: 'second leg' });
   const TB = ctl(d.controls, { label: '\\ktheta_{\\text{B}}', cls: 'angle', min: 0, max: 180, step: 1, value: 112, unit: '°', dec: 0, aria: 'direction of B, north of east' });
   /* A is the example's 27.5 m at 66.0° north of east. Nine units to the metre, fixed: B and −B reach at most 35 m
      from the head of A, which the stage holds on every side. */

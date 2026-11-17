@@ -139,7 +139,7 @@ function tower(ctx, x, y, h, color) {
    at 75° is the opening state. One run to the top per loop.
 ===================================================================== */
 (function () {
-  const H = 780, d = sim('sim-fireworks', H);
+  const H = 800, d = sim('sim-fireworks', H);
   const vy0 = ctl(d.controls, { label: '\\kvoy', cls: 'velocity', min: 40, max: 70, step: 0.1, value: 67.6, unit: 'm/s', dec: 1, onInput: reset, aria: 'vertical component of the initial velocity' });
   const th = ctl(d.controls, { label: '\\kthetao', cls: 'angle', min: 45, max: 90, step: 1, value: 75, unit: '°', dec: 0, onInput: reset, aria: 'launch angle' });
   const tTop = () => vy0.v / G;
@@ -147,7 +147,7 @@ function tower(ctx, x, y, h, color) {
   function reset() { cy.reset(); }
   /* one fixed scale, 1.95 units to the metre: the highest burst the sliders allow is 250 m (70 m/s) and the
      farthest 500 m along (the 45° shell). Launch arrows are 2 units per m/s. */
-  const SC = 1.95, KV = 2, X0 = 240, Y0 = 660;
+  const SC = 1.95, KV = 2, X0 = 240, Y0 = 680;
   const X = (m) => X0 + m * SC, Y = (m) => Y0 - m * SC;
   function draw() {
     const { ctx } = begin(d.c);
@@ -155,6 +155,8 @@ function tower(ctx, x, y, h, color) {
     const h = (vy0.v * vy0.v) / (2 * G), y = vy0.v * t - 0.5 * G * t * t;
     const vxOf = (a) => (a >= 90 ? 0 : vy0.v / Math.tan(a * RAD)), spOf = (a) => vy0.v / Math.sin(a * RAD);
     const cs = F.ref('shell'), cv = C('velocity'), cp = C('position');
+    /* a shell's name over its burst: the angle, and under it the speed that angle needs */
+    const name = (a, bx, color, w) => { const o = { size: 18, weight: w, align: a === 90 ? 'left' : 'center', bg: PAL.panel }, tx = a === 90 ? bx + 12 : bx; text(ctx, a + '°', tx, Y(h) - 90, color, o); text(ctx, fmt(spOf(a), 1) + ' m/s', tx, Y(h) - 66, color, o); };
     const lab = labeller(ctx, H); lab.block(0, 0, 1400, 96);
     ground(ctx, 60, 1340, Y0);
     line(ctx, X0, Y0 + 6, X0, 120, PAL.muted, 2); text(ctx, 'y', X0 - 22, 126, PAL.ink, { size: 22, weight: 600, align: 'center' });
@@ -175,7 +177,7 @@ function tower(ctx, x, y, h, color) {
       arrow(ctx, X0, Y0, X0 + vxOf(a) * KV, headY, alpha(PAL.muted, 0.9), 4);
       const bx = X(vxOf(a) * tT);
       if (atTop) burst(ctx, bx, Y(h), open, PAL.muted, 0.7); else shell(ctx, X(vxOf(a) * t), Y(y), PAL.muted);
-      text(ctx, a + '°, ' + fmt(spOf(a), 1) + ' m/s', bx, Y(h) - 70, PAL.muted, { size: 18, align: 'center', bg: PAL.panel });
+      name(a, bx, PAL.muted, 400);
     }
     /* the shell of the example */
     const vx = vxOf(th.v), xT = vx * tT;
@@ -184,7 +186,7 @@ function tower(ctx, x, y, h, color) {
     if (th.v < 86) F.angleArc(ctx, { x: X0, y: Y0 }, 60, 0, th.v * RAD, 'θ₀ = ' + th.v + '°', lab, C('angle'));
     if (xT > 30) { hbracket(ctx, X0, X(xT), Y0 + 52, cp, ''); text(ctx, 'x = ' + fmt(xT, 0) + ' m', (X0 + X(xT)) / 2, Y0 + 82, cp, { weight: 600, align: 'center' }); line(ctx, X(xT), Y(h), X(xT), Y0, alpha(PAL.ink, 0.3), 2, [4, 8]); }
     if (atTop) burst(ctx, X(xT), Y(h), open, cs, 1); else shell(ctx, X(vx * t), Y(y), cs);
-    text(ctx, th.v + '°, ' + fmt(spOf(th.v), 1) + ' m/s', X(xT), Y(h) - 70, cs, { size: 19, weight: 600, align: 'center', bg: PAL.panel });
+    name(th.v, X(xT), cs, 600);
     lab.flush();
     topline(ctx, atTop ? 'After ' + fmt(tT, 2) + ' s every shell bursts ' + fmt(h, 0) + ' m up. The one fired at ' + th.v + '° is ' + fmt(xT, 0) + ' m along.'
       : 'After ' + fmt(t, 2) + ' s every shell is ' + fmt(y, 0) + ' m up, whatever its angle.');

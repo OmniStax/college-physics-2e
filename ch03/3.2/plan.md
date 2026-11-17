@@ -121,7 +121,7 @@ id · replaces · concepts · value add · arrows · moving or still · controls
 4. `sim-subtraction` · Figure 3.19 + 3.20 + 3.21 + 3.22 + 3.23 ·
    vector-subtraction · variation by slider: the dock and the place she ends
    up stay opposite each other across the head of A, 2B apart · arrows
-   symbolic · still · B (10 to 35 m, default 30.0, position) and θ_B (0 to
+   symbolic · still · B (15 to 35 m, default 30.0, position) and θ_B (0 to
    180°, default 112, angle); A is fixed at the example's 27.5 m at 66.0°,
    since it changes nothing about the idea · "Sailing −B in place of B
    leaves her 60.0 m from the dock." · none · 2D.
