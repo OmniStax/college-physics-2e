@@ -108,8 +108,8 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
 (function () {
   const HH = 815;
   const d = sim('sim-head-to-tail', HH);
-  const E = ctl(d.controls, { label: '\\text{blocks east}', cls: 'position', key: 'east', min: 1, max: 12, step: 1, value: 9, unit: '', dec: 0, aria: 'blocks east' });
-  const N = ctl(d.controls, { label: '\\text{blocks north}', cls: 'position', key: 'north', min: 1, max: 8, step: 1, value: 5, unit: '', dec: 0, aria: 'blocks north' });
+  const E = ctl(d.controls, { label: '\\text{blocks east}', cls: 'position', key: 'east', min: 3, max: 12, step: 1, value: 9, unit: '', dec: 0, aria: 'blocks east' });
+  const N = ctl(d.controls, { label: '\\text{blocks north}', cls: 'position', key: 'north', min: 2, max: 8, step: 1, value: 5, unit: '', dec: 0, aria: 'blocks north' });
   const K = ctl(d.controls, { label: '\\text{step}', cls: '', key: 'step', min: 0, max: 4, step: 0.01, value: 4, unit: '', dec: 2, aria: 'step of the head-to-tail method' });
   F.story(d, K, { stops: [{ v: 0, label: 'start' }, { v: 1, label: 'Step 1' }, { v: 2, label: 'Step 2' }, { v: 3, label: 'Step 4' }, { v: 4, label: 'Steps 5, 6' }] });
   /* 72 units to a block, fixed: the grid holds the longest walk the sliders allow, 12 blocks east and 8 north */
@@ -121,7 +121,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     cityGrid(ctx, ox, oy, b, 12, 8);
     rose(ctx, 1290, 190, 44);
     /* steps 5 and 6: the ruler along the resultant and the protractor at its tail, under the arrows */
-    if (p4 > 0) F.faded(ctx, p4, [0, (1 - p4) * -18], () => { protractor(ctx, ox, oy, 120, deg); ruler(ctx, ox, oy, deg, r * b + b * 0.4, b, 1, deg > 45 ? -1 : 1, 26); });
+    if (p4 > 0) F.faded(ctx, p4, [0, (1 - p4) * -18], () => { protractor(ctx, ox, oy, 120, deg); ruler(ctx, ox, oy, deg, r * b + b * 0.4, b, 1, 1, 26); });
     /* step 1: the first vector; step 2: the second, from its head */
     if (p1 > 0.01) arrow(ctx, ox, oy, ox + p1 * e * b, oy, cp, 6);
     if (p2 > 0.01) arrow(ctx, ex, oy, ex, oy - p2 * n * b, cp, 6);
@@ -132,8 +132,8 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     dot(ctx, ox, oy, PAL.ink, true, 7);
     if (p1 >= 1) text(ctx, blocks(e) + ' east', ox + e * b * 0.62, oy + 58, cp, { weight: 600, size: 22, align: 'center', bg: PAL.panel });
     if (p2 >= 1) text(ctx, blocks(n) + ' north', ex + 22, oy - n * b * 0.4, cp, { weight: 600, size: 22, align: 'left', bg: PAL.panel });
-    if (p3 >= 1) { const s = deg > 45 ? -1 : 1; text(ctx, 'D', ox + 0.6 * r * b * cos(deg) + s * 30 * sin(deg), oy - 0.6 * r * b * sin(deg) + s * 30 * cos(deg), cp, { weight: 700, size: 28, align: 'center', bg: PAL.panel }); }
-    if (p4 >= 1) { const a = deg / 2, R = 176; text(ctx, 'θ = ' + fmt(deg, 1) + '°', ox + R * cos(a) + (deg < 14 ? 60 : 0), oy - R * sin(a) - (deg < 14 ? 34 : 0), C('angle'), { weight: 600, size: 22, align: 'left', bg: PAL.panel }); }
+    if (p3 >= 1) { const s = 1; text(ctx, 'D', ox + 0.6 * r * b * cos(deg) + s * 30 * sin(deg), oy - 0.6 * r * b * sin(deg) + s * 30 * cos(deg), cp, { weight: 700, size: 28, align: 'center', bg: PAL.panel }); }
+    if (p4 >= 1) { const a = deg / 2, R = 176, low = deg < 20; text(ctx, 'θ = ' + fmt(deg, 1) + '°', low ? ox + 110 : ox + R * cos(a), low ? oy + 58 : oy - R * sin(a), C('angle'), { weight: 600, size: 22, align: low ? 'center' : 'left', bg: PAL.panel }); }
     text(ctx, 'starting point', ox - 16, oy + 58, PAL.muted, { size: 17, align: 'right' });
     const cur = k <= 1 ? 0 : k <= 2 ? 1 : k <= 3 ? 2 : 3;
     topline(ctx, cur === 0 ? 'Step 1: draw the first vector, ' + blocks(e) + ' to the east.'

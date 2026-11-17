@@ -77,8 +77,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     /* the limits of the regions, dropped from the curve to the axis as the book drops them */
     [HOOKE, ELAST, FFR].forEach((v) => line(ctx, X(v), Y(dl(v)), X(v), box.b + 100, alpha(PAL.ink, 0.4), 2, [6, 6]));
     F.plot(ctx, ax, dl, cp, { w: 5 });
-    text(ctx, 'slope 1/k', X(4.6) + 14, Y(dl(4.6)) + 28, C('stiffness'), { size: 20, weight: 600 });
-    const fx = X(FFR), fy = Y(DMAX);
+        const fx = X(FFR), fy = Y(DMAX);
     line(ctx, fx - 13, fy - 13, fx + 13, fy + 13, PAL.ink, 4); line(ctx, fx - 13, fy + 13, fx + 13, fy - 13, PAL.ink, 4);
     text(ctx, 'fracture', fx - 24, fy + 2, PAL.ink, { size: 19, weight: 600, align: 'right' });
     /* the regions, bracketed under the axis as in the book's figure */
@@ -112,6 +111,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
       if (off) dot(ctx, X(f), Y(x), PAL.ink, false, 10);
       dot(ctx, X(f * on), Y(now), PAL.ink, true, 10);
     }
+    text(ctx, 'slope 1/k', X(2.6) - 12, Y(dl(2.6)) - 30, C('stiffness'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
     const nx = fmt(x, 2) + ' cm';
     headline(ctx, broken ? 'At ' + fmt(FFR, 0) + ' N the spring fractures.'
       : off ? (reg < 2 ? 'With the force removed the spring is back at its original length: a stretch of ' + nx + ' was elastic.'
@@ -210,7 +210,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     return (2 * t3 - 3 * t2 + 1) * y0 + (t3 - 2 * t2 + t) * h * m0 + (-2 * t3 + 3 * t2) * y1 + (t3 - t2) * h * m1;
   };
   const slope = (e) => (e <= TOE ? (Y * e) / TOE : e <= LIN ? Y : (stress(Math.min(0.1, e + 1e-4)) - stress(e - 1e-4)) / (Math.min(0.1, e + 1e-4) - e + 1e-4));
-  const NF = 7, breaksAt = (i) => LIN + ((0.1 - LIN) * [4, 1, 6, 2.2, 5, 3, 7][i]) / 9;   /* the strain at which each fiber breaks; two hold to the end */
+  const NF = 7, breaksAt = (i) => LIN + ((0.1 - LIN) * [4, 1, 99, 2.2, 5, 3, 99][i]) / 6;   /* the strain at which each fiber breaks; two hold to the end */
   function draw() {
     const { ctx } = begin(d.c);
     const e = eps.v, s = stress(e), m = slope(e), reg = e <= TOE ? 0 : e <= LIN ? 1 : 2;
@@ -342,7 +342,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
    original volume, and the constant is the bulk modulus. Still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-cube', 690);
+  const d = sim('sim-cube', 720);
   const st = ctl(d.controls, { label: '\\frac{\\kF}{\\karea}', cls: 'stress', min: 0, max: 100, step: 1, value: 50, unit: '× 10⁶ N/m²', dec: 0, aria: 'force per unit area applied on every surface' });
   /* every bulk modulus Table 5.3 prints is a tick on the slider, and the tenth the slider steps by
      lands on each of them exactly; two are named, and naming more would crowd the track */
@@ -358,7 +358,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     const side = 330, MAG = 20;
     const shrink = Math.min(0.45, (1 - Math.pow(1 - f, 1 / 3)) * MAG);
     /* the book's viewpoint for this cube: the same locked view the bookcase of Figure 5.16 uses, a little to the left of the solid and a little above it, so its left side, its top and its front all show */
-    const V = view({ yaw: -0.42, pitch: 0.2, dist: 2400, cx: 370, cy: 365 });
+    const V = view({ yaw: -0.42, pitch: 0.2, dist: 2400, cx: 370, cy: 395 });
     const h0 = side / 2, h2 = h0 * (1 - shrink);                      /* half the original edge and half the squeezed edge, in scene units */
     /* the six faces of a cube, each as its outward normal and the four corners in units of the half-edge */
     const FACES = [
@@ -376,7 +376,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     const far = pt(h0)([1, -1, -1]);
     [[-1, -1, -1], [1, 1, -1], [1, -1, 1]].forEach((c) => { const e = pt(h0)(c); line(ctx, far[0], far[1], e[0], e[1], PAL.muted, 2, [8, 8]); });
     /* an arrow pressing inward on the middle of a face, drawn in scene units so the perspective carries it */
-    const al = 26 + st.v * 0.55;
+    const al = 20 + st.v * 0.4;
     const push = (n, w) => {
       const c = [n[0] * h2, n[1] * h2, n[2] * h2];
       const tail = V.P([c[0] + n[0] * (al + 16), c[1] + n[1] * (al + 16), c[2] + n[2] * (al + 16)]);
@@ -396,9 +396,9 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     text(ctx, 'A', aq[0], aq[1] + 2, C('area'), { size: 20, align: 'center', weight: 600 });
     text(ctx, 'V₀', lo[0] - 10, lo[1] + 6, C('volume'), { size: 22, align: 'right', weight: 600 });
     text(ctx, 'V₀ − ΔV', ctr[0], ctr[1] + 44, C('volume'), { size: 21, align: 'center', weight: 600 });   /* below the centre, off the arrow pressing on the hidden back face */
-    text(ctx, 'The shrinking is drawn ' + MAG + ' times larger than it is.', 110, 650, PAL.muted, { size: 18 });
+    text(ctx, 'The shrinking is drawn ' + MAG + ' times larger than it is.', 110, 690, PAL.muted, { size: 18 });
     /* the graph beside the scene: the fractional change against the force per unit area, for the five liquids of Table 5.3 */
-    const box = { l: 800, r: 1310, t: 160, b: 580 };
+    const box = { l: 800, r: 1310, t: 170, b: 610 };
     const { X, Y } = axes(ctx, box, [0, 100], [0, TOPY], { xl: 'force per unit area F/A (× 10⁶ N/m²)', xc: C('stress'), yl: 'fractional change ΔV / V₀ (%)', yc: PAL.ink, nx: 4, ny: 3, fy: (v) => fmt(v, 0) });
     LIQ.forEach((q) => {
       const e = Math.min(100, (TOPY / 100) * q.B * 1e9 / 1e6);

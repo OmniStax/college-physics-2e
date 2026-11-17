@@ -110,7 +110,7 @@ function tower(ctx, x, y, h, color) {
       ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px, py, 40, 0, -thv * RAD, thv > 0); ctx.stroke(); ctx.restore();
     }
     lab.add('v', px + f.vx * K, py - vy * K, f.vx / v, -vy / v, cv, 22, 16);
-    lab.add('v_x', px + f.vx * K, py, 0.6, vy > 0 ? 1 : -1, cv, 20, 16);
+    if (Math.abs(vy) * K > 24) lab.add('v_x', px + f.vx * K, py, 0.6, vy > 0 ? 1 : -1, cv, 20, 16);
     if (Math.abs(vy) * K > 24) lab.add('v_y', px, py - vy * K, -1, 0, cv, 20, 14);
     dot(ctx, px, py, PAL.ink, true, 10);
     lab.flush();
@@ -123,7 +123,7 @@ function tower(ctx, x, y, h, color) {
       : Math.abs(vy) < 0.6 ? 'At the highest point, ' + fmt(tau, 2) + ' s after launch, $\\kvy = 0$ and the velocity is horizontal, $\\kv = \\kvx = ' + fmt(f.vx, 1) + '$ m/s.'
       : vy > 0 ? 'After ' + fmt(tau, 2) + ' s $\\kvx$ is still ' + fmt(f.vx, 1) + ' m/s, and $\\kvy$ has fallen from ' + fmt(f.vy0, 1) + ' m/s to ' + fmt(vy, 1) + ' m/s.'
       : 'After ' + fmt(tau, 2) + ' s $\\kvx$ is still ' + fmt(f.vx, 1) + ' m/s, and $\\kvy$ is −' + fmt(-vy, 1) + ' m/s, pointing down.');
-    const sv = (q) => sgn(q) + fmt(Math.abs(q), 1);
+    const sv = (q) => (Math.abs(q) < 0.05 ? '0.0' : sgn(q) + fmt(Math.abs(q), 1));
     tex(d.readout, `\\kvx = \\kvo\\cos\\kthetao = (${fmt(v0.v, 1)}\\ \\text{m/s})\\cos ${th.v}^\\circ = ${fmt(f.vx, 1)}\\ \\text{m/s} \\\\ `
       + `\\kvy = \\kvo\\sin\\kthetao - \\kg\\kt = ${fmt(f.vy0, 1)}\\ \\text{m/s} - (9.80\\ \\text{m/s}^2)(${fmt(tau, 2)}\\ \\text{s}) = ${sv(vy)}\\ \\text{m/s} \\\\ `
       + `\\kv = \\sqrt{\\kvx^2 + \\kvy^2} = \\sqrt{(${fmt(f.vx, 1)}\\ \\text{m/s})^2 + (${sv(vy)}\\ \\text{m/s})^2} = ${fmt(v, 1)}\\ \\text{m/s}`);
@@ -139,7 +139,7 @@ function tower(ctx, x, y, h, color) {
    at 75° is the opening state. One run to the top per loop.
 ===================================================================== */
 (function () {
-  const H = 760, d = sim('sim-fireworks', H);
+  const H = 780, d = sim('sim-fireworks', H);
   const vy0 = ctl(d.controls, { label: '\\kvoy', cls: 'velocity', min: 40, max: 70, step: 0.1, value: 67.6, unit: 'm/s', dec: 1, onInput: reset, aria: 'vertical component of the initial velocity' });
   const th = ctl(d.controls, { label: '\\kthetao', cls: 'angle', min: 45, max: 90, step: 1, value: 75, unit: '°', dec: 0, onInput: reset, aria: 'launch angle' });
   const tTop = () => vy0.v / G;
@@ -147,7 +147,7 @@ function tower(ctx, x, y, h, color) {
   function reset() { cy.reset(); }
   /* one fixed scale, 1.95 units to the metre: the highest burst the sliders allow is 250 m (70 m/s) and the
      farthest 500 m along (the 45° shell). Launch arrows are 2 units per m/s. */
-  const SC = 1.95, KV = 2, X0 = 240, Y0 = 640;
+  const SC = 1.95, KV = 2, X0 = 240, Y0 = 660;
   const X = (m) => X0 + m * SC, Y = (m) => Y0 - m * SC;
   function draw() {
     const { ctx } = begin(d.c);
@@ -157,7 +157,7 @@ function tower(ctx, x, y, h, color) {
     const cs = F.ref('shell'), cv = C('velocity'), cp = C('position');
     const lab = labeller(ctx, H); lab.block(0, 0, 1400, 96);
     ground(ctx, 60, 1340, Y0);
-    line(ctx, X0, Y0 + 6, X0, 116, PAL.muted, 2); text(ctx, 'y', X0 + 22, 122, PAL.ink, { size: 22, weight: 600, align: 'center' });
+    line(ctx, X0, Y0 + 6, X0, 120, PAL.muted, 2); text(ctx, 'y', X0 - 22, 126, PAL.ink, { size: 22, weight: 600, align: 'center' });
     text(ctx, 'x', 1356, Y0, PAL.ink, { size: 22, weight: 600, align: 'center' });
     const others = [90, 60, 45].filter((a) => Math.abs(vxOf(a) - vxOf(th.v)) * tTop() * SC > 165);
     const pathOf = (a, color, w, dash, t1) => { const vx = vxOf(a); ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; if (dash) ctx.setLineDash(dash); ctx.beginPath(); for (let i = 0; i <= 60; i++) { const s = (t1 * i) / 60; const qx = X(vx * s), qy = Y(vy0.v * s - 0.5 * G * s * s); if (i) ctx.lineTo(qx, qy); else ctx.moveTo(qx, qy); } ctx.stroke(); ctx.restore(); };
@@ -175,7 +175,7 @@ function tower(ctx, x, y, h, color) {
       arrow(ctx, X0, Y0, X0 + vxOf(a) * KV, headY, alpha(PAL.muted, 0.9), 4);
       const bx = X(vxOf(a) * tT);
       if (atTop) burst(ctx, bx, Y(h), open, PAL.muted, 0.7); else shell(ctx, X(vxOf(a) * t), Y(y), PAL.muted);
-      text(ctx, a + '°, ' + fmt(spOf(a), 1) + ' m/s', bx, Y(h) + 76, PAL.muted, { size: 18, align: 'center', bg: PAL.panel });
+      text(ctx, a + '°, ' + fmt(spOf(a), 1) + ' m/s', bx, Y(h) - 70, PAL.muted, { size: 18, align: 'center', bg: PAL.panel });
     }
     /* the shell of the example */
     const vx = vxOf(th.v), xT = vx * tT;
@@ -184,7 +184,7 @@ function tower(ctx, x, y, h, color) {
     if (th.v < 86) F.angleArc(ctx, { x: X0, y: Y0 }, 60, 0, th.v * RAD, 'θ₀ = ' + th.v + '°', lab, C('angle'));
     if (xT > 30) { hbracket(ctx, X0, X(xT), Y0 + 52, cp, ''); text(ctx, 'x = ' + fmt(xT, 0) + ' m', (X0 + X(xT)) / 2, Y0 + 82, cp, { weight: 600, align: 'center' }); line(ctx, X(xT), Y(h), X(xT), Y0, alpha(PAL.ink, 0.3), 2, [4, 8]); }
     if (atTop) burst(ctx, X(xT), Y(h), open, cs, 1); else shell(ctx, X(vx * t), Y(y), cs);
-    text(ctx, th.v + '°, ' + fmt(spOf(th.v), 1) + ' m/s', X(xT), Y(h) + 76, cs, { size: 19, weight: 600, align: 'center', bg: PAL.panel });
+    text(ctx, th.v + '°, ' + fmt(spOf(th.v), 1) + ' m/s', X(xT), Y(h) - 70, cs, { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     lab.flush();
     topline(ctx, atTop ? 'After ' + fmt(tT, 2) + ' s every shell bursts ' + fmt(h, 0) + ' m up. The one fired at ' + th.v + '° is ' + fmt(xT, 0) + ' m along.'
       : 'After ' + fmt(t, 2) + ' s every shell is ' + fmt(y, 0) + ' m up, whatever its angle.');
@@ -371,7 +371,7 @@ function tower(ctx, x, y, h, color) {
 (function () {
   const H = 800, d = sim('sim-orbit', H);
   const RE = 6.37e6, GM = G * RE * RE, HT = 1.5e6, VC = Math.sqrt(GM / (RE + HT)) / 1000;   /* a 1,500 km tower: circular orbit at 7.11 km/s */
-  const v0 = ctl(d.controls, { label: '\\kvo', cls: 'velocity', min: 1, max: 7.4, step: 0.1, value: 6, unit: 'km/s', dec: 1, onInput: reset, aria: 'launch speed',
+  const v0 = ctl(d.controls, { label: '\\kvo', cls: 'velocity', min: 1, max: 7.4, step: 0.1, value: 6, unit: 'km/s', dec: 2, onInput: reset, aria: 'launch speed',
     specials: [{ at: () => VC, label: 'circular orbit' }] });
   v0.refresh();
   const ro = F.readout(d);

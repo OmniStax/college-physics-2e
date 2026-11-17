@@ -155,7 +155,8 @@
     "position",
     "mass",
     "area",
-    "density"
+    "density",
+    "acceleration"
    ],
    "ai": [
     {
@@ -191,7 +192,9 @@
     "force",
     "velocity",
     "position",
-    "viscosity"
+    "viscosity",
+    "mass",
+    "acceleration"
    ],
    "ai": [
     {

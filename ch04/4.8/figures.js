@@ -160,12 +160,16 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     text(ctx, '−1.0 nC', px(SEP), py(0) + below, F.ref('negative-charge'), { size: 19, weight: 600, align: 'center', bg: PAL.panel });
     /* the force on the test charge, 6 units to the nanonewton, cut short past 300 units */
     const ux = ex / (E0 || 1), uy = ey / (E0 || 1), sg = Math.sign(q);
-    let tip = [px(x), py(y)];
+    let tip = [px(x), py(y)], cut = false;
     if (!near && q !== 0) {
-      const full = 6 * Math.abs(Fm), len = Math.min(300, full);
+      /* the arrow stops short of the edge of the drawing as well */
+      const dx = sg * ux, dy = -sg * uy, m = 34;
+      const room = Math.min(dx > 0 ? (BOX.r - m - px(x)) / dx : dx < 0 ? (BOX.l + m - px(x)) / dx : 1e9, dy > 0 ? (BOX.b - m - py(y)) / dy : dy < 0 ? (BOX.t + m - py(y)) / dy : 1e9);
+      const full = 6 * Math.abs(Fm), len = Math.max(0, Math.min(300, full, room));
+      cut = len < full - 0.5;
       tip = [px(x) + sg * ux * len, py(y) - sg * uy * len];
       arrow(ctx, px(x), py(y), tip[0], tip[1], C('force'), 5);
-      if (full > 300) {
+      if (cut && len > 60) {
         /* two strokes across the shaft say the arrow is longer than it is drawn */
         [0.42, 0.5].forEach((k) => {
           const mx = px(x) + sg * ux * len * k, my = py(y) - sg * uy * len * k;
@@ -189,7 +193,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       { x: px(-SEP), y: py(0), r: 26, name: 'the positive charge that makes the field' },
       { x: px(SEP), y: py(0), r: 26, name: 'the negative charge that makes the field' },
       { x: px(x), y: py(y), r: 18, name: 'the test charge: drag it' },
-      { x: (px(x) + tip[0]) / 2, y: (py(y) + tip[1]) / 2, r: 22, name: 6 * Math.abs(Fm) > 300 ? 'the force on the test charge, drawn cut short' : 'the force on the test charge' },
+      { x: (px(x) + tip[0]) / 2, y: (py(y) + tip[1]) / 2, r: 22, name: cut ? 'the force on the test charge, drawn cut short' : 'the force on the test charge' },
     ];
     headline(ctx, near ? 'Right at a charge the field has no single direction'
       : q === 0 ? 'With no charge on it the test object feels no force, and the field is still there'
@@ -272,7 +276,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     /* the people on their ground line, a hollow mark where each began */
     text(ctx, pull ? 'A basketball pulled from one person by the other' : 'A basketball thrown by one person and caught by the other', 50, 104, PAL.muted, { size: 19 });
     line(ctx, 60, GY, 1340, GY, PAL.rule, 3);
-    dot(ctx, x0a, GY, PAL.muted, false, 7); dot(ctx, x0b, GY, PAL.muted, false, 7);
+    if (Math.abs(xa - x0a) > 16) { dot(ctx, x0a, GY, PAL.muted, false, 7); dot(ctx, x0b, GY, PAL.muted, false, 7); }
     body(ctx, xa, 1, F.ref('thrower'), hold1);
     body(ctx, xb, -1, F.ref('catcher'), hold2);
     ball(ctx, bx, by, PAL.ink);
@@ -291,7 +295,7 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
     }
     /* the proton and the neutron, doing the same thing with a meson */
     text(ctx, 'A meson exchanged between a proton and a neutron', 50, NY - 76, PAL.muted, { size: 19 });
-    dot(ctx, x0a, NY + 44, PAL.muted, false, 7); dot(ctx, x0b, NY + 44, PAL.muted, false, 7);
+    if (Math.abs(xa - x0a) > 2) { dot(ctx, x0a, NY, PAL.muted, false, 30); dot(ctx, x0b, NY, PAL.muted, false, 30); }
     dot(ctx, xa, NY, F.el('p+'), true, 30); dot(ctx, xb, NY, F.el('n0'), true, 30);
     text(ctx, 'p', xa, NY - 1, PAL.panel, { size: 24, weight: 600, align: 'center' });
     text(ctx, 'n', xb, NY - 1, PAL.panel, { size: 24, weight: 600, align: 'center' });
@@ -309,7 +313,8 @@ const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
       { x: bx, y: by, r: 24, name: 'the basketball' },
       { x: x0a, y: GY, r: 12, name: 'where person 1 began' }, { x: x0b, y: GY, r: 12, name: 'where person 2 began' },
       { x: xa, y: NY, r: 32, name: 'the proton' }, { x: xb, y: NY, r: 32, name: 'the neutron' }, { x: mx, y: NY, r: 14, name: 'the meson they exchange' },
-      { x: x0a, y: NY + 44, r: 12, name: 'where the proton began' }, { x: x0b, y: NY + 44, r: 12, name: 'where the neutron began' },
+      { x: x0a, y: NY, r: 32, name: 'where the proton began' }, { x: x0b, y: NY, r: 32, name: 'where the neutron began' },
+      
     ];
     headline(ctx, said);
     const N = `${fmt(f, 0)}\\ \\text{N}`;

@@ -105,7 +105,9 @@ const deg = (v, d) => fmt(v, d) + '°';
     });
     const push = (x) => K.v * x / 100, xTop = Math.min(10, 30000 / K.v);
     line(ctx, box.l, ax.Y(w), box.r, ax.Y(w), alpha(PAL.ink, 0.5), 2, [10, 10]);
-    text(ctx, 'weight ' + num(w, 1) + ' N', box.l + 10, ax.Y(w) + (ax.Y(w) - 18 < box.t + 12 ? 18 : -18), PAL.muted, { size: 18, align: 'left', bg: PAL.panel });
+    /* the level's name goes where the line is not: under the level to the right of an early crossing, over it to the left of a late one */
+    if (sagEq < 5) text(ctx, 'weight ' + num(w, 1) + ' N', box.r - 6, ax.Y(w) + 18, PAL.muted, { size: 18, align: 'right', bg: PAL.panel });
+    else text(ctx, 'weight ' + num(w, 1) + ' N', box.l + 10, ax.Y(w) + (ax.Y(w) - 18 < box.t + 12 ? 18 : -18), PAL.muted, { size: 18, align: 'left', bg: PAL.panel });
     line(ctx, ax.X(0), ax.Y(0), ax.X(xTop), ax.Y(push(xTop)), alpha(col, 0.35), 4);
     if (sagCm > 0) line(ctx, ax.X(0), ax.Y(0), ax.X(sagCm), ax.Y(N), col, 5);
     if (sagCm > 0.05) line(ctx, ax.X(sagCm), box.b, ax.X(sagCm), ax.Y(N), PAL.ink, 2, [4, 8]);

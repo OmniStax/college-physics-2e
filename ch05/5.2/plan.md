@@ -142,7 +142,7 @@ sliders with their types · headline · graph · 3D
    Draws force, velocity, acceleration, time, mass, area, density.
    works: read off the image: no image. Example 5.2: 85 kg, A = (2 m)(0.35 m)
    = 0.70 m², C = 1.0, v_t = 44 m/s (here 44.4 m/s, 160 km/h). The text: 75
-   kg head first, 0.18 m², C = 0.70, 98 m/s = 350 km/h (here 98.2 m/s, 354
+   kg head first, 0.18 m², C = 0.70, 98 m/s = 350 km/h (here 98.2 m/s, 353
    km/h). must hold: (1) those two on load and at 75 kg head first; (2) the
    weight and drag arrows share one scale and are equal at the end of the
    run; (3) the readout's difference is the difference of the two numbers
@@ -190,7 +190,7 @@ sliders with their types · headline · graph · 3D
    the two bodies: v against the height of the fall, 1 to 1000 m
    logarithmic by 0 to 50 m/s, fixed · 2D. Readout: v_t with k³m and k²A put
    in, reduced to √k times the full-size v_t, one chain. Draws velocity,
-   position, mass, area, density.
+   position, mass, area, density, acceleration.
    works: read off the image: no image. Haldane: a tenth the length, a
    thousandth the weight (85 kg to 85 g), a hundredth the surface (0.70 m² to
    70 cm²). v after a fall h with quadratic drag: v² = v_t²(1 − e^(−2gh/v_t²)).
@@ -299,17 +299,18 @@ None built.
 
 ## Colour
 
-The page binds force, velocity, acceleration and time. `sim-drag` draws the
-drag arrow and the force axis of its graph in the force hue and carries the
-speed on a velocity slider; `sim-terminal` draws the weight and the drag as
-forces, the falling speed and the terminal level as velocities, the
-shrinking acceleration arrow, and the time axis of its graph; `sim-stokes`
-draws the weight and the Stokes drag as forces and the steady speed as a
-velocity, and its headline runs on a clock; `sim-size` draws two speeds and
-their terminal levels against time. Mass, frontal area, the drag
-coefficient, the fluid density, the viscosity, the bead's radius, the scale
-factor and the drop are untyped and stay in ink, which is what the chapter
-config decided and what the book's own type table allows.
+The page binds force, velocity, acceleration, time, position, mass, area,
+density and viscosity. `sim-drag` draws the drag arrow and the force axis in
+the force hue and carries the speed on a velocity slider and the frontal
+area on an area slider; `sim-terminal` draws the weight and the drag as
+forces, the speed and the terminal levels as velocities, the shrinking
+acceleration arrow and the time axis, with the mass on its slider;
+`sim-stokes` draws the weight and the Stokes drag as forces, the steady
+speed as a velocity, the radius as a position and the viscosity on its
+slider; `sim-size` draws the two landing velocities, the height of the fall
+as a position, and each body's mass and area as values, its two curves in
+the bodies' referent colours. The drag coefficient and the scale factor are
+untyped and stay in ink.
 
 ## Wanted at chapter level
 

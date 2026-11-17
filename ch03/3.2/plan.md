@@ -86,7 +86,7 @@ id · replaces · concepts · value add · arrows · moving or still · controls
    vectors), grown from the tail as each is drawn · a story, not a clock: the
    steps are the stops of a story slider (start, Step 1, Step 2, Step 4,
    Steps 5, 6), which opens at the last stop so the finished construction is
-   the poster · blocks east (1 to 12, default 9), blocks north (1 to 8,
+   the poster · blocks east (3 to 12, default 9), blocks north (2 to 8,
    default 5), both position · the step in the book's words · none · 2D.
    works: parts: the first vector along the east axis from the starting
    point; the second from the head of the first, north; the resultant D from

@@ -37,6 +37,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -67,6 +70,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "dropdowns for the two forces, note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: one log axis, opens on EM vs gravity, exponent subtraction in readout"
     }
    ]
   },
@@ -106,6 +113,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "note cut to one sentence"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: draggable signed test charge, line through it, real units"
     }
    ]
   },
@@ -144,6 +155,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "panel label clear of the headline, note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: larger people, book force names, attractive pull-away case"
     }
    ]
   },

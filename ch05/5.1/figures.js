@@ -89,12 +89,15 @@ function crate(ctx, x, y, w, h, col) {
        the normal force, and falls by μ_k/μ_s once the crate slides. The surfaces are set as far apart
        as leaves exactly that share touching. */
     const share = 0.34 * (m.v / 200) * (1 - (1 - MU_K / MU_S) * e);
-    const sums = low.map((v, i) => v + up[i]).sort((p, q) => q - p);
-    const D = sums[Math.max(0, Math.min(NX - 1, Math.round(share * NX) - 1))];
-    const LOWBASE = LY + 96, UPBASE = LOWBASE - D;
-    const x0 = LX - LR, n0 = Math.ceil((2 * LR * NX) / PERIOD);
+    const LOWBASE = LY + 96, x0 = LX - LR, n0 = Math.ceil((2 * LR * NX) / PERIOD);
     const xAt = (i) => x0 + (i * PERIOD) / NX;
-    const yLow = (i) => LOWBASE - low[i % NX], yUp = (i) => Math.min(UPBASE + up[i % NX], yLow(i));
+    const yLow = (i) => LOWBASE - low[i % NX];
+    const seen = (i) => Math.hypot(xAt(i) - LX, yLow(i) - LY) < LR - 6;      /* the stretch the lens shows */
+    const sums = []; for (let i = 0; i <= n0; i++) if (seen(i)) sums.push(low[i % NX] + up[i % NX]);
+    sums.sort((p, q) => q - p);
+    const D = sums[Math.max(0, Math.min(sums.length - 1, Math.round(share * sums.length) - 1))];
+    const UPBASE = LOWBASE - D;
+    const yUp = (i) => Math.min(UPBASE + up[i % NX], yLow(i));
     ctx.save(); ctx.beginPath(); ctx.arc(LX, LY, LR, 0, Math.PI * 2); ctx.clip();
     ctx.fillStyle = PAL.panel; ctx.fillRect(LX - LR, LY - LR, 2 * LR, 2 * LR);
     ctx.fillStyle = alpha(cfl, 0.26);
@@ -108,8 +111,7 @@ function crate(ctx, x, y, w, h, col) {
     let touching = 0, on = false;
     ctx.strokeStyle = car; ctx.lineWidth = 11; ctx.lineCap = 'round';
     for (let i = 0; i <= n0; i++) {
-      const inside = Math.hypot(xAt(i) - LX, yLow(i) - LY) < LR - 6;
-      const hit = inside && UPBASE + up[i % NX] >= yLow(i) - 0.01;
+      const hit = seen(i) && UPBASE + up[i % NX] >= yLow(i) - 0.01;
       if (hit) touching += PERIOD / NX;
       if (hit && !on) { ctx.beginPath(); ctx.moveTo(xAt(i), yLow(i)); on = true; }
       else if (hit) ctx.lineTo(xAt(i), yLow(i));
@@ -327,7 +329,7 @@ function crate(ctx, x, y, w, h, col) {
     arrow(ctx, sN.x1, sN.y1, sN.x2, sN.y2, cf, 5);
     arrow(ctx, sf.x1, sf.y1, sf.x2, sf.y2, cf, 5);
     /* the slope's own angle again, between the weight and its part into the slope */
-    if (th.v >= 12) {
+    if (th.v >= 20) {
       const r = Math.min(120, 0.6 * wp * SF);
       ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(P.x, P.y, r, Math.PI / 2, Math.PI / 2 + a0); ctx.stroke(); ctx.restore();
       const bm = Math.PI / 2 + a0 / 2;

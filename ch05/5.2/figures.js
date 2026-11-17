@@ -304,7 +304,7 @@ function jar(ctx, x1, x2, top, bottom, surface, col) {
     hits = [{ x: pA.x, y: pA.y, r: 16, name: 'the full-size body lands at ' + fmt(vA, 1) + ' m/s' }, { x: pB.x, y: pB.y, r: 16, name: 'the smaller body lands at ' + fmt(vB, 1) + ' m/s' },
       { x: xa, y: yb, r: 100, name: 'the full-size body, ' + massLabel(MASS) }, { x: xb, y: yb, r: Math.max(24, 100 * k), name: 'the smaller body, ' + massLabel(MASS * k * k * k) }];
     if (pF) hits.push({ x: pF.x, y: pF.y, r: 16, name: 'with no air, ' + fmt(free, 1) + ' m/s' });
-    tex(d.readout, `\\kvt = \\sqrt{\\frac{2(k^3\\km)\\kg}{\\krhomat C(k^2\\karea)}} = \\sqrt{k}\\,\\sqrt{\\frac{2\\km\\kg}{\\krhomat C\\karea}} = \\sqrt{${fmt(k, 2)}}\\,(${fmt(VT, 1)}\\ \\text{m/s}) = ${fmt(VB, 1)}\\ \\text{m/s}`);
+    tex(d.readout, `\\text{smaller body: }\\ \\kvt = \\sqrt{\\frac{2(k^3\\km)\\kg}{\\krhomat C(k^2\\karea)}} = \\sqrt{k}\\,\\sqrt{\\frac{2\\km\\kg}{\\krhomat C\\karea}} = \\sqrt{${fmt(k, 2)}}\\,(${fmt(VT, 1)}\\ \\text{m/s}) = ${fmt(VB, 1)}\\ \\text{m/s}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();

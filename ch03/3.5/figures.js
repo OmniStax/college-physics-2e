@@ -219,7 +219,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     text(ctx, 'x (east)', cols[0], TY, PAL.muted, { size: 20, align: 'right' }); text(ctx, 'y (north)', cols[1], TY, PAL.muted, { size: 20, align: 'right' });
     const rows = [['v_{tot}', sf(vt.v) + ' m/s at ' + fmt(a, 1) + '°', ux, uy], ['− v_p', sf(vp.v) + ' m/s north', 0, vp.v], ['= v_w', 'the wind', vwx, vwy]];
     rows.forEach(([name, what, x, y], i) => {
-      const yy = TY + rowH * (i + 1) + (i === 2 ? 14 : 0);
+      const yy = TY + rowH * (i + 1) + (i === 2 ? 30 : 0);
       if (i === 2) line(ctx, TX, yy - rowH / 2 - 6, cols[1] + 10, yy - rowH / 2 - 6, PAL.ink, 2);
       text(ctx, name, TX + 76, yy - 8, cv, { size: 24, weight: 600, align: 'right' });
       text(ctx, what, TX + 76, yy + 20, PAL.muted, { size: 17, align: 'right' });
