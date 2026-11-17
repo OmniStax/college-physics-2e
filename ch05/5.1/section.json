@@ -92,6 +92,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "animated: crate creeps and checks, or slides with its tips skipping along"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: lens on the contact, rest or sliding, friction against N"
     }
    ]
   },
@@ -100,7 +104,9 @@
    "kind": "sim",
    "draws": [
     "force",
-    "mass"
+    "mass",
+    "velocity",
+    "acceleration"
    ],
    "ai": [
     {
@@ -122,6 +128,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "labels off the crate and the drop line, note through the macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "readout one formula a line, speed arrow, caption cut"
     }
    ]
   },
@@ -172,6 +182,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: library crouch silhouette plumb on skis, haloed forces"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: forces to scale, μk on the control, the two forces against angle"
     }
    ]
   },
@@ -214,6 +228,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "friction label moved clear of the tip atoms"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: stick and slip, each release rings the lattice"
     }
    ]
   },

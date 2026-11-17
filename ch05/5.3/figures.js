@@ -131,7 +131,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
    constants, so the same weight stretches them less. Still.
 ===================================================================== */
 (function () {
-  const d = sim('sim-strings', 790);
+  const d = sim('sim-strings', 810);
   const w = ctl(d.controls, { label: '\\kwgt', cls: 'force', min: 2, max: 40, step: 1, value: 20, unit: 'N', dec: 0, aria: 'weight hung from each string' });
   const L0 = ctl(d.controls, { label: '\\kLo', cls: 'position', min: 0.2, max: 1.2, step: 0.05, value: 0.65, unit: 'm', dec: 2, aria: 'original length of the strings' });
   /* the book gives the strings no sizes: the thin ones are taken 1.0 mm across and the thicker one 2.0 mm, with Young's moduli from Table 5.3 */
@@ -141,6 +141,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     { name: 'steel', id: 'string-steel', Y: 210e9, r: 0.5e-3, lw: 5 },
   ];
   const kOf = (s) => (s.Y * Math.PI * s.r * s.r) / L0.v;              /* the force constant of a string, k = YA/L₀, in N/m */
+  const kText = (k) => { const e = Math.floor(Math.log10(k)); return fmt(k / Math.pow(10, e), 2) + ' × 10' + SUP[e]; };
   const dl = (s, force) => force / kOf(s);                             /* metres */
   function draw() {
     const { ctx } = begin(d.c);
@@ -148,38 +149,37 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
        so a longer string really is drawn stretching farther. The longest stretch the sliders allow,
        12.2 mm, still draws inside its 90 units. */
     const MAG = 7000, cp = C('position'), cf = C('force');
-    const yTop = 210, len = 110 + 230 * (L0.v / 1.2);
-    fixed(ctx, 150, yTop - 44, 620, 44);
+    const yTop = 210, len = 180 + 220 * (L0.v / 1.2);
+    fixed(ctx, 120, yTop - 44, 680, 44);
     STR.forEach((s, i) => {
-      const x = 250 + i * 210, dL = dl(s, w.v), grow = Math.min(90, dL * MAG), yb = yTop + len + grow, col = F.ref(s.id);
+      const x = 230 + i * 230, dL = dl(s, w.v), grow = Math.min(90, dL * MAG), yb = yTop + len + grow, col = F.ref(s.id);
       line(ctx, x, yTop, x, yTop + len, col, s.lw);
       line(ctx, x, yTop + len, x, yb, cp, s.lw);
       /* the weight: a hook and a slotted mass, as the book hangs one */
       ctx.save(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, yb + 9, 8, 0, 2 * Math.PI); ctx.stroke();
       ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(x - 30, yb + 18); ctx.lineTo(x + 30, yb + 18); ctx.lineTo(x + 42, yb + 70); ctx.lineTo(x - 42, yb + 70); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
-      arrow(ctx, x, yb + 74, x, yb + 74 + 16 + w.v * 1.1, cf, 5);
-      text(ctx, 'w', x + 16, yb + 74 + (16 + w.v * 1.1) / 2, cf, { size: 22, weight: 600 });
+      arrow(ctx, x, yb + 74, x, yb + 74 + 14 + w.v * 0.8, cf, 5);
+      text(ctx, 'w', x + 16, yb + 74 + (14 + w.v * 0.8) / 2, cf, { size: 22, weight: 600 });
       text(ctx, s.name, x, yTop - 98, col, { size: 20, align: 'center', weight: 600 });
-      text(ctx, 'k = ' + plain(kOf(s), 2) + ' N/m', x, yTop - 70, C('stiffness'), { size: 18, align: 'center', weight: 600 });
+      text(ctx, 'k = ' + kText(kOf(s)) + ' N/m', x, yTop - 70, C('stiffness'), { size: 18, align: 'center', weight: 600 });
       text(ctx, 'ΔL = ' + fmt(dL * 1000, 2) + ' mm', x + 16 + s.lw / 2, yTop + len + grow / 2 - (grow < 20 ? 14 : 0), cp, { size: 18, weight: 600 });
     });
-    vbracket(ctx, 120, yTop, yTop + len, cp, 'L₀', -1);
+    vbracket(ctx, 96, yTop, yTop + len, cp, 'L₀', -1);
     /* the graph beside the scene: the stretch each string takes against the weight hung on it. The range is fixed: at the
        slider maxima (w = 40 N and L₀ = 1.20 m) the thin nylon string stretches 12.2 mm, so the axis holds 0 to 15 mm. */
     const YHI = 15;
-    const box = { l: 880, r: 1320, t: 180, b: 600 };
-    const { X, Y } = axes(ctx, box, [0, 40], [0, YHI], { xl: 'weight w (N)', xc: cf, yl: 'stretch ΔL (mm)', yc: cp, nx: 4, ny: 5, fy: (v) => fmt(v, 0) });
+    const box = { l: 910, r: 1320, t: 180, b: 650 };
+    const ax = axes(ctx, box, [0, 40], [0, YHI], { xl: 'weight w (N)', xc: cf, yl: 'stretch ΔL (mm)', yc: cp, nx: 4, ny: 5, fy: (v) => fmt(v, 0) });
+    const { X, Y } = ax;
     line(ctx, X(w.v), box.b, X(w.v), Y(dl(STR[0], w.v) * 1000), cf, 2, [4, 8]);
     STR.forEach((s) => {
       line(ctx, X(0), Y(0), X(40), Y(dl(s, 40) * 1000), F.ref(s.id), 4);
       dot(ctx, X(w.v), Y(dl(s, w.v) * 1000), PAL.ink, true, 9);
     });
-    text(ctx, 'thin nylon', X(40) - 8, Y(dl(STR[0], 40) * 1000) - 24, F.ref('string-thin'), { size: 18, align: 'right', weight: 600 });
-    text(ctx, 'thicker nylon', X(40) - 8, Y(dl(STR[1], 40) * 1000) - 20, F.ref('string-thick'), { size: 18, align: 'right', weight: 600 });
-    text(ctx, 'steel', X(40) - 8, Y(dl(STR[2], 40) * 1000) + 20, F.ref('string-steel'), { size: 18, align: 'right', weight: 600 });
-    text(ctx, 'The stretch is drawn ' + timesLarger(MAG, len / L0.v) + ' times larger than it is.', 880, 740, PAL.muted, { size: 18 });
+    F.legend(ctx, ax, STR.map((s) => ({ s: s.name, color: F.ref(s.id), w: 4 })), { corner: 'tl' });
+    text(ctx, 'The stretch is drawn ' + timesLarger(MAG, len / L0.v) + ' times larger than it is.', 910, 770, PAL.muted, { size: 18 });
     headline(ctx, 'A ' + fmt(w.v, 0) + ' N weight stretches the thin nylon string ' + fmt(dl(STR[0], w.v) * 1000, 2) + ' mm, the thicker nylon string ' + fmt(dl(STR[1], w.v) * 1000, 2) + ' mm and the steel string ' + fmt(dl(STR[2], w.v) * 1000, 2) + ' mm.');
-    readout(d.readout, `\\text{thin nylon: }\\ \\kdL = \\frac{\\kwgt}{\\kk} = \\frac{${fmt(w.v, 0)}\\ \\text{N}}{${fmt(kOf(STR[0]), 0)}\\ \\text{N/m}} = ${fmt(dl(STR[0], w.v) * 1000, 2)}\\ \\text{mm}`);
+    readout(d.readout, `\\text{thin nylon: }\\ \\kdL = \\frac{\\kwgt}{\\kk} = \\frac{${fmt(w.v, 0)}\\ \\text{N}}{${sci(kOf(STR[0]), 2)}\\ \\text{N/m}} = ${fmt(dl(STR[0], w.v) * 1000, 2)}\\ \\text{mm}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();
@@ -265,7 +265,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
 /* =====================================================================
    FIGURE 5.17: the nail a picture hangs from, seen from the side as the
    book draws it and opening on the numbers of Example 5.5. The nail, its
-   thickness and the length outside the wall share one scale (70 units to
+   thickness and the length outside the wall share one scale (62 units to
    the millimetre); only the flex is drawn larger than it is. Still.
 ===================================================================== */
 (function () {
@@ -277,7 +277,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
   const area = () => Math.PI * Math.pow(rr.v / 1000, 2);
   const force = () => mm.v * G;
   const dx = () => (force() * (L0.v / 1000)) / (S * area());
-  const SC = 70;                                                      /* units per millimetre of nail */
+  const SC = 62;                                                      /* units per millimetre of nail */
   function draw() {
     const { ctx } = begin(d.c);
     const x = dx(), w = force();
@@ -328,8 +328,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     text(ctx, '2r = ' + fmt(2 * rr.v, 2) + ' mm', wallL - 16, y + half + 26, cp, { size: 20, weight: 600, align: 'right' });
     hbracket(ctx, wallR, px, y - half - 86, cp, 'L₀ = ' + fmt(L0.v, 2) + ' mm');
     line(ctx, px, y - half - 86, px, pTop, alpha(PAL.ink, 0.4), 2, [4, 8]);
-    if (flex > 3) vbracket(ctx, hx + 56, y - half, hy - half, cp, '', 1);
-    text(ctx, 'Δx = ' + fmt(x * 1e6, 2) + ' µm', hx + 80, y - half - 26, cp, { size: 22, weight: 600, align: 'right' });
+    if (flex > 3) vbracket(ctx, hx + 56, y - half, hy - half, cp, 'Δx = ' + fmt(x * 1e6, 2) + ' µm', 1);
     text(ctx, 'The flex is drawn ' + plain(MAG / (SC * 1000), 1) + ' times larger than it is.', wallR + 24, 616, PAL.muted, { size: 18 });
     headline(ctx, 'A ' + fmt(mm.v, 1) + ' kg picture weighs ' + fmt(w, 0) + ' N and bends the nail ' + fmt(x * 1e6, 2) + ' µm.');
     readout(d.readout, `\\kdx = \\frac{1}{\\kS}\\frac{\\kF}{\\karea}\\kLo = \\frac{(${fmt(w, 1)}\\ \\text{N})(${sci(L0.v / 1000, 2)}\\ \\text{m})}{(${sci(S, 0)}\\ \\text{N/m}^2)(${sci(area(), 2)}\\ \\text{m}^2)} = ${sci(x, 2)}\\ \\text{m}`);

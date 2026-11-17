@@ -44,7 +44,10 @@ function crate(ctx, x, y, w, h, col) {
     return v;
   };
   const A = 78, NX = 360, PERIOD = 600;            /* peak height, samples and length of one period of profile, in units */
-  const low = []; for (let i = 0; i < NX; i++) low.push(bumpy(LOW, i / NX) * A);
+  /* the profiles are turned so that the spot that touches first sits a little left of the lens's middle */
+  const raw = []; for (let i = 0; i < NX; i++) raw.push(bumpy(LOW, i / NX) + bumpy(UP, i / NX));
+  const OFF = raw.indexOf(Math.max(...raw)) - Math.round((210 * NX) / PERIOD);
+  const low = []; for (let i = 0; i < NX; i++) low.push(bumpy(LOW, (i + OFF) / NX) * A);
   let hits = [];
   function draw() {
     const { ctx } = begin(d.c);
@@ -81,7 +84,7 @@ function crate(ctx, x, y, w, h, col) {
     ctx.restore();
     /* the crate's underside, carried along a little once it slides */
     const shift = 70 * e;
-    const up = []; for (let i = 0; i < NX; i++) up.push(bumpy(UP, i / NX - shift / PERIOD) * A);
+    const up = []; for (let i = 0; i < NX; i++) up.push(bumpy(UP, (i + OFF) / NX - shift / PERIOD) * A);
     /* The share of the surface in actual contact is drawn in proportion to the friction: it follows
        the normal force, and falls by μ_k/μ_s once the crate slides. The surfaces are set as far apart
        as leaves exactly that share touching. */
@@ -194,9 +197,9 @@ function crate(ctx, x, y, w, h, col) {
     /* friction acts at the surface, so the arrow leaves the crate's bottom corner along the floor */
     if (fr > 0) arrow(ctx, cx - cw / 2, floorY - 3, cx - cw / 2 - fl, floorY - 3, C('force'), 5);
     text(ctx, 'f = ' + fmt(fr, 0) + ' N', cx - cw / 2 - 10, floorY - 32, C('force'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
-    /* its speed, 10 units to the metre per second, once it slides */
+    /* its speed, 25 units to the metre per second, once it slides */
     if (moving && vAt(t) > 0.05) {
-      const vl = Math.min(120, 10 * vAt(t)), vx = Math.min(cx + cw / 2 + 14, 1250 - vl);
+      const vl = Math.min(150, 25 * vAt(t)), vx = Math.min(cx + cw / 2 + 14, 1250 - vl);
       arrow(ctx, vx, floorY - ch - 24, vx + vl, floorY - ch - 24, C('velocity'), 5);
       text(ctx, 'v = ' + fmt(vAt(t), 1) + ' m/s', vx + vl, floorY - ch - 52, C('velocity'), { size: 20, weight: 600, align: 'right' });
     }
@@ -375,55 +378,64 @@ function crate(ctx, x, y, w, h, col) {
 })();
 
 /* =====================================================================
-   FIGURE 5.6: the tip of a probe dragged across a substrate, leaned
-   back by the friction on it, with the lattice behind it left
-   vibrating. Moving: the tip is dragged across the surface.
+   FIGURE 5.6: the tip of a probe drawn across a substrate. Its foot
+   adheres to the surface while the rest of it is carried on, so the tip
+   is bent sideways until the foot lets go and jumps forward; each release
+   sends a vibration into the lattice that spreads and dies away, which is
+   how rubbing warms a surface. Moving: one pass across the surface.
 ===================================================================== */
 (function () {
-  const d = sim('sim-probe', 620);
-  const N = ctl(d.controls, { label: '\\kN', cls: 'force', min: 2, max: 40, step: 1, value: 12, unit: 'nN', dec: 0, onInput: reset, aria: 'normal force pressing the tip into the surface' });
-  const uk = ctl(d.controls, { label: '\\mu_{\\text{k}}', cls: '', min: 0.02, max: 1, step: 0.02, value: 0.3, unit: '', dec: 2, onInput: reset, aria: 'coefficient of kinetic friction' });
-  const T = 5;
-  const cy = cycle(() => T, 1.2);
+  const d = sim('sim-probe', 650);
+  const ad = F.choice(d.controls, { label: '\\text{the two materials}', options: [{ value: 'weak', label: 'adhere weakly' }, { value: 'strong', label: 'adhere strongly' }], value: 'strong', aria: 'how strongly the two materials adhere', onInput: reset });
+  const T = 6, cy = cycle(() => T, 1.2);
   function reset() { cy.reset(); }
-  const ROWS = [[-5, 5], [-4, 4], [-3, 3], [-2, 2]];
+  const SP = 44, R = 13, surfaceY = 372, X0 = 62, COLS = 30, DEEP = 6;
+  const VB = 110, XB0 = 300;                       /* the probe is carried along at 110 units a second from here */
+  /* how far the foot is left behind before it lets go: one spacing of the lattice, or two */
+  const HOLD = { weak: SP, strong: 2 * SP };
+  const N_ROW = [13, 11, 9, 7, 5], PX = 0.82 * SP, PY = 0.88 * SP;
+  let hits = [];
   function draw() {
     const { ctx } = begin(d.c);
-    const t = REDUCED ? T : cy.now();
-    const f = uk.v * N.v, lean = 24 * (f / 40);
-    const SP = 42, surfaceY = 400, x0 = 130, cols = 28;
-    const tipX = x0 + 260 + (t / T) * 600, cs = F.ref('substrate'), cp = F.ref('probe');
-    /* the substrate: four rows of atoms, the ones the tip has passed over still ringing */
-    for (let r = 0; r < 4; r++) for (let c = 0; c < cols; c++) {
-      const ax = x0 + c * SP, ay = surfaceY + r * SP;
-      const behind = tipX - ax, ring = behind > 0 ? Math.exp(-behind / 280) * Math.exp(-r * 0.55) : 0;
-      const jx = ring * 8 * Math.sin(ax * 0.7 + ay * 0.3 + t * 26), jy = ring * 8 * Math.cos(ax * 0.5 - ay * 0.4 + t * 26);
-      dot(ctx, ax + jx, ay + jy, r === 0 ? cs : alpha(cs, 0.55), r === 0, 11);
+    const t = REDUCED ? T - 0.05 : cy.now();
+    const S = HOLD[ad.value] ?? HOLD.strong, strong = ad.value !== 'weak';
+    const cs = F.ref('substrate'), cp = F.ref('probe'), cf = C('force');
+    const xb = XB0 + VB * t, n = Math.floor((VB * t) / S), tn = (n * S) / VB;
+    const xf = n < 1 ? XB0 : XB0 + S * (n - 1 + F.ease.smooth(Math.min(1, (t - tn) / 0.07)));
+    const shear = xb - xf;
+    headline(ctx, strong
+      ? 'Strong adhesion bends the tip far over before its foot lets go, and each release leaves the lattice ringing'
+      : 'Weak adhesion lets the foot go early, so the tip bends little and jolts the lattice less');
+    /* the substrate: each release is a jolt where the foot was, spreading at 700 units a second and dying with distance and time */
+    for (let r = 0; r < DEEP; r++) for (let c = 0; c < COLS; c++) {
+      const ax = X0 + c * SP, ay = surfaceY + r * SP;
+      let jx = 0, jy = 0, heat = 0;
+      for (let i = 1; i <= n; i++) {
+        const dx = ax - (XB0 + (i - 1) * S), dy = ay - surfaceY + 20, dist = Math.hypot(dx, dy), since = t - (i * S) / VB - dist / 700;
+        if (since < 0) continue;
+        const amp = 9 * (S / (2 * SP)) * Math.exp(-since / 1.1) * Math.exp(-dist / 240);
+        jx += (dx / dist) * amp * Math.sin(30 * since); jy += (dy / dist) * amp * Math.sin(30 * since); heat += amp;
+      }
+      dot(ctx, ax + jx, ay + jy, alpha(cs, Math.min(1, 0.32 + heat / 5)), true, R);
     }
-    text(ctx, 'the substrate, still ringing where the tip has passed', x0, surfaceY + 3 * SP + 56, cs, { size: 17 });
-    /* the probe: atoms in an inverted pyramid with a flattened peak, leaning back as it is dragged.
-       How many of the five atoms along its foot adhere follows the normal force one at a time, so
-       every step of the slider changes the count as well as the arrow and the lean. */
-    const hold = 1 + Math.round((4 * (N.v - 2)) / 38);
-    const ORDER = [0, -1, 1, -2, 2];                 /* they take hold from the middle of the tip outward */
-    ctx.save(); ctx.translate(tipX, surfaceY - 26); ctx.transform(1, 0, Math.tan(lean * RAD), 1, 0, 0);
-    for (let r = 0; r < ROWS.length; r++) for (let c = ROWS[r][0]; c <= ROWS[r][1]; c++) dot(ctx, c * SP * 0.82, -SP * 0.88 * (ROWS.length - r), cp, false, 11);
-    for (let c = -2; c <= 2; c++) dot(ctx, c * SP * 0.82, 0, cp, ORDER.indexOf(c) < hold, 11);
-    ctx.restore();
-    const topX = tipX + Math.tan(lean * RAD) * -SP * 0.88 * 4;
-    text(ctx, 'the probe', topX - 5 * SP * 0.82 - 30, surfaceY - 26 - SP * 0.88 * 4, cp, { size: 20, weight: 600, align: 'right' });
-    text(ctx, hold === 1 ? 'one atom of the tip adheres' : hold + ' atoms of the tip adhere', tipX + 120, surfaceY - 34, cp, { size: 17 });
-    arrow(ctx, topX + 60, 150, topX + 220, 150, PAL.muted, 3);
-    text(ctx, 'dragged this way', topX + 232, 150, PAL.muted, { size: 17 });
-    const fl = Math.min(40 + 150 * (f / 40), tipX - 220);
-    arrow(ctx, tipX - 130, surfaceY - 34, tipX - 130 - fl, surfaceY - 34, C('force'), 5);
-    text(ctx, 'f = ' + fmt(f, 2) + ' nN', tipX - 130 - fl / 2, surfaceY - 64, C('force'), { size: 20, weight: 600, align: 'center' });
-    arrow(ctx, topX, 104, topX, 174, C('force'), 5);
-    text(ctx, 'N = ' + fmt(N.v, 0) + ' nN', topX - 14, 140, C('force'), { size: 20, weight: 600, align: 'right' });
-    headline(ctx, 'Pressed on with $\\kN = ' + fmt(N.v, 0) + '\\ \\text{nN}$, the tip is dragged back by $\\kfk = ' + fmt(f, 2) + '\\ \\text{nN}$ and leans back as it goes');
-    readout(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = (${fmt(uk.v, 2)})(${fmt(N.v, 0)}\\ \\text{nN}) = ${fmt(f, 2)}\\ \\text{nN}`,
-      'The lean is drawn in proportion to the friction to make it visible; it is not a measured angle.');
+    text(ctx, 'the substrate', X0 - 12, surfaceY + DEEP * SP + 6, cs, { size: 20, weight: 600 });
+    /* the probe: an inverted pyramid of atoms, its top row carried along and its foot held by the surface */
+    const yRow = (r) => surfaceY - 0.92 * SP - (4 - r) * PY, xRow = (r) => xb + (xf - xb) * (r / 4);
+    for (let r = 0; r < 5; r++) for (let c = 0; c < N_ROW[r]; c++) dot(ctx, xRow(r) + (c - (N_ROW[r] - 1) / 2) * PX, yRow(r), r === 4 ? cp : alpha(cp, 0.6), true, R);
+    text(ctx, 'the probe', xb - 6.5 * PX - 22, yRow(0), cp, { size: 20, weight: 600, align: 'right', base: 'middle' });
+    arrow(ctx, xb - 60, yRow(0) - 44, xb + 80, yRow(0) - 44, PAL.ink, 3);
+    text(ctx, 'motion of the probe', xb + 94, yRow(0) - 44, PAL.ink, { size: 19, base: 'middle' });
+    /* the friction on the foot, as long as the tip is bent: it grows while the foot holds and drops when it lets go */
+    const fx = xf - 2.5 * PX - 24, fl = 1.7 * shear;
+    if (fl > 6) arrow(ctx, fx, yRow(4), fx - fl, yRow(4), cf, 5);
+    text(ctx, 'f', fx - Math.max(fl, 6) - 14, yRow(4), cf, { size: 22, weight: 600, align: 'right', base: 'middle' });
+    hits = [
+      { x: xf, y: yRow(4), r: 60, name: 'the foot of the tip, held by the surface until it lets go' },
+      { x: xb, y: yRow(1), r: 90, name: 'the tip of the probe' },
+      { x: 700, y: surfaceY + 2.5 * SP, r: 120, name: 'the lattice of the substrate' },
+    ];
   }
-  register(d.fig, { update: (dt) => cy.step(dt, () => T / 5), draw });
+  hover(d.stage, () => hits);
+  register(d.fig, { update: (dt) => cy.step(dt, () => 1), draw });
 })();
 };

@@ -202,7 +202,7 @@ function trafficLight(ctx, x, y, color) {
     dot(ctx, kx, ky, PAL.ink, true, 6);
     lab.add('T_1 = ' + fmt(T1, 0) + ' N', h1x, h1y, 0.35, -0.94, fc, 20, 26);
     lab.add('T_2 = ' + fmt(T2, 0) + ' N', h2x, h2y, -0.35, -0.94, fc, 20, 26);
-    lab.add('w = ' + fmt(W, 0) + ' N', kx, wy1 - 16, 1, 0, fc, 20, 18);
+    lab.add('w = ' + fmt(W, 0) + ' N', kx, wy1 - 16, kx > XR - 150 ? -1 : 1, 0, fc, 20, 18);   /* on the side away from a near pole */
     /* the book's part (e): the same forces as their parts along x and y, on the same scale */
     const cx = 1050, cy = 440;
     text(ctx, 'the same forces, as their horizontal and vertical parts', cx, 132, PAL.muted, { size: 19, align: 'center' });
