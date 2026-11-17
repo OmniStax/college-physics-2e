@@ -456,7 +456,7 @@ function tower(ctx, x, y, h, color) {
     }
     dot(ctx, px, py, F.ref('projectile'), true, 10);
     const along = (arcTo * RE) / 1000, flat = (v0.v * 1000 * Math.sqrt((2 * HT) / G)) / 1000, sofar = (Math.min(p.swept, arcTo) * RE) / 1000;
-    if (run.landed) { const a = -Math.PI / 2 + end.swept; lab.add(sig3(along) + ' km along the surface', OX + (RPX + 8) * Math.cos(a), OY + (RPX + 8) * Math.sin(a), Math.cos(a), Math.sin(a), cp, 20, 22); }
+    if (run.landed) { const a = -Math.PI / 2 + end.swept; lab.add(sig3(along) + ' km along the surface', OX + (RPX + 8) * Math.cos(a), OY + (RPX + 8) * Math.sin(a), 1, Math.max(0.1, Math.sin(a)), cp, 20, 22); }
     lab.flush();
     F.legend(ctx, { l: 20, r: 1380, t: 100, b: H - 10 }, [{ s: 'launches at 2, 4 and 6 km/s', color: faint, w: 2.5 }, { s: 'circular orbit, ' + fmt(VC, 2) + ' km/s', color: faint, w: 2.5, dash: [10, 10] }], { corner: 'bl' });
     const min = (q) => fmt(q / 60, 1) + ' min';
