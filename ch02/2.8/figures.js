@@ -9,22 +9,6 @@ const neg = (s) => s.replace('-', '−');
 const drop = (ctx, x1, y1, x2, y2, color) => line(ctx, x1, y1, x2, y2, color, 3, [4, 8]);
 /* draw inside a graph box only */
 function clipped(ctx, box, f) { ctx.save(); ctx.beginPath(); ctx.rect(box.l, box.t, box.r - box.l, box.b - box.t); ctx.clip(); f(); ctx.restore(); }
-/* the rise-and-run triangle between two points of a line: the run along the bottom, the rise up the right side */
-function triangle(ctx, X, Y, p1, p2, runLabel, riseLabel, runColor, riseColor, box, lab) {
-  const x1 = X(p1[0]), x2 = X(p2[0]), y1 = Y(p1[1]), y2 = Y(p2[1]);
-  clipped(ctx, box, () => { drop(ctx, x1, y1, x2, y1, runColor); drop(ctx, x2, y1, x2, y2, riseColor); });
-  const inBox = (y) => Math.min(box.b - 14, Math.max(box.t + 14, y));
-  const right = x2 > (box.l + box.r) / 2 && x2 + 200 > box.r;
-  /* given a labeller the two labels queue on it and step clear of whatever else is near the corner */
-  if (lab) {
-    lab.add(runLabel, (x1 + x2) / 2, y1, 0, y2 < y1 ? 1 : -1, runColor, 22, 26);
-    lab.add(riseLabel, x2, (y1 + y2) / 2, right ? -1 : 1, 0, riseColor, 22, 16);
-    return;
-  }
-  text(ctx, runLabel, (x1 + x2) / 2, inBox(y1 + (y2 < y1 ? 26 : -26)), runColor, { align: 'center', weight: 600, bg: alpha(PAL.panel, 0.85) });
-  text(ctx, riseLabel, x2 + (right ? -16 : 16), inBox((y1 + y2) / 2), riseColor, { align: right ? 'right' : 'left', weight: 600, bg: alpha(PAL.panel, 0.85) });
-}
-
 /* The two ends of a tangent, kept on the part of the line that lies inside the graph: a slider left past the
    edge is brought back to it, so the rise and the run are always read between two points the reader can see.
    The line is y = yq + s (t − tq) with s ≥ 0; the box holds y from ylo to yhi; the ends step by 0.5. */
@@ -84,7 +68,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     lab.block(box.l, box.b, box.r, box.b + 40); lab.block(box.l - 70, box.t - 30, box.l, box.b);
     /* the intercept's label is dropped when the first point sits on the intercept and already names it */
     if (t1.v > 0.3) lab.add('x₀ = ' + fmt(x0.v, 0) + ' m', X(0), Y(x0.v), 0.4, -1, C('position'), 22, 30);
-    triangle(ctx, X, Y, [t1.v, xa], [t2.v, xb], 'Δt = ' + fmt(dt, 2) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), box, lab);
+    riseRun(ctx, X, Y, box, [t1.v, xa], [t2.v, xb], 'Δt = ' + fmt(dt, 2) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), box.r + 150);
     drop(ctx, X(t1.v), Y(xa), X(t1.v), box.b, C('time')); drop(ctx, X(t2.v), Y(xb), X(t2.v), box.b, C('time'));
     P1.draw(ctx, ax, C('position')); P2.draw(ctx, ax, C('position'));
     const lowP = Y(xa) > box.b - 80;   /* near the time axis the first point is named above the line */
@@ -287,7 +271,7 @@ function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColo
     curve(ctx, acc, 0, 70, g2.X, g2.Y, C('acceleration'), 5, 140);
     for (const t of MARKS) dot(ctx, g2.X(t), g2.Y(acc(t)), C('acceleration'), true, 5);
     dot(ctx, g2.X(tQ.v), g2.Y(aQ), C('acceleration'), true, 9);
-    text(ctx, 'a = ' + fmt(aQ, 1) + ' m/s²', g2.X(tQ.v) + (tQ.v > 45 ? -20 : 20), g2.Y(aQ) - 28, C('acceleration'), { weight: 600, size: 22, align: tQ.v > 45 ? 'right' : 'left', bg: alpha(PAL.panel, 0.85) });
+    text(ctx, 'a = ' + fmt(aQ, 1) + ' m/s²', g2.X(tQ.v) + (tQ.v > 45 ? -20 : 20), g2.Y(aQ) - (tQ.v < 6 ? 4 : 28), C('acceleration'), { weight: 600, size: 22, align: tQ.v > 45 ? 'right' : 'left', bg: alpha(PAL.panel, 0.85) });
     headline(ctx, tQ.v >= 55 ? 'From 55 s on the velocity stays at 250 m/s: the tangent is level and the acceleration is zero.'
       : 'The tangent at ' + fmt(tQ.v, 1) + ' s rises ' + fmt(dv, 0) + ' m/s in ' + fmt(dt, 1) + ' s; that slope is the acceleration plotted below it.');
     tex(d.readout, `\\ka = \\frac{\\kdv}{\\kdt} = \\frac{${fmt(v2, 0)}\\ \\text{m/s} - ${fmt(v1, 0)}\\ \\text{m/s}}{${fmt(tb, 1)}\\ \\text{s} - ${fmt(ta, 1)}\\ \\text{s}} = ${fmt(aQ, 1)}\\ \\text{m/s}^2`);
