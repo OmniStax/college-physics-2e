@@ -41,8 +41,8 @@ function cityGrid(ctx, ox, oy, b, nx, ny) {
   for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) ctx.fillRect(ox + i * b + b * 0.1, oy - (j + 1) * b + b * 0.1, b * 0.8, b * 0.8);
   ctx.restore();
   arrow(ctx, ox, oy, ox + nx * b + 34, oy, PAL.ink, 2); arrow(ctx, ox, oy, ox, oy - ny * b - 34, PAL.ink, 2);
-  for (let i = 0; i <= nx; i++) { line(ctx, ox + i * b, oy - 5, ox + i * b, oy + 5, PAL.ink, 1.5); text(ctx, String(i), ox + i * b, oy + 22, PAL.muted, { size: 15, align: 'center' }); }
-  for (let j = 1; j <= ny; j++) { line(ctx, ox - 5, oy - j * b, ox + 5, oy - j * b, PAL.ink, 1.5); text(ctx, String(j), ox - 14, oy - j * b, PAL.muted, { size: 15, align: 'right' }); }
+  for (let i = 0; i <= nx; i++) { line(ctx, ox + i * b, oy - 5, ox + i * b, oy + 5, PAL.ink, 1.5); text(ctx, String(i), ox + i * b, oy + 24, PAL.muted, { size: 17, align: 'center' }); }
+  for (let j = 1; j <= ny; j++) { line(ctx, ox - 5, oy - j * b, ox + 5, oy - j * b, PAL.ink, 1.5); text(ctx, String(j), ox - 14, oy - j * b, PAL.muted, { size: 17, align: 'right' }); }
   text(ctx, 'blocks east', ox + nx * b + 46, oy, PAL.ink, { size: 17, align: 'left' });
   text(ctx, 'blocks north', ox + 12, oy - ny * b - 30, PAL.ink, { size: 17, align: 'left' });
 }
@@ -199,7 +199,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
       arrow(ctx, gx, gy, hx, hy, cp, 5);
       const sg = WALK_DEG[i] > 0 ? -1 : 1;
       text(ctx, 'θ_' + NAMES[i] + ' = ' + fmt(Math.abs(WALK_DEG[i]), 1) + '°', gx + 74, gy + sg * (i === 1 ? -20 : 24), C('angle'), { size: 20, weight: 600, align: 'left', bg: PAL.panel });
-      text(ctx, NAMES[i] + ' = ' + fmt(MAG[i], 1) + ' m', i === 2 ? hx + 22 : (gx + hx) / 2 - (i === 0 ? 14 : 0), i === 2 ? hy - 30 : (gy + hy) / 2 - (i === 0 ? 34 : 30), cp, { size: 22, weight: 600, align: i === 0 ? 'right' : 'left', bg: PAL.panel });
+      text(ctx, NAMES[i] + ' = ' + fmt(MAG[i], 1) + ' m', hx + 16, hy + (i === 2 ? 4 : -10), cp, { size: 22, weight: 600, align: 'left', bg: PAL.panel });
     });
     text(ctx, 'east', 300, GIVEN[0][1] + 18, PAL.muted, { size: 17, align: 'right' });
     /* the sum: the east line through the start, the measuring tools, then the arrows over them */
@@ -220,7 +220,7 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
       const L = MAG[i] * S, nx = (hy - py) / L, ny = -(hx - px) / L, out = (ox + 25 * S - (px + hx) / 2) * nx + (oy - (py + hy) / 2) * ny > 0 ? -1 : 1;
       lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx * out, ny * out, cp, 26, 26);
     });
-    lab.add('R = 50.8 m', ox + 0.52 * (ex - ox), oy + 0.52 * (ey - oy), 0.1 * -side, -side, cp, 24, side > 0 ? 30 : 84);
+    lab.add('R = 50.8 m', ox + 0.52 * (ex - ox), oy + 0.52 * (ey - oy), 0.1 * -side, -side, cp, 24, side > 0 ? 34 : 100);
     dot(ctx, ox, oy, PAL.ink, true, 7); dot(ctx, ex, ey, PAL.ink, true, 7);
     text(ctx, 'start', ox - 16, oy - 20, PAL.muted, { size: 17, align: 'right' });
     lab.flush();
@@ -268,8 +268,8 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     arrow(ctx, ox, oy, bx, by, cp, 8); arrow(ctx, ox, oy, nx, ny, cp, 8);
     arrow(ctx, ox, oy, ax, ay, cp, 5); arrow(ctx, ax, ay, bx, by, cp, 5); arrow(ctx, ax, ay, nx, ny, cp, 5);
     const side = (s, x1, y1, x2, y2, sgn, size, start, f = 0.5) => { const L = Math.hypot(x2 - x1, y2 - y1) || 1; lab.add(s, x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, ((y2 - y1) / L) * sgn, (-(x2 - x1) / L) * sgn, cp, size, start); };
-    side('A', ox, oy, ax, ay, 1, 26, 24, 0.6); side('B', ax, ay, bx, by, 1, 26, 24); side('−B', ax, ay, nx, ny, 1, 26, 24);
-    side('R′ = ' + fmt(sum.r, 1) + ' m', ox, oy, bx, by, -1, 22, 28, 0.55); side('R = ' + fmt(dif.r, 1) + ' m', ox, oy, nx, ny, -1, 22, 28, 0.6);
+    side('A', ox, oy, ax, ay, -1, 26, 24, 0.6); side('B', ax, ay, bx, by, -1, 26, 24); side('−B', ax, ay, nx, ny, 1, 26, 24);
+    side('R′ = ' + fmt(sum.r, 1) + ' m', ox, oy, bx, by, 1, 22, 28, 0.55); side('R = ' + fmt(dif.r, 1) + ' m', ox, oy, nx, ny, -1, 22, 28, 0.6);
     lab.add('the dock', bx + 60, by - 40, 0.6, -1, F.ref('dock'), 20, 24);
     lab.add('where she ends up', nx + 30, ny + 50, 0.6, 1, F.ref('sailor'), 20, 24);
     dot(ctx, ox, oy, PAL.ink, true, 7); lab.add('start', ox, oy, -1, 0.5, PAL.muted, 17, 22);
@@ -362,7 +362,6 @@ function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
     if (no > 0.3) text(ctx, fmt(no, 1) + ' blocks north', hx + (west ? -18 : 18), oy - (no * b) / 2, cp, { weight: 600, size: 22, align: west ? 'right' : 'left', bg: PAL.panel });
     if (th > 3) lab.add('θ = ' + fmt(th, 1) + '°', ox + 110 * cos(th / 2), oy - 110 * sin(th / 2), cos(th / 2), -sin(th / 2), ca, 22, 22);
     lab.flush();
-    rose(ctx, 1320, 100, 34);
     tex(d.readout, `\\mathbf{D} = ${kp(fmt(Math.abs(ex), 1))}\\ \\text{blocks ${west ? 'west' : 'east'}} + ${kp(fmt(no, 1))}\\ \\text{blocks north}`);
   }
   register(d.fig, { update: () => {}, draw });

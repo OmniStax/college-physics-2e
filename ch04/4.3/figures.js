@@ -2,7 +2,7 @@
    Boots against the section's text article. */
 window.OMNISTAX_FIGURES = window.OMNISTAX_FIGURES || {};
 window.OMNISTAX_FIGURES['4.3'] = function (root, F) {
-const { el, fmt, tex, C, PAL, alpha, choice, ctl, cycle, register, begin, line, arrow, dot, text, headline, topline, hbracket, strip, scale, axes, curve, pinned, runner, person, car, block, fixed } = F;
+const { el, fmt, tex, C, PAL, alpha, choice, ctl, cycle, register, begin, line, arrow, dot, text, headline, topline, hbracket, strip, scale, axes, curve, pinned, runner, person, block, fixed } = F;
 const sim = (id, H) => F.sim(root, id, H);
 function readout(host, main, small) { tex(host, main); if (small) host.appendChild(el('small', null, small)); }
 
@@ -26,6 +26,17 @@ function basketball(ctx, x, y, color, r) {
   ctx.save(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
   ctx.strokeStyle = PAL.panel; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.moveTo(x, y - r); ctx.lineTo(x, y + r); ctx.stroke();
+  ctx.restore();
+}
+
+/* an SUV standing on (x, y), nose to the right, about 170 by 92 at s = 1 */
+function suv(ctx, x, y, color, s) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.fillStyle = color;
+  ctx.beginPath(); ctx.moveTo(-84, -14); ctx.lineTo(-84, -52); ctx.lineTo(-74, -80); ctx.lineTo(34, -80); ctx.lineTo(56, -52); ctx.lineTo(84, -46); ctx.lineTo(84, -14); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = PAL.panel;
+  ctx.beginPath(); ctx.moveTo(-68, -73); ctx.lineTo(-10, -73); ctx.lineTo(-10, -54); ctx.lineTo(-74, -54); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-2, -73); ctx.lineTo(30, -73); ctx.lineTo(45, -54); ctx.lineTo(-2, -54); ctx.closePath(); ctx.fill();
+  [-50, 50].forEach((wx) => { ctx.fillStyle = PAL.panel; ctx.beginPath(); ctx.arc(wx, -14, 18, 0, TAU); ctx.fill(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(wx, -14, 13, 0, TAU); ctx.fill(); });
   ctx.restore();
 }
 
@@ -222,11 +233,11 @@ function basketball(ctx, x, y, color, r) {
       F.rich(ctx, [name + ', m_' + sub + ' = ', [m, cm]], mid, gy + 34, { size: 20, align: 'center' });
       F.rich(ctx, ['a_' + sub + ' = ', [sig3(a) + ' m/s²', ca]], mid, gy + 66, { size: 23, weight: 600, align: 'center' });
     };
-    const hb = { x: 196, y: gy - 150 }, hs = { x: 866, y: gy - 120 };
+    const hb = { x: 200, y: gy - 122 }, hs = { x: 866, y: gy - 120 };
     scene(120, hb, () => basketball(ctx, hb.x + 40, hb.y, cb, 38), 'the ball', fmt(mb.v, 3) + ' kg', ab, cb, '1', 300);
-    scene(790, hs, () => car(ctx, hs.x + 166, gy - 62, cs, 3.9), 'the SUV', commas(fmt(ms.v, 0)) + ' kg', as, cs, '2', 1010);
+    scene(790, hs, () => suv(ctx, hs.x + 190, gy, cs, 2.2), 'the SUV', commas(fmt(ms.v, 0)) + ' kg', as, cs, '2', 1010);
     hits = [{ x: 150, y: gy - 110, r: 70, name: 'the player' }, { x: 820, y: gy - 110, r: 70, name: 'the same player' },
-      { x: hb.x + 40, y: hb.y, r: 40, name: 'the basketball' }, { x: hs.x + 166, y: gy - 70, r: 110, name: 'the stalled SUV' }];
+      { x: hb.x + 40, y: hb.y, r: 40, name: 'the basketball' }, { x: hs.x + 190, y: gy - 90, r: 110, name: 'the stalled SUV' }];
     /* acceleration against mass, both axes stepping by tens: 0.1 kg to 10,000 kg, 0.01 to 10,000 m/s² */
     const gbox = { l: 200, r: 1240, t: 470, b: 720 };
     const g = axes(ctx, gbox, [0, 5], [0, 6],
@@ -247,7 +258,7 @@ function basketball(ctx, x, y, color, r) {
     });
     [[mb.v, ab, 'the ball', cb, 1], [ms.v, as, 'the SUV', cs, -1]].forEach(([m, a, name, cr, side]) => {
       const p = pinned(ctx, gbox, g.X, g.Y, ex(m), ey(a), cr, sig3(a) + ' m/s²');
-      text(ctx, name, p.x + side * 18, p.y - 26, cr, { size: 19, weight: 600, align: side > 0 ? 'left' : 'right', bg: PAL.panel });
+      text(ctx, name, p.x + side * 18, p.y + side * -26, cr, { size: 19, weight: 600, align: side > 0 ? 'left' : 'right', bg: PAL.panel });
       hits.push({ x: p.x, y: p.y, r: 16, name: name + ': ' + sig3(m) + ' kg, ' + sig3(a) + ' m/s²' });
     });
     readout(d.readout, `\\ka_{1} = \\frac{\\kF}{\\km_{1}} = \\frac{${fmt(Fp.v, 0)}\\ \\text{N}}{${fmt(mb.v, 3)}\\ \\text{kg}} = ${tnum(sig3(ab))}\\ \\text{m/s}^2 \\\\ \\ka_{2} = \\frac{\\kF}{\\km_{2}} = \\frac{${fmt(Fp.v, 0)}\\ \\text{N}}{${tnum(commas(fmt(ms.v, 0)))}\\ \\text{kg}} = ${sig3(as)}\\ \\text{m/s}^2`);
@@ -460,11 +471,10 @@ function basketball(ctx, x, y, color, r) {
     for (let i = 0; i <= 25; i++) {
       const th = Math.PI * (1 - i / 25), big = i % 5 === 0, r0 = R - (big ? 18 : 10);
       line(ctx, cx + r0 * Math.cos(th), oy - r0 * Math.sin(th), cx + (R - 2) * Math.cos(th), oy - (R - 2) * Math.sin(th), cs, big ? 2.5 : 1.5);
-      if (i % 10 === 0 || i === 25) text(ctx, fmt(i / 10, i === 25 ? 1 : 0), cx + (R - 36) * Math.cos(th), oy - (R - 36) * Math.sin(th) - 2, PAL.muted, { size: 17, align: 'center' });
+      if (i % 10 === 0 || i === 25) text(ctx, fmt(i / 10, i === 25 ? 1 : 0), cx + (R - 36) * Math.cos(th), oy - (R - 36) * Math.sin(th) - (i % 25 === 0 ? 14 : 2), PAL.muted, { size: 17, align: 'center' });
     }
     const th = Math.PI * (1 - Math.min(read, DMAX) / DMAX);
     line(ctx, cx, oy, cx + (R - 54) * Math.cos(th), oy - (R - 54) * Math.sin(th), PAL.ink, 5);
-    text(ctx, 'kg', cx, oy - 30, PAL.muted, { size: 17, align: 'center' });
     dot(ctx, cx, oy, PAL.ink, true, 6);
     F.rich(ctx, ['the dial reads ', [sig3(read) + ' kg', PAL.ink]], cx, fy + 52, { size: 21, align: 'center', weight: 600 });
     /* the block, the same size in both places */
@@ -472,9 +482,9 @@ function basketball(ctx, x, y, color, r) {
     block(ctx, cx, by, kw, kh, cl);
     text(ctx, fmt(mm.v, 1) + ' kg', cx, by, C('mass'), { size: 23, weight: 600, align: 'center' });
     /* the two forces on the block, from a dot beside the scene */
-    const dx = cx + 310, dy = 330, L = w * KW;
-    arrow(ctx, dx, dy, dx, dy + L, cf, 6); lb.add('w = ' + sig3(w) + ' N', dx, dy + Math.max(L, 20), 1, 0, cf, 23, 16);
-    arrow(ctx, dx, dy, dx, dy - L, cf, 6); lb.add('N = ' + sig3(w) + ' N', dx, dy - Math.max(L, 20), 1, 0, cf, 23, 16);
+    const dx = cx + 290, dy = 330, L = w * KW;
+    arrow(ctx, dx, dy, dx, dy + L, cf, 6); lb.add('w = ' + sig3(w) + ' N', dx, dy + Math.max(L, 20), -1, 0, cf, 23, 16);
+    arrow(ctx, dx, dy, dx, dy - L, cf, 6); lb.add('N = ' + sig3(w) + ' N', dx, dy - Math.max(L, 20), -1, 0, cf, 23, 16);
     dot(ctx, dx, dy, cl, true, 6);
     hits.push({ x: dx, y: dy + L / 2 + 8, r: 24, name: 'w, the weight of the block' }, { x: dx, y: dy - L / 2 - 8, r: 24, name: 'N, the scale pushing up on the block' },
       { x: cx, y: by, r: 50, name: 'the block, ' + fmt(mm.v, 1) + ' kg wherever it goes' }, { x: cx, y: fy - 60, r: 80, name: 'a scale built for Earth: it prints the weight divided by 9.80 m/s²' });
@@ -483,7 +493,7 @@ function basketball(ctx, x, y, color, r) {
     const { ctx } = begin(d.c);
     const lb = F.labeller(ctx, 600), w = mm.v * gg.v;
     hits = [];
-    panel(ctx, 300, G, lb); panel(ctx, 980, gg.v, lb);
+    panel(ctx, 290, G, lb); panel(ctx, 990, gg.v, lb);
     line(ctx, 700, 40, 700, 560, PAL.rule, 2);
     lb.flush();
     readout(d.readout, `\\kwgt = \\km\\kg = (${fmt(mm.v, 1)}\\ \\text{kg})(${gtxt(gg.v)}\\ \\text{m/s}^2) = ${sig3(w)}\\ \\text{N} \\\\ \\text{dial reading} = \\frac{\\kwgt}{9.80\\ \\text{m/s}^2} = \\frac{${sig3(w)}\\ \\text{N}}{9.80\\ \\text{m/s}^2} = ${sig3(w / G)}\\ \\text{kg}`);

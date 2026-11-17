@@ -33,15 +33,30 @@ function over(ctx, x1, y1, x2, y2, color, a) {
    reach ahead past the head. Limbs are round-ended bands, the near one drawn over the far one. */
 function swimmerBody(ctx, foot, hipX, y, c) {
   const limb = (pts, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); };
-  const knee = (fy, hy) => { const dx = hipX - foot, dy = hy - fy, Ld = Math.hypot(dx, dy), l = 101, h = Math.sqrt(Math.max(0, l * l - (Ld * Ld) / 4)); return [foot + dx / 2 - (dy / Ld) * h, fy + dy / 2 - (-dx / Ld) * h * -1]; };
+  const knee = (fy, hy) => { const dx = hipX - foot, dy = hy - fy, Ld = Math.hypot(dx, dy), l = 78, h = Math.sqrt(Math.max(0, l * l - (Ld * Ld) / 4)); return [foot + dx / 2 - (dy / Ld) * h, fy + dy / 2 - (-dx / Ld) * h * -1]; };
   const far = alpha(c, 0.55), sh = hipX - 122;
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  limb([[foot - 8, y + 46], knee(y + 46, y + 8), [hipX, y + 8]], 19, far);
+  limb([[foot - 8, y + 34], knee(y + 34, y + 8), [hipX, y + 8]], 19, far);
   limb([[sh, y + 6], [sh - 150, y + 10]], 13, far);
   limb([[hipX, y + 2], [sh, y - 2]], 46, c);
-  limb([[foot - 8, y + 30], knee(y + 30, y + 4), [hipX, y + 4]], 21, c);
+  limb([[foot - 8, y + 20], knee(y + 20, y + 4), [hipX, y + 4]], 21, c);
   ctx.fillStyle = c; ctx.beginPath(); ctx.arc(sh - 52, y - 4, 27, 0, TAU); ctx.fill();
   limb([[sh, y - 6], [sh - 156, y - 2]], 14, c);
+  ctx.restore();
+}
+/* a person leaning into a push, feet on the floor at y and hands on the grip (gx, gy): round-ended
+   bands for the limbs, the far leg and arm paler and drawn first */
+function pusher(ctx, x, y, gx, gy, c) {
+  const limb = (pts, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); };
+  const mid = (a, b, l, side) => { const dx = b[0] - a[0], dy = b[1] - a[1], Ld = Math.hypot(dx, dy), h = Math.sqrt(Math.max(0, l * l - (Ld * Ld) / 4)); return [a[0] + dx / 2 + (dy / Ld) * h * side, a[1] + dy / 2 - (dx / Ld) * h * side]; };
+  const hip = [x + 6, y - 172], sh = [x + 70, y - 268], back = [x - 84, y], front = [x + 26, y], far = alpha(c, 0.55);
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  limb([hip, mid(hip, back, 96, -1), back, [back[0] + 22, y - 2]], 21, far);
+  limb([sh, mid(sh, [gx, gy + 6], 56, -1), [gx, gy + 6]], 14, far);
+  limb([hip, sh], 50, c);
+  limb([hip, mid(hip, front, 92, 1), front, [front[0] + 24, y - 2]], 22, c);
+  ctx.fillStyle = c; ctx.beginPath(); ctx.arc(sh[0] + 26, sh[1] - 50, 29, 0, TAU); ctx.fill();
+  limb([sh, mid(sh, [gx, gy], 56, -1), [gx, gy]], 15, c);
   ctx.restore();
 }
 /* the key every scene of force pairs shares */
@@ -55,7 +70,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
    the figure has a clock and gets the scrubber.
 ===================================================================== */
 (function () {
-  const d = sim('sim-swimmer', 590);
+  const d = sim('sim-swimmer', 604);
   const sys = choice(d.controls, { label: '\\text{system}', options: [{ value: 'swimmer', label: 'the swimmer' }, { value: 'wall', label: 'the wall' }], value: 'swimmer', aria: 'system of interest' });
   const Fp = ctl(d.controls, { label: '\\kF', cls: 'force', min: 100, max: 600, step: 10, value: 350, unit: 'N', dec: 0, onInput: reset, aria: 'force of each of the pair' });
   const mm = ctl(d.controls, { label: '\\km', cls: 'mass', min: 40, max: 90, step: 1, value: 60, unit: 'kg', dec: 0, onInput: reset, aria: 'mass of the swimmer' });
@@ -83,32 +98,32 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
         : '$\\kFfeetwall$ acts on the wall, so it cannot cancel the force on her');
     pairKey(ctx, { l: 28, r: 780, t: 86, b: 200 }, cf);
     /* the pool: the water's surface, the wall she pushes off, the distance of her feet from it */
-    line(ctx, 40, 150, WALL, 150, PAL.muted, 3, [22, 14]);
-    text(ctx, 'the water’s surface', 44, 172, PAL.muted, { size: 17 });
-    fixed(ctx, WALL, 120, WR - WALL, 380);
-    ctx.save(); ctx.strokeStyle = F.ref('wall'); ctx.lineWidth = 3; ctx.strokeRect(WALL, 120, WR - WALL, 380); ctx.restore();
-    text(ctx, 'the wall', (WALL + WR) / 2, 146, F.ref('wall'), { size: 18, weight: 600, align: 'center', bg: PAL.panel });
-    scale(ctx, SX, 0, 3, 1, 530, 'm', 1);
+    line(ctx, 40, 180, WALL, 180, PAL.muted, 3, [22, 14]);
+    text(ctx, 'the water’s surface', 44, 160, PAL.muted, { size: 17 });
+    fixed(ctx, WALL, 150, WR - WALL, 370);
+    ctx.save(); ctx.strokeStyle = F.ref('wall'); ctx.lineWidth = 3; ctx.strokeRect(WALL, 150, WR - WALL, 370); ctx.restore();
+    text(ctx, 'the wall', (WALL + WR) / 2, 176, F.ref('wall'), { size: 18, weight: 600, align: 'center', bg: PAL.panel });
+    scale(ctx, SX, 0, 3, 1, 548, 'm', 1);
     /* the system of interest, round her or round the wall */
-    const her = [hip - 300, Y0 - 66, foot + 4, Y0 + 84], B = sys.mix((u) => (u === 'swimmer' ? her : [WALL - 8, 112, WR + 8, 508]));
+    const her = [hip - 300, Y0 - 66, foot + 4, Y0 + 118], B = sys.mix((u) => (u === 'swimmer' ? her : [WALL - 8, 142, WR + 8, 528]));
     boundary(ctx, B[0], B[1], B[2], B[3]);
-    text(ctx, 'the system of interest', onHer ? Math.max(B[0] + 8, 36) : B[0] - 6, B[1] - 17, PAL.muted, { size: 18, weight: 600, align: onHer ? 'left' : 'right', bg: PAL.panel });
+    text(ctx, 'the system of interest', Math.max(B[0] + 8, 36), B[1] - 17, PAL.muted, { size: 18, weight: 600, bg: PAL.panel });
     /* the swimmer, lying feet to the wall: her legs straighten through the push, then she glides streamlined */
     swimmerBody(ctx, foot, hip, Y0, F.ref('swimmer'));
     /* the pair of forces, each drawn on the body it acts on, to one scale */
     if (pushing) {
-      const yF = Y0 + 13 * S, aH = sys.mix((u) => (u === 'swimmer' ? 1 : DIM)), aW = sys.mix((u) => (u === 'wall' ? 1 : DIM));
+      const yF = Y0 + 27, aH = sys.mix((u) => (u === 'swimmer' ? 1 : DIM)), aW = sys.mix((u) => (u === 'wall' ? 1 : DIM));
       over(ctx, WALL, yF, WALL - L, yF, cf, aH);
       over(ctx, WALL, yF, WALL + L, yF, cf, aW);
-      F.faded(ctx, Math.max(aH, 0.8), [0, 0], () => { line(ctx, WALL - 26, yF + 12, WALL - 40, Y0 + 96, alpha(cf, 0.5), 1.5, [5, 6]); sym(ctx, '$\\kFwallfeet$', WALL - 14, Y0 + 110, { align: 'right' }); });
+      F.faded(ctx, Math.max(aH, 0.8), [0, 0], () => { sym(ctx, '$\\kFwallfeet$', WALL - 14, Y0 + 142, { align: 'right' }); });
       F.faded(ctx, Math.max(aW, 0.8), [0, 0], () => sym(ctx, '$\\kFfeetwall$', WALL + 12, yF + 34));
     }
     /* her acceleration while the wall pushes, and her velocity */
-    if (pushing) { arrow(ctx, hip, 446, hip - r.a * KA, 446, C('acceleration'), 5); text(ctx, 'a = ' + fmt(r.a, 2) + ' m/s²', hip - r.a * KA - 12, 446, C('acceleration'), { size: 20, weight: 600, align: 'right' }); }
-    if (v > 0.05) { arrow(ctx, hip, 484, hip - v * KV, 484, C('velocity'), 5); text(ctx, 'v = ' + fmt(v, 2) + ' m/s', hip - v * KV - 12, 484, C('velocity'), { size: 20, weight: 600, align: 'right' }); }
+    if (pushing) { arrow(ctx, hip, 472, hip - r.a * KA, 472, C('acceleration'), 5); text(ctx, 'a = ' + fmt(r.a, 2) + ' m/s²', hip - r.a * KA - 12, 472, C('acceleration'), { size: 20, weight: 600, align: 'right' }); }
+    if (v > 0.05) { arrow(ctx, hip, 506, hip - v * KV, 506, C('velocity'), 5); text(ctx, 'v = ' + fmt(v, 2) + ' m/s', hip - v * KV - 12, 506, C('velocity'), { size: 20, weight: 600, align: 'right' }); }
     /* the free-body diagram of the chosen system, the forces at the scene's scale */
     const PL = 985, fx = 1220, fy = 340, w = mm.v * G;
-    panel(ctx, PL, 104, 1384, 566, onHer ? 'Free-body diagram of the swimmer' : 'Forces on the wall along her push');
+    panel(ctx, PL, 104, 1384, 580, onHer ? 'Free-body diagram of the swimmer' : 'Forces on the wall along her push');
     sys.only(ctx, 'swimmer', () => {
       arrow(ctx, fx, fy, fx, fy - w * KF, cf, 5); text(ctx, 'BF = ' + fmt(w, 0) + ' N', fx + 16, fy - w * KF + 10, cf, { size: 20, weight: 600 });
       arrow(ctx, fx, fy, fx, fy + w * KF, cf, 5); text(ctx, 'w = ' + fmt(w, 0) + ' N', fx + 16, fy + w * KF - 10, cf, { size: 20, weight: 600 });
@@ -119,7 +134,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     sys.only(ctx, 'wall', () => {
       if (pushing) {
         arrow(ctx, fx, fy, fx + L, fy, cf, 5); sym(ctx, '$\\kFfeetwall$', fx + 14, fy - 26, { bg: false });
-        arrow(ctx, fx, fy, fx - L, fy, cf, 5); text(ctx, 'F_{pool on wall}', fx - 14, fy - 26, cf, { size: 21, weight: 600, align: 'right' });
+        arrow(ctx, fx, fy, fx - L, fy, cf, 5); text(ctx, 'F_{pool on wall}', fx - 14, fy + 28, cf, { size: 21, weight: 600, align: 'right' });
         text(ctx, 'The rest of the pool holds the wall,', (PL + 1384) / 2, fy + 70, PAL.muted, { size: 17, align: 'center' });
         text(ctx, 'so the wall does not move.', (PL + 1384) / 2, fy + 96, PAL.muted, { size: 17, align: 'center' });
       } else text(ctx, 'nothing pushes on the wall now', (PL + 1384) / 2, fy + 70, PAL.muted, { size: 17, align: 'center' });
@@ -187,7 +202,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     arrow(ctx, NOZ, RY, NOZ + L, RY, cf, 5);
     text(ctx, 'thrust', NOZ + 16, RY + 27, cf, { size: 19, weight: 600 });
     over(ctx, NOZ - 6, RY, NOZ - 6 - L, RY, cf, 1);
-    text(ctx, 'the rocket’s force on the gas', Math.max(NOZ - 6 - L / 2, 180), RY - 44, cf, { size: 19, weight: 600, align: 'center', bg: PAL.panel });
+    text(ctx, 'the rocket’s force on the gas', NOZ - 76, RY - 44, cf, { size: 19, weight: 600, align: 'right', bg: PAL.panel });
     F.rich(ctx, ['every 0.2 s, ', [fmt(lump, 2) + ' kg', C('mass')], ' of gas leaves at ', [fmt(vg.v, 0) + ' m/s', C('velocity')]], 40, RY + 62, { size: 18 });
     if (v > 0.2) { arrow(ctx, RX - 60, 336, RX - 60 + v * KV, 336, C('velocity'), 5); text(ctx, 'v = ' + fmt(v, 1) + ' m/s', RX - 60 + v * KV + 12, 336, C('velocity'), { size: 20, weight: 600 }); }
     hits = [{ x: RX, y: RY, r: 90, name: 'the rocket' }, { x: NOZ - 200, y: RY, r: 40, name: 'the exhaust gas' }, { x: 700, y: 400, r: 30, name: 'distance covered since the burn began' }];
@@ -252,15 +267,15 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     boundary(ctx, B[0], B[1], B[2], B[3]);
     text(ctx, me.name, B[0] + 8, B[1] - 17, PAL.muted, { size: 18, weight: 600 });
     cartBody(ctx, F.ref('cart'));
-    F.silhouette(ctx, { x: PX, y: FLOOR, s: 2.5, pose: 'push', color: F.ref('professor'), hands: [{ x: (HX - PX) / 2.5, y: (HY - FLOOR) / 2.5 }, { x: (HX - PX) / 2.5 - 2, y: (HY - FLOOR) / 2.5 + 5 }] });
+    pusher(ctx, PX, FLOOR, HX, HY, F.ref('professor'));
     /* the five forces of the book's drawing, each where it acts, all to one scale */
     const A = sys.mix((x) => SYS[x].on.map((q) => (q ? 1 : DIM))), Lf = Ff.v * KF, Lp = r.Fprof * KF, Lr = fr.v * KF;
-    const lab = (i, s, x, y, align) => F.faded(ctx, Math.max(A[i], 0.5), [0, 0], () => sym(ctx, s, x, y, { align }));
+    const lab = (i, s, x, y, align) => F.faded(ctx, Math.max(A[i], 0.8), [0, 0], () => sym(ctx, s, x, y, { align }));
     over(ctx, PX, FY, PX - Lf, FY, cf, A[0]); lab(0, '$\\kFfoot$', Math.max(PX - Lf / 2, 70), FY + 32, 'center');
     over(ctx, PX, FY, PX + Lf, FY, cf, A[1]); lab(1, '$\\kFfloor$', PX + Lf / 2, FY + 32, 'center');
     over(ctx, HX, HY, HX - Lp, HY, cf, A[2]); lab(2, '$\\kFcart$', HX - 12, HY + 36, 'right');
     over(ctx, HX, HY, HX + Lp, HY, cf, A[3]); lab(3, '$\\kFprof$', HX + 14, HY - 34, 'left');
-    if (Lr >= 2) { over(ctx, WX + Lr, WY, WX, WY, cf, A[4]); lab(4, '$\\kff$', WX + Lr / 2 + 6, WY - 30, 'center'); }
+    if (Lr >= 2) { over(ctx, WX + Lr, WY, WX, WY, cf, A[4]); lab(4, '$\\kff$', WX + Lr + 12, WY, 'left'); }
     /* the free-body diagram of the chosen system: what acts on it from outside, at the scene's scale */
     const PL = 880, PR = 1384, fx = 1070, fy = 292, q = sys.mix((x) => { const p = parts(x, r); return [p.fwd, p.back]; });
     panel(ctx, PL, 104, PR, 716, 'Free-body diagram of ' + me.name);

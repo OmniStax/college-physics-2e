@@ -124,7 +124,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
   /* the ground at one unit to the metre and the arrows at 7.5 units per m/s, so an arrow is as long as the
      ground covered in 7.5 s; the tallest triangle the sliders allow (50 m/s and a 20 m/s tailwind) stays on the map */
   const L = 30, R = 1370, PT = 112, PB = 704, SX = 800, SY = 650, K = 7.5;
-  function T() { const ux = wx(), uy = vp.v + wy(); let t = 9; if (ux > 0.01) t = Math.min(t, (R - 70 - SX) / ux); if (ux < -0.01) t = Math.min(t, (SX - L - 70) / -ux); if (uy > 0.01) t = Math.min(t, (SY - PT - 70) / uy); return t; }
+  function T() { const ux = wx(), uy = vp.v + wy(); let t = 11; if (ux > 0.01) t = Math.min(t, (R - 70 - SX) / ux); if (ux < -0.01) t = Math.min(t, (SX - L - 70) / -ux); if (uy > 0.01) t = Math.min(t, (SY - PT - 70) / uy); return t; }
   const cy = cycle(T, 1.2);
   function reset() { cy.reset(); }
   let hits = [];
@@ -162,7 +162,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     const off = Math.atan2(ux, uy) / DEG;   /* east of north */
     if (vt > 0.3 && Math.abs(off) > 3 && Math.abs(off) < 177) F.angleArc(ctx, { x: SX, y: SY }, 150, 90 * DEG, (90 - off) * DEG, fmt(Math.abs(off), 1) + '°', lab, C('angle'));
     lab.flush();
-    if (vw.v > 0.02) F.legend(ctx, { l: 820, r: R - 10, t: PB - 60, b: PB - 6 }, [{ s: 'the plane in still air', draw: (c, x, y) => { c.save(); c.globalAlpha = 0.3; c.translate(x + 22, y + 11); c.rotate(-Math.PI / 2); F.plane(c, 0, 0, cp, 0.32); c.restore(); } }, { s: 'how far the air has carried it', color: ca, dash: [6, 8], w: 3 }], { corner: 'br', row: true, panel: true, size: 19 });
+    if (vw.v > 0.02) F.legend(ctx, { l: 820, r: R - 10, t: PB - 60, b: PB - 6 }, [{ s: 'the plane in still air', kind: 'dot', color: alpha(cp, 0.35) }, { s: 'how far the air has carried it', color: ca, dash: [6, 8], w: 3 }], { corner: 'br', row: true, panel: true, size: 19 });
     hits = [{ x: px, y: py, r: 50, name: 'the plane, pointed north' }];
     if (vw.v > 0.02) hits.push({ x: gx, y: gy, r: 40, name: 'where the plane would be in still air' });
     /* what the numbers say */
@@ -214,7 +214,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     if (Math.abs(b.v) > 4) F.angleArc(ctx, { x: Ox, y: Oy }, 190, 90 * DEG, a * DEG, fmt(Math.abs(b.v), 1) + '°', lab, ca);
     lab.flush();
     /* the subtraction, component by component, as the example does it */
-    const TX = 880, TY = 250, cols = [TX + 250, TX + 420], rowH = 62;
+    const TX = 860, TY = 330, cols = [TX + 250, TX + 420], rowH = 62;
     title(ctx, 'components (m/s)', TX, TY - 56);
     text(ctx, 'x (east)', cols[0], TY, PAL.muted, { size: 20, align: 'right' }); text(ctx, 'y (north)', cols[1], TY, PAL.muted, { size: 20, align: 'right' });
     const rows = [['v_{tot}', sf(vt.v) + ' m/s at ' + fmt(a, 1) + '°', ux, uy], ['− v_p', sf(vp.v) + ' m/s north', 0, vp.v], ['= v_w', 'the wind', vwx, vwy]];

@@ -58,7 +58,7 @@ function hook(ctx, x, y, color) {
     /* ---- seen from above: each pusher behind the third skater on the line of its push, hands on her,
        the push drawn along its arms and ending where the hands touch; pushers that push nearly the
        same way stand side by side ---- */
-    const o = { x: 235, y: 300 - 40 * Math.max(0, Math.cos(th)) };
+    const o = { x: 235, y: 320 - 30 * Math.max(0, Math.cos(th)) };
     const pusher = (a, side, f, color, name) => {
       const u = { x: Math.cos(a), y: -Math.sin(a) }, n = { x: -Math.sin(a), y: -Math.cos(a) }, off = 44 * Math.max(0, Math.cos(th)) * side;
       const base = { x: o.x + n.x * off, y: o.y + n.y * off }, c = { x: base.x - u.x * ARM, y: base.y - u.y * ARM };
@@ -160,8 +160,8 @@ function hook(ctx, x, y, color) {
     /* ---- (c) the spring scale: its zero under the relaxed end, its pointer under the pulled end ---- */
     text(ctx, '(c) a spring scale, marked in standard units', WALL - 40, 468, PAL.muted, { size: 17 });
     const FX = (u) => REST + u * SC, ay = 555;
-    line(ctx, REST, 200, REST, 520, alpha(PAL.ink, 0.35), 2, [4, 8]);
-    if (r > 0) line(ctx, pulled, 380, pulled, 520, alpha(C('position'), 0.6), 2, [4, 8]);
+    line(ctx, REST, 200, REST, 496, alpha(PAL.ink, 0.35), 2, [4, 8]);
+    if (r > 0) line(ctx, pulled, 380, pulled, 496, alpha(C('position'), 0.6), 2, [4, 8]);
     ctx.save(); ctx.fillStyle = PAL.soft; ctx.strokeStyle = PAL.muted; ctx.lineWidth = 3; ctx.lineJoin = 'round';
     ctx.fillRect(FX(0) - 100, 490, FX(9) + 30 - (FX(0) - 100), 110); ctx.strokeRect(FX(0) - 100, 490, FX(9) + 30 - (FX(0) - 100), 110);
     ctx.fillStyle = PAL.panel; ctx.lineWidth = 2; ctx.fillRect(FX(0) - 76, ay - 20, FX(9) + 16 - (FX(0) - 76), 40); ctx.strokeRect(FX(0) - 76, ay - 20, FX(9) + 16 - (FX(0) - 76), 40);

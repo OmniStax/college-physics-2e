@@ -39,8 +39,8 @@ function hammer(ctx, x, y, color, s = 1) {
   /* the steel: the neck, the head with its flared face to the right and the claw curving down to the left */
   ctx.fillStyle = color; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(-5, -58); ctx.lineTo(5, -58); ctx.lineTo(6, -84); ctx.lineTo(-6, -84); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(-10, -104); ctx.lineTo(20, -104); ctx.lineTo(22, -100); ctx.lineTo(30, -102); ctx.lineTo(32, -100); ctx.lineTo(32, -82); ctx.lineTo(30, -80); ctx.lineTo(22, -82); ctx.lineTo(20, -80); ctx.lineTo(-8, -82);
-  ctx.quadraticCurveTo(-28, -84, -37, -62); ctx.lineTo(-44, -64); ctx.quadraticCurveTo(-36, -100, -10, -104); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-8, -106); ctx.lineTo(18, -106); ctx.lineTo(21, -109); ctx.lineTo(35, -109); ctx.lineTo(35, -79); ctx.lineTo(21, -79); ctx.lineTo(18, -83); ctx.lineTo(-8, -85);
+  ctx.quadraticCurveTo(-30, -84, -45, -54); ctx.quadraticCurveTo(-50, -100, -8, -106); ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.restore();
 }
 /* a feather standing on its quill at (x, y), about 96 tall at s = 1 */
@@ -84,7 +84,7 @@ function feather(ctx, x, y, color, s = 1) {
     hits = [];
     vscale(ctx, 96, Y, 0, 2, 0.5, 1, 'm');
     P.forEach((p, i) => {
-      const xh = p.l + 105, xf = p.r - 130, fh = fall(p.g), ff = i === 0 ? Math.min(h.v, airFall(tau)) : fh;
+      const xh = p.l + 168, xf = p.r - 112, fh = fall(p.g), ff = i === 0 ? Math.min(h.v, airFall(tau)) : fh;
       ctx.save(); ctx.strokeStyle = PAL.rule; ctx.lineWidth = 2; ctx.strokeRect(p.l, 116, p.r - p.l, floorY - 116); ctx.restore();
       line(ctx, p.l, floorY, p.r, floorY, PAL.ink, 4);
       line(ctx, p.l, Y(h.v), p.r, Y(h.v), PAL.muted, 2, [8, 8]);
@@ -100,7 +100,7 @@ function feather(ctx, x, y, color, s = 1) {
       const tl = i === 2 ? tm : te;
       if (tau >= tl - 1e-9) { text(ctx, fmt(tl, 2) + ' s', xh, floorY - 108, C('time'), { size: 20, weight: 600, align: 'center', bg: PAL.panel }); if (i) text(ctx, fmt(tl, 2) + ' s', xf, floorY - 104, C('time'), { size: 20, weight: 600, align: 'center', bg: PAL.panel }); }
     });
-    text(ctx, 'h = ' + fmt(h.v, 1) + ' m', 108, Y(h.v) - 20, C('position'), { size: 20, weight: 600, align: 'right', bg: PAL.panel });
+    text(ctx, 'h = ' + fmt(h.v, 1) + ' m', P[0].l + 10, Y(h.v) - 20, C('position'), { size: 20, weight: 600 });
     topline(ctx, tau >= tm - 1e-9 ? 'With no air the hammer and the feather land together, after ' + fmt(te, 2) + ' s on Earth and ' + fmt(tm, 2) + ' s on the Moon.'
       : tau >= te - 1e-9 ? 'At ' + fmt(tau, 2) + ' s the pair in the vacuum has landed together, and on the Moon the two are still side by side, ' + fmt(h.v - fall(GM), 2) + ' m up.'
       : 'At ' + fmt(tau, 2) + ' s the hammer and the feather are side by side wherever there is no air. In air the feather is left behind.');
@@ -290,7 +290,7 @@ function feather(ctx, x, y, color, s = 1) {
     hits = [];
     vscale(ctx, SX, Y, YLO, 0, 0.2, 1);
     text(ctx, 'y (m)', SX - 40, sTop - 64, C('position'), { size: 20, weight: 600 });
-    F.hand(ctx, bx - 118, Y(0) - 34, { aim: [1, 0.06], view: 'side', curl: 0.35, s: 0.95, color: PAL.muted });
+    F.hand(ctx, bx - 118, Y(0) - 34, { aim: [1, 0.06], view: 'side', curl: 0.35, s: 0.95 });
     line(ctx, bx, Y(0), bx, Y(YLO), PAL.rule, 1.5);
     const A = axes(ctx, box, [0, TMAX], [YLO, 0], { xl: 't (s)', xc: C('time'), yl: 'y (m)', yc: C('position'), nx: 5, ny: 6 });
     /* where the fall is timed to */
@@ -328,7 +328,7 @@ function feather(ctx, x, y, color, s = 1) {
     const where = gg > 9.83 ? ', more than anywhere on Earth' : gg < 9.78 ? ', less than anywhere on Earth' : '';
     topline(ctx, done ? 'A fall of ' + fmt(-yF.v, 4) + ' m in ' + fmt(tF.v, 5) + ' s gives g = ' + fmt(gg, 4) + ' m/s²' + where + '.'
       : 'After ' + fmt(tau, 2) + ' s the ball has fallen ' + fmt(-y, 3) + ' m and is moving at ' + fmt(v, 2) + ' m/s.');
-    readout(d.readout, `\\ka = \\frac{2(\\ky - \\kyo)}{\\kt^2} = \\frac{2(${stex(yF.v, 4)}\\ \\text{m} - 0)}{(${fmt(tF.v, 5)}\\ \\text{s})^2} = ${stex(a, 4)}\\ \\text{m/s}^2`);
+    readout(d.readout, `\\ka = \\dfrac{2(\\ky - \\kyo)}{\\kt^2} = \\dfrac{2(${stex(yF.v, 4)}\\ \\text{m} - 0)}{(${fmt(tF.v, 5)}\\ \\text{s})^2} = ${stex(a, 4)}\\ \\text{m/s}^2`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => tF.v / 5), draw });
 })();
@@ -351,13 +351,14 @@ function feather(ctx, x, y, color, s = 1) {
   const cy = cycle(() => Th.v, 1.8);
   function reset() { cy.reset(); }
   /* fixed scales from the slider's maximum of 5 s: 125 m of depth, which holds ½g(5 s)² = 122.5 m */
-  const DMAX = 125, TMAX = 5, box = { l: 660, r: 1340, t: 240, b: 700 }, wl = 330, wr = 420, sx = 375;
+  const DMAX = 125, TMAX = 5, box = { l: 660, r: 1340, t: 240, b: 700 }, wl = 345, wr = 405, sx = 375;
   const Y = (m) => box.b - ((box.b - box.t) * (m + DMAX)) / DMAX;
   let hits = [];
   F.hover(d.stage, () => hits);
   function draw() {
     const { ctx } = begin(d.c);
-    const tau = cy.now(), dd = depth(), tf = Math.sqrt((2 * dd) / G), ts = Th.v - tf, naive = 0.5 * G * Th.v * Th.v, done = tau >= Th.v - 1e-9;
+    /* the fall time to the millisecond, and the depth that fall gives, so the readout is true as written */
+    const tau = cy.now(), tf = Math.round(Math.sqrt((2 * depth()) / G) * 1000) / 1000, dd = 0.5 * G * tf * tf, ts = Th.v - tf, naive = 0.5 * G * Th.v * Th.v, done = tau >= Th.v - 1e-9;
     const falling = tau < tf, yRock = falling ? -0.5 * G * tau * tau : -dd, ySound = falling ? null : Math.min(0, -dd + VS * (tau - tf));
     const A = axes(ctx, box, [0, TMAX], [-DMAX, 0], { xl: 't (s)', xc: C('time'), yl: 'height (m)', yc: C('position'), nx: 5, ny: 5 });
     /* the ground, and the shaft cut into it down to the bottom */
@@ -401,7 +402,7 @@ function feather(ctx, x, y, color, s = 1) {
     topline(ctx, done ? 'The rock is heard ' + fmt(Th.v, 2) + ' s after it is let go: ' + fmt(tf, 2) + ' s of fall and ' + fmt(ts, 2) + ' s for the sound to climb ' + fmt(dd, 1) + ' m.'
       : falling ? 'After ' + fmt(tau, 2) + ' s the rock is still falling, ' + fmt(dd + yRock, 1) + ' m above the bottom.'
       : 'The rock landed at ' + fmt(tf, 2) + ' s. Its sound is on the way up, ' + fmt(-ySound, 1) + ' m below the listener.');
-    readout(d.readout, `\\begin{aligned} d &= \\tfrac{1}{2}\\kg\\kt_{\\text{fall}}^2 = \\tfrac{1}{2}(${fmt(G, 2)}\\ \\text{m/s}^2)(${fmt(tf, 2)}\\ \\text{s})^2 = ${fmt(dd, 1)}\\ \\text{m} \\\\ \\kt_{\\text{sound}} &= \\frac{d}{\\kv_{\\text{s}}} = \\frac{${fmt(dd, 1)}\\ \\text{m}}{${fmt(VS, 0)}\\ \\text{m/s}} = ${fmt(ts, 2)}\\ \\text{s} \\end{aligned}`,
+    readout(d.readout, `\\begin{aligned} d &= \\tfrac{1}{2}\\kg\\kt_{\\text{fall}}^2 = \\tfrac{1}{2}(${fmt(G, 2)}\\ \\text{m/s}^2)(${fmt(tf, 3)}\\ \\text{s})^2 = ${fmt(dd, 1)}\\ \\text{m} \\\\ \\kt_{\\text{sound}} &= \\frac{d}{\\kv_{\\text{s}}} = \\frac{${fmt(dd, 1)}\\ \\text{m}}{${fmt(VS, 0)}\\ \\text{m/s}} = ${fmt(ts, 2)}\\ \\text{s} \\end{aligned}`,
       'Taking the whole ' + fmt(Th.v, 1) + ' s as the fall gives $\\tfrac{1}{2}\\kg\\kt^2$ = ' + fmt(naive, 1) + ' m, which is ' + fmt(naive - dd, 1) + ' m too deep.');
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => Th.v / 5.5), draw });

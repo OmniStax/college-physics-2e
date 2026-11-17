@@ -39,6 +39,22 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
   return [a, b];
 }
 
+/* the rise and the run between the two ends of a tangent, each labelled where the triangle leaves room: the
+   run under its line (above it at the right-hand corner when the line lies along the time axis), the rise to
+   the right of its line (inside the corner when there is no room to the right, above it when the tangent is level) */
+function riseRun(ctx, X, Y, box, p1, p2, runLabel, riseLabel, runColor, riseColor, rightLimit) {
+  const xa = X(p1[0]), xb = X(p2[0]), ya = Y(p1[1]), yb = Y(p2[1]);
+  drop(ctx, xa, ya, xb, ya, runColor); drop(ctx, xb, ya, xb, yb, riseColor);
+  const o = { weight: 600, bg: alpha(PAL.panel, 0.85) };
+  const low = ya + 26 > box.b - 12, flat = ya - yb < 34;
+  const right = xb + 16 + F.measure(ctx, riseLabel, { size: 22, weight: 600 }) <= rightLimit;
+  if (flat) text(ctx, riseLabel, Math.min(xb, rightLimit - 10), yb - 26, riseColor, { ...o, align: 'right' });
+  else if (right) text(ctx, riseLabel, xb + 16, (ya + yb) / 2, riseColor, { ...o, align: 'left' });
+  else text(ctx, riseLabel, xb - 16, ya - (low ? 52 : 24), riseColor, { ...o, align: 'right' });
+  if (low) text(ctx, runLabel, xb - 16, ya - 24, runColor, { ...o, align: 'right' });
+  else text(ctx, runLabel, (xa + xb) / 2, ya + 26, runColor, { ...o, align: 'center' });
+}
+
 /* =====================================================================
    FIGURE 2.45: the jet car's position against time at constant velocity.
    A straight line with the intercept x₀ and the slope v̄ on sliders, and
@@ -71,7 +87,8 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
     triangle(ctx, X, Y, [t1.v, xa], [t2.v, xb], 'Δt = ' + fmt(dt, 2) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), box, lab);
     drop(ctx, X(t1.v), Y(xa), X(t1.v), box.b, C('time')); drop(ctx, X(t2.v), Y(xb), X(t2.v), box.b, C('time'));
     P1.draw(ctx, ax, C('position')); P2.draw(ctx, ax, C('position'));
-    lab.add('(' + fmt(t1.v, 2) + ' s, ' + fmt(xa, 0) + ' m)', X(t1.v), Y(xa), 0.6, 1, PAL.ink, 20, 30);
+    const lowP = Y(xa) > box.b - 80;   /* near the time axis the first point is named above the line */
+    lab.add('(' + fmt(t1.v, 2) + ' s, ' + fmt(xa, 0) + ' m)', X(t1.v), Y(xa), 0.6, lowP ? -1 : 1, PAL.ink, 20, 30);
     lab.add('(' + fmt(t2.v, 2) + ' s, ' + fmt(xb, 0) + ' m)', X(t2.v), Y(xb), -0.6, -1, PAL.ink, 20, 30);
     lab.flush();
     headline(ctx, vb.v > 0 ? 'Any two points on the line give the same slope: ' + fmt(dx, 0) + ' m ÷ ' + fmt(dt, 2) + ' s = ' + fmt(vb.v, 0) + ' m/s.'
@@ -193,12 +210,7 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
     /* the tangent, drawn a little past its ends and through Q */
     const lo = Math.min(ta, tQ.v) - 1.2, hi = Math.max(tb, tQ.v) + 1.2;
     clipped(ctx, box, () => line(ctx, X(lo), Y(tan(lo)), X(hi), Y(tan(hi)), PAL.ink, 3));
-    /* the run along the bottom of the triangle and the rise up its right side */
-    drop(ctx, X(ta), Y(x1), X(tb), Y(x1), C('time')); drop(ctx, X(tb), Y(x1), X(tb), Y(x2), C('position'));
-    const riseLabel = 'Δx = ' + fmt(dx, 0) + ' m', rw = F.measure(ctx, riseLabel, { size: 22 });
-    const right = X(tb) + 16 + rw <= 1000;
-    text(ctx, riseLabel, X(tb) + (right ? 16 : -16), right ? (Y(x1) + Y(x2)) / 2 : Y(x1) - 22, C('position'), { align: right ? 'left' : 'right', weight: 600, bg: alpha(PAL.panel, 0.85) });
-    text(ctx, 'Δt = ' + fmt(dt, 1) + ' s', (X(ta) + X(tb)) / 2 - (right ? 0 : 90), Y(x1) + 26, C('time'), { align: 'center', weight: 600, bg: alpha(PAL.panel, 0.85) });
+    riseRun(ctx, X, Y, box, [ta, x1], [tb, x2], 'Δt = ' + fmt(dt, 1) + ' s', 'Δx = ' + fmt(dx, 0) + ' m', C('time'), C('position'), 1000);
     E1.draw(ctx, ax, PAL.ink); E2.draw(ctx, ax, PAL.ink);
     PQ.draw(ctx, ax, F.ref('point-q'));
     text(ctx, 'Q', X(tQ.v) - 18, Y(xQ) - 28, F.ref('point-q'), { align: 'right', weight: 600, size: 24 });
@@ -266,14 +278,10 @@ function onGraph(A, B, tq, yq, s, ylo, yhi, gap) {
     for (const t of MARKS) dot(ctx, g1.X(t), g1.Y(vel(t)), C('velocity'), true, 5);
     const lo = Math.min(ta, tQ.v) - 2, hi = Math.max(tb, tQ.v) + 2;
     clipped(ctx, b1, () => line(ctx, g1.X(lo), g1.Y(tan(lo)), g1.X(hi), g1.Y(tan(hi)), PAL.ink, 3));
-    const lab = labeller(ctx, 820);
-    lab.block(b1.l, b1.b, b1.r, b1.b + 40); lab.block(b1.l - 70, b1.t - 30, b1.l, b1.b); lab.block(g1.X(tQ.v) - 16, g1.Y(vQ) - 16, g1.X(tQ.v) + 16, g1.Y(vQ) + 16);
-    triangle(ctx, g1.X, g1.Y, [ta, v1], [tb, v2], 'Δt = ' + fmt(dt, 1) + ' s', 'Δv = ' + fmt(dv, 0) + ' m/s', C('time'), C('velocity'), b1, lab);
+    riseRun(ctx, g1.X, g1.Y, b1, [ta, v1], [tb, v2], 'Δt = ' + fmt(dt, 1) + ' s', 'Δv = ' + fmt(dv, 0) + ' m/s', C('time'), C('velocity'), b1.r + 150);
     drop(ctx, g1.X(tQ.v), b1.t, g1.X(tQ.v), b2.b, C('time'));
     E1.draw(ctx, g1, PAL.ink); E2.draw(ctx, g1, PAL.ink);
     PQ.draw(ctx, g1, C('velocity'));
-    lab.add('v = ' + fmt(vQ, 0) + ' m/s', g1.X(tQ.v), g1.Y(vQ), tQ.v > 45 ? -0.5 : 0.5, 1, C('velocity'), 20, 34);
-    lab.flush();
     rich(ctx, ['slope of the tangent = ', [fmt(aQ, 1) + ' m/s²', C('acceleration')]], b1.r - 24, b1.b - 30, { size: 22, align: 'right' });
     /* (b) the acceleration with the book's markers, falling to zero at 55 s */
     curve(ctx, acc, 0, 70, g2.X, g2.Y, C('acceleration'), 5, 140);

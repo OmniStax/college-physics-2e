@@ -53,7 +53,7 @@ function person(ctx, x, y, h, color) { F.person(ctx, x, y, color, { s: h / 98 })
     ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.05); ctx.fillRect(rx0, rt, rx1 - rx0, G - rt); ctx.restore();
     ctx.save(); ctx.beginPath(); ctx.rect(rx0, rt, rx1 - rx0, G - rt); ctx.clip();
     for (let i = 0; i < Math.ceil(S.v - 1e-9); i++) {
-      F.faded(ctx, i === 0 ? 1 : 0.4, [0, 0], () => person(ctx, rcx, G - i * ph, ph, F.ref('person')));
+      person(ctx, rcx, G - i * ph, ph, i === 0 ? F.ref('person') : F.mixColor(F.ref('person'), PAL.panel, 0.6));
       if (i > 0) line(ctx, rcx - 70, G - i * ph, rcx + 70, G - i * ph, alpha(F.ref('person'), 0.6), 2, [4, 8]);
     }
     ctx.restore();

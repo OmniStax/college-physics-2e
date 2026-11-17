@@ -80,7 +80,7 @@ function stopwatch(ctx, x, y, r, min) {
     if (dist > 0.04) arrow(ctx, X(0), yp, X(dist), yp, light, 5); else dot(ctx, X(dist), yp, light, true, 7);
     /* where the front is: dropped onto the stick, with the time it took */
     const xf = X(dist);
-    line(ctx, xf, yp - 24, xf, sb + 14, C('time'), 2.5, [4, 8]);
+    line(ctx, xf, yp - 24, xf, st + 26, C('time'), 2.5, [4, 8]); line(ctx, xf, sb, xf, sb + 16, C('time'), 2.5, [4, 8]);
     F.rich(ctx, ['t = ', [fmt(tau, 2) + ' ns', C('time')]], Math.min(Math.max(xf, 110), 1290), sb + 34, { align: 'center' });
     if (dist > 0.02) hbracket(ctx, X(0), xf, 112, C('position'), 'd = ' + fmt(dist, 2) + ' m');
     const gap = Math.abs(dEnd - 1);
@@ -154,7 +154,7 @@ function stopwatch(ctx, x, y, r, min) {
     line(ctx, ZL, zy, ZR, zy, PAL.ink, 3);
     for (let k = 1; k <= 10; k++) {
       line(ctx, ZX(k), zy - 12, ZX(k), zy + 12, PAL.ink, 2);
-      if ([1, 2, 3, 4, 5, 7, 10].includes(k)) text(ctx, mark(k, n), ZX(k), zy + 38, PAL.muted, { size: 18, align: 'center' });
+      if ((n > 20 ? [1, 2, 3, 5, 10] : [1, 2, 3, 4, 5, 7, 10]).includes(k)) text(ctx, mark(k, n), ZX(k), zy + 38, PAL.muted, { size: 18, align: 'center' });
     }
     const xm = ZX(m), sci = fmt(m, 1) + ' × ' + pow10(n) + ' m';
     dot(ctx, xm, zy, C('position'), true, 11);
@@ -187,7 +187,7 @@ function stopwatch(ctx, x, y, r, min) {
   /* Fixed frames, from the slider limits: the road is 0 to 30 km, and the fastest trip, 30 km in 15 min,
      is 2 km/min = 120 km/h = 33.3 m/s, the right-hand end of all three speed scales. */
   const KM_MAX = 30, VMAX = 120;
-  const L = 330, R = 1200, X = (km) => L + ((R - L) * km) / KM_MAX;
+  const L = 330, R = 1170, X = (km) => L + ((R - L) * km) / KM_MAX;
   const SL = 380, SR = 1290, S = (kmh) => SL + ((SR - SL) * kmh) / VMAX;
   const ROWS = [
     { y: 412, unit: 'km/min', per: 60, minor: 0.1, major: 0.5, dec: 1 },   /* per: km/h in one of this unit */
@@ -211,7 +211,7 @@ function stopwatch(ctx, x, y, r, min) {
     /* the car, its average speed an arrow from the front bumper, one fixed length per km/h */
     const cx = X(pos);
     car(ctx, cx, ys + 4, F.ref('car'), 1.2);
-    arrow(ctx, cx + 52, ys - 8, cx + 64 + (150 * kmH) / VMAX, ys - 8, C('velocity'), 5);
+    arrow(ctx, cx + 52, ys - 8, cx + 64 + (110 * kmH) / VMAX, ys - 8, C('velocity'), 5);
     /* the stopwatch, one turn of the dial an hour */
     stopwatch(ctx, 120, 204, 62, tau);
     F.rich(ctx, ['t = ', [fmt(tau, 1) + ' min', C('time')]], 120, 300, { align: 'center', size: 24 });
@@ -223,7 +223,7 @@ function stopwatch(ctx, x, y, r, min) {
       for (let k = 0; k * r.minor <= top + 1e-9; k++) {
         const v = k * r.minor, big = Math.abs(v / r.major - Math.round(v / r.major)) < 1e-9, x = S(v * r.per);
         line(ctx, x, r.y, x, r.y + (big ? 13 : 7), PAL.ink, 2);
-        if (big && Math.abs(x - xv) > 1) text(ctx, fmt(v, r.dec), x, r.y + 30, PAL.muted, { size: 17, align: 'center' });
+        if (big && Math.abs(x - xv) > 40) text(ctx, fmt(v, r.dec), x, r.y + 30, PAL.muted, { size: 17, align: 'center' });
       }
       text(ctx, r.unit, SL - 22, r.y, PAL.ink, { size: 20, align: 'right' });
     });

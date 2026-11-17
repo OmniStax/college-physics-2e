@@ -94,7 +94,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
    percent uncertainty δA/A × 100% as a curve. A bag half as heavy with
    the same δA has a band as wide and stands twice as high on the curve.
    Fixed frame: 0 to 11 lb (A up to 10 lb plus δA up to 1 lb) and 0 to
-   50% (δA = 1 lb at A = 2 lb); a point above it is pinned. Still.
+   60% (δA = 1 lb at A = 2 lb is 50%); a point above it is pinned. Still.
 ===================================================================== */
 (function () {
   const d = sim('sim-percent', 600);
@@ -105,7 +105,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
   function draw() {
     const { ctx } = begin(d.c);
     const a = A.v, u = dA.v, half = a / 2, p = (100 * u) / a, wt = C('force');
-    const ax = F.axes(ctx, BOX, [0, 11], [0, 50], { xl: 'weight (lb)', xc: wt, yl: 'percent uncertainty', nx: 11, ny: 5, fy: (v) => fmt(v, 0) + '%' });
+    const ax = F.axes(ctx, BOX, [0, 11], [0, 60], { xl: 'weight (lb)', xc: wt, yl: 'percent uncertainty', nx: 11, ny: 6, fy: (v) => fmt(v, 0) + '%' });
     const X = ax.X, Y = ax.Y;
     /* the line of weight, on the graph's own scale */
     line(ctx, X(0), YS, X(11), YS, PAL.muted, 3);
@@ -114,7 +114,7 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     band(half, 0.16); band(a, 0.3);
     /* the drops from each bag to its point on the curve */
     const drop = (w) => { const y = Math.max(Y(100 * u / w), BOX.t); line(ctx, X(w), YS + 18, X(w), y, alpha(PAL.ink, 0.4), 2, [4, 8]); line(ctx, X(w), y, BOX.l, y, alpha(PAL.ink, 0.4), 2, [4, 8]); };
-    drop(a); if (2 * p <= 50) drop(half);
+    drop(a); if (2 * p <= 60) drop(half);
     F.plot(ctx, ax, (w) => (100 * u) / w, PAL.ink, { x: [0.01, 11] });
     if (Math.abs(a - 5.1) < 0.05) {
       for (const w of WEEKS) line(ctx, X(w), YS - 18, X(w), YS + 18, wt, 3);

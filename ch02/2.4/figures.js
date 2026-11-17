@@ -209,13 +209,13 @@ function topCar(ctx, x, y, heading, color) {
    the signs change, the cars that slow down do not. Finite motion.
 ===================================================================== */
 (function () {
-  const d = sim('sim-four-cars', 660);
-  const dirc = F.choice(d.controls, { label: 'positive direction', options: [{ value: 'right', label: 'right' }, { value: 'left', label: 'left' }], value: 'right', aria: 'positive direction of the x-axis' });
+  const d = sim('sim-four-cars', 700);
+  const dirc = F.choice(d.controls, { label: '\\text{positive direction}', options: [{ value: 'right', label: 'right' }, { value: 'left', label: 'left' }], value: 'right', aria: 'positive direction of the x-axis' });
   /* every car starts at 15 m/s and has 3.0 m/s² for 3.5 s, so the two that slow down are still moving at the end */
   const V0 = 15, A = 3, T = 3.5, KX = 4, KV = 6, KA = 24;
   const cy = cycle(() => T, 1.6);
   const CARS = [['(a)', 1, 1, 'car-a'], ['(b)', 1, -1, 'car-b'], ['(c)', -1, 1, 'car-c'], ['(d)', -1, -1, 'car-d']];   /* letter, way it moves, way it accelerates (1 is to the right), referent */
-  const COL = [{ l: 200, r: 760 }, { l: 820, r: 1380 }], ROWY = [268, 478];
+  const COL = [{ l: 200, r: 760 }, { l: 820, r: 1380 }], ROWY = [262, 496];
   let hits = [];
   F.hover(d.stage, () => hits);
   function draw() {
@@ -246,7 +246,7 @@ function topCar(ctx, x, y, heading, color) {
       next.push({ x: px, y: y - 14, r: 50, name: 'Car ' + lab + ', moving ' + (sv > 0 ? 'right' : 'left') + ' and ' + (speeding ? 'speeding up' : 'slowing down') });
     });
     hits = next;
-    F.legend(ctx, { l: 200, r: 1380, t: 590, b: 652 }, [{ s: 'velocity', color: C('velocity'), w: 5 }, { s: 'velocity at the start', color: alpha(C('velocity'), 0.6), w: 2, dash: [4, 6] }, { s: 'acceleration', color: C('acceleration'), w: 5 }], { corner: 'bottom', row: true, panel: false });
+    F.legend(ctx, { l: 200, r: 1380, t: 628, b: 690 }, [{ s: 'velocity', color: C('velocity'), w: 5 }, { s: 'velocity at the start', color: alpha(C('velocity'), 0.6), w: 2, dash: [4, 6] }, { s: 'acceleration', color: C('acceleration'), w: 5 }], { corner: 'bottom', row: true, panel: false });
     const neg = CARS.filter(([, , sa]) => sa * sgn < 0).map(([lab]) => lab);
     topline(ctx, 'With +x to the ' + (sgn > 0 ? 'right' : 'left') + ', ' + neg[0] + ' and ' + neg[1] + ' have negative acceleration, but the cars slowing down are (b) and (c).');
     /* the two decelerating cars over the whole run, by the section's definition */
@@ -304,7 +304,7 @@ function topCar(ctx, x, y, heading, color) {
       if (r.gap > 0.005) { const bx = X(r.far); line(ctx, bx, Y(r.ab), bx, Y(g.f(r.far)), PAL.ink, 2); line(ctx, bx - 9, Y(g.f(r.far)), bx + 9, Y(g.f(r.far)), PAL.ink, 2); }
       const below = r.ab > 3.6 || (r.ab > -4 && g.f(Math.min(q + 0.2, g.tmax - 0.01)) > r.ab + 0.2);
       text(ctx, 'ā', X(q) + (q > g.tmax - 0.4 ? -18 : 18), Y(r.ab) + (below ? 18 : -18), PAL.ink, { size: 24, weight: 600, align: 'center' });
-      F.rich(ctx, [g.name + '  ā = ', [num(r.ab, 2) + ' m/s²', C('acceleration')], r.gap > 0.005 ? ', and a gets ' : ', and a equals it throughout', r.gap > 0.005 ? [num(r.gap, 2) + ' m/s²', C('acceleration')] : '', r.gap > 0.005 ? ' from it' : ''], (g.box.l + g.box.r) / 2, g.box.b + 100, { size: 20, align: 'center' });
+      F.rich(ctx, [g.name + '  ā = ', [num(r.ab, 2) + ' m/s²', C('acceleration')], r.gap > 0.005 ? ', and a gets as far as ' : ', and a equals it throughout', r.gap > 0.005 ? [num(r.gap, 2) + ' m/s²', C('acceleration')] : '', r.gap > 0.005 ? ' from it' : ''], (g.box.l + g.box.r) / 2, g.box.b + 100, { size: 20, align: 'center' });
       return r;
     });
     headline(ctx, 'From ' + fmt(p, 1) + ' s to ' + fmt(q, 1) + ' s the acceleration stays within ' + num(res[0].gap, 2) + ' m/s² of its average in (a), and within ' + num(res[1].gap, 2) + ' m/s² in (b).');
@@ -352,7 +352,7 @@ function topCar(ctx, x, y, heading, color) {
     const px = X(pos(tau));
     train(ctx, px, y + 6, F.ref('train'), 1);
     if (vv > 0.02) arrow(ctx, px, y - 116, px + vv * 18, y - 116, C('velocity'), 5);
-    text(ctx, 'v = ' + sig3(vv) + ' m/s', px - 14, y - 116, C('velocity'), { weight: 600, align: 'right' });
+    text(ctx, 'v = ' + fmt(vv, 2) + ' m/s', px - 14, y - 116, C('velocity'), { weight: 600, align: 'right' });
     if (phase !== 'steady') arrow(ctx, px, y - 86, px + aa * 100, y - 86, C('acceleration'), 5);
     text(ctx, phase === 'steady' ? 'a = 0' : 'a = ' + sig3s(aa) + ' m/s²', px + (aa > 0 || phase === 'steady' ? -14 : 14), y - 86, C('acceleration'), { weight: 600, align: aa > 0 || phase === 'steady' ? 'right' : 'left' });
     /* the three graphs on one time axis: 0 to 60 s, 0 to 400 m, 0 to 10 m/s, −2 to 1 m/s² */
@@ -375,7 +375,7 @@ function topCar(ctx, x, y, heading, color) {
     const gx = AX[0].X(tau), gy = AX[0].Y(pos(tau));
     line(ctx, gx - hx, gy - hy, gx + hx, gy + hy, C('velocity'), 3);
     G.forEach((g, i) => dot(ctx, AX[i].X(tau), AX[i].Y(i === 2 ? aa : g.f(tau)), PAL.ink, true, 9));
-    F.rich(ctx, ['slope = v = ', [sig3(vv) + ' m/s', C('velocity')]], 1250, BOX[0].t - 24, { size: 20, align: 'right' });
+    F.rich(ctx, ['slope = v = ', [fmt(vv, 2) + ' m/s', C('velocity')]], 1250, BOX[0].t - 24, { size: 20, align: 'right' });
     F.rich(ctx, ['slope = a = ', [phase === 'steady' ? '0' : sig3s(aa) + ' m/s²', C('acceleration')]], 1250, BOX[1].t - 24, { size: 20, align: 'right' });
     const GX = AX[0].X;
     text(ctx, 'speeding up', GX(t1.v / 2), 318, PAL.muted, { size: 18, align: 'center' });
