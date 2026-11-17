@@ -34,6 +34,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -41,40 +44,9 @@
  "exercise_notes": "Bloom levels and concept tags are AI-generated. Answers come from the book's answer key; problems without a keyed answer are left out. Suggested approaches for open questions are AI-written and marked. Numeric answers accept 2% tolerance.",
  "figures": [
   {
-   "id": "sim-notation",
-   "kind": "sim",
-   "draws": [
-    "position",
-    "time"
-   ],
-   "ai": [
-    {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "headline typeset, true minus in the bracket"
-    }
-   ]
-  },
-  {
    "id": "sim-avg",
    "kind": "sim",
    "draws": [
-    "acceleration",
     "position",
     "time",
     "velocity"
@@ -99,6 +71,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "labels on either side of the level, headline typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: two cars, one holding the average, on the text numbers"
     }
    ]
   },
@@ -143,6 +119,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: a runner twice as fast beside the jogger"
     }
    ]
   },
@@ -188,6 +168,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "scene below the headline, end label and minus sign"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: v0 + at as arrows, velocity may turn negative"
     }
    ]
   },
@@ -232,6 +216,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "half-time label on its own row, headline typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: quarter-time marks, gaps 1:3:5:7, Example 2.11 line"
     }
    ]
   },
@@ -277,6 +265,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "light's line under the labels"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: two roads over a speed-position graph"
     }
    ]
   },
@@ -316,6 +308,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "scene lowered, ramp end on hover, caption names the mark"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: clock runs from the negative root, ghost car"
     }
    ]
   },
@@ -968,7 +964,9 @@
      "then": {
       "tex": "\\mk{a}{\\ka} = \\frac{\\mk{dv}{\\kdv}}{\\mk{t}{\\kdt}}",
       "src": "2.4",
-      "uses": [0],
+      "uses": [
+       0
+      ],
       "why": "Average acceleration is $\\kdv/\\kdt$, and when acceleration is constant the average and instantaneous accelerations are equal."
      },
      "steps": [
@@ -1112,11 +1110,15 @@
      "steps": [
       {
        "tex": "\\mk{x}{\\kx} = \\mk{x0}{\\kxo} + \\mk{vb}{\\left(\\frac{\\kvo + \\kv}{2}\\right)}\\mk{t}{\\kt}",
-       "uses": [0]
+       "uses": [
+        0
+       ]
       },
       {
        "tex": "\\mk{x}{\\kx} = \\mk{x0}{\\kxo} + \\mk{vb}{\\left(\\frac{\\kvo + \\kv}{2}\\right)}\\mk{t}{\\left(\\frac{\\kv - \\kvo}{\\ka}\\right)}",
-       "uses": [1]
+       "uses": [
+        1
+       ]
       },
       {
        "tex": "\\mk{x}{\\kx} = \\mk{x0}{\\kxo} + \\frac{\\mk{sq}{\\kv^2 - \\kvo^2}}{\\mk{den}{2\\ka}}",

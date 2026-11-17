@@ -103,338 +103,267 @@ const ORDERS = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]
 const NAMES = ['A', 'B', 'C'];
 const orderName = (k) => ORDERS[k].map((i) => NAMES[i]).join(', then ');
 
+/* a number wearing a type's colour in a readout */
+const kp = (s) => '\\htmlClass{kv-position}{' + s + '}', ka = (s) => '\\htmlClass{kv-angle}{' + s + '}';
+const clamp01 = (x) => Math.max(0, Math.min(1, x));
+const blocks = (n) => fmt(n, 0) + (n === 1 ? ' block' : ' blocks');
+/* an arc of an angle from a0 to a1 degrees (counterclockwise from east) about (x, y) */
+function arcDeg(ctx, x, y, r, a0, a1, color, w = 3) {
+  if (Math.abs(a1 - a0) < 0.05) return;
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath(); ctx.arc(x, y, r, -a0 * RAD, -a1 * RAD, a1 > a0); ctx.stroke(); ctx.restore();
+}
+
 /* =====================================================================
-   FIGURE 3.8 (and 3.9): a vector in two dimensions. The total displacement
-   of the walk in the city drawn as an arrow on the grid of blocks, a ruler
-   along it and a protractor at its tail. No motion.
+   FIGURE 3.10 (and 3.11 to 3.13): the head-to-tail method, step by step.
+   A story slider carries the book's steps: the first vector, the second
+   from its head, the resultant from first tail to last head, and the ruler
+   and protractor that measure it.
 ===================================================================== */
 (function () {
-  const d = sim('sim-vector-2d', 660);
-  const D = ctl(d.controls, { label: '\\kD\\ \\text{(blocks)}', cls: 'position', min: 1, max: 12, step: 0.1, value: 10.3, unit: '', dec: 1, aria: 'magnitude in blocks' });
-  const TH = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 90, step: 0.1, value: 29.1, unit: '°', dec: 1, aria: 'direction' });
-  const ox = 330, oy = 590, b = 40;
+  const HH = 790;
+  const d = sim('sim-head-to-tail', HH);
+  const E = ctl(d.controls, { label: '\\text{blocks east}', cls: 'position', key: 'east', min: 1, max: 12, step: 1, value: 9, unit: '', dec: 0, aria: 'blocks east' });
+  const N = ctl(d.controls, { label: '\\text{blocks north}', cls: 'position', key: 'north', min: 1, max: 8, step: 1, value: 5, unit: '', dec: 0, aria: 'blocks north' });
+  const K = ctl(d.controls, { label: '\\text{step}', cls: '', key: 'step', min: 0, max: 4, step: 0.01, value: 4, unit: '', dec: 2, aria: 'step of the head-to-tail method' });
+  F.story(d, K, { stops: [{ v: 0, label: 'start' }, { v: 1, label: 'Step 1' }, { v: 2, label: 'Step 2' }, { v: 3, label: 'Step 4' }, { v: 4, label: 'Steps 5, 6' }] });
+  /* 72 units to a block, fixed: the grid holds the longest walk the sliders allow, 12 blocks east and 8 north */
+  const ox = 240, oy = 700, b = 72;
   function draw() {
     const { ctx } = begin(d.c);
-    const Dm = D.v, th = TH.v, [hx, hy] = tip(ox, oy, Dm * b, th);
-    cityGrid(ctx, ox, oy, b, 12, 12);
-    rose(ctx, 140, 250);
-    /* the protractor at the tail and the ruler along the arrow */
-    protractor(ctx, ox, oy, 100, th);
-    ruler(ctx, ox, oy, th, Math.max(Dm, 1) * b, b, 1, th > 45 ? -1 : 1, 24);
-    /* the vector itself */
-    arrow(ctx, ox, oy, hx, hy, C('position'), 6);
-    dot(ctx, ox, oy, PAL.ink, true, 6);
-    const lab = labeller(ctx, 660, { headline: true }); lab.block(ox - 34, oy - 12 * b - 10, ox - 2, oy + 4); lab.block(ox - 10, oy + 8, ox + 12 * b + 10, oy + 34); lab.block(ox - 12, oy + 34, ox + 150, oy + 60);
-    lab.beside({ x1: ox, y1: oy, x2: hx, y2: hy }, th > 45 ? 'left' : 'right', 'D', C('position'), 26, { gap: 22 }); lab.flush();
-    thetaLabel(ctx, ox, oy, th);
-    text(ctx, 'starting point', ox - 8, oy + 48, PAL.muted, { size: 15, align: 'left' });
-    topline(ctx, 'The ruler reads ' + fmt(Dm, 1) + ' blocks and the protractor ' + fmt(th, 1) + '°, so $\\kD$ is ' + fmt(Dm, 1) + ' blocks at ' + compass(th) + '.');
-    readout(d.readout, `\\kD = ${fmt(Dm, 1)}\\ \\text{blocks},\\quad \\ktheta = ${fmt(th, 1)}^\\circ\\ \\text{north of east}`);
+    const e = E.v, n = N.v, k = K.v, p1 = clamp01(k), p2 = clamp01(k - 1), p3 = clamp01(k - 2), p4 = clamp01(k - 3);
+    const { r, deg } = polar(e, n), ex = ox + e * b, ny = oy - n * b, cp = C('position');
+    cityGrid(ctx, ox, oy, b, 12, 8);
+    rose(ctx, 1290, 190, 44);
+    /* steps 5 and 6: the ruler along the resultant and the protractor at its tail, under the arrows */
+    if (p4 > 0) F.faded(ctx, p4, [0, (1 - p4) * -18], () => { protractor(ctx, ox, oy, 120, deg); ruler(ctx, ox, oy, deg, r * b + b * 0.4, b, 1, deg > 45 ? -1 : 1, 26); });
+    /* step 1: the first vector; step 2: the second, from its head */
+    if (p1 > 0.01) arrow(ctx, ox, oy, ox + p1 * e * b, oy, cp, 6);
+    if (p2 > 0.01) arrow(ctx, ex, oy, ex, oy - p2 * n * b, cp, 6);
+    /* step 4: the resultant, from the tail of the first to the head of the last */
+    if (p3 > 0.01) { const [hx, hy] = tip(ox, oy, p3 * r * b, deg); arrow(ctx, ox, oy, hx, hy, cp, 7); }
+    /* the walker, until the walk is done */
+    if (k < 2.4) F.faded(ctx, clamp01((2.4 - k) / 0.4), [0, 0], () => walker(ctx, ox + p1 * e * b, oy - p2 * n * b, p2 > 0 ? 90 : 0, F.ref('city-walker')));
+    dot(ctx, ox, oy, PAL.ink, true, 7);
+    if (p1 >= 1) text(ctx, blocks(e) + ' east', ox + e * b * 0.62, oy + 58, cp, { weight: 600, size: 22, align: 'center', bg: PAL.panel });
+    if (p2 >= 1) text(ctx, blocks(n) + ' north', ex + 22, oy - n * b * 0.4, cp, { weight: 600, size: 22, align: 'left', bg: PAL.panel });
+    if (p3 >= 1) { const s = deg > 45 ? -1 : 1; text(ctx, 'D', ox + 0.6 * r * b * cos(deg) + s * 30 * sin(deg), oy - 0.6 * r * b * sin(deg) + s * 30 * cos(deg), cp, { weight: 700, size: 28, align: 'center', bg: PAL.panel }); }
+    if (p4 >= 1) { const a = deg / 2, R = 176; text(ctx, 'θ = ' + fmt(deg, 1) + '°', ox + R * cos(a) + (deg < 14 ? 60 : 0), oy - R * sin(a) - (deg < 14 ? 34 : 0), C('angle'), { weight: 600, size: 22, align: 'left', bg: PAL.panel }); }
+    text(ctx, 'starting point', ox - 16, oy + 58, PAL.muted, { size: 17, align: 'right' });
+    const cur = k <= 1 ? 0 : k <= 2 ? 1 : k <= 3 ? 2 : 3;
+    topline(ctx, cur === 0 ? 'Step 1: draw the first vector, ' + blocks(e) + ' to the east.'
+      : cur === 1 ? 'Step 2: draw the second vector, ' + blocks(n) + ' to the north, with its tail at the head of the first.'
+        : cur === 2 ? 'Step 4: draw the resultant from the tail of the first vector to the head of the last.'
+          : 'Steps 5 and 6: the ruler reads ' + fmt(r, 1) + ' blocks along $\\mathbf{D}$ and the protractor reads ' + fmt(deg, 1) + '°.');
+    tex(d.readout, `\\mathbf{D} = ${kp(fmt(e, 0))}\\ \\text{${e === 1 ? 'block' : 'blocks'} east} + ${kp(fmt(n, 0))}\\ \\text{${n === 1 ? 'block' : 'blocks'} north} = ${kp(fmt(r, 1))}\\ \\text{blocks at}\\ ${ka(fmt(deg, 1) + '^\\circ')}\\ \\text{north of east}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
-   FIGURE 3.10 (and 3.11 to 3.13): the head-to-tail method. The person
-   walks the first leg east and the second leg north from the head of the
-   first; then the resultant is drawn from the tail of the first to the
-   head of the last and measured. Finite motion, so it gets the scrubber.
+   FIGURE 3.14 (and 3.15 to 3.18): Example 3.1, the woman who takes a walk.
+   On the left the three displacements as the example gives them; on the
+   right the same three laid head to tail in the order chosen, the resultant
+   measured with a ruler and a protractor turned upside down. A change of
+   order glides each leg to its new place while the resultant holds.
 ===================================================================== */
 (function () {
-  const d = sim('sim-head-to-tail', 660);
-  const E = ctl(d.controls, { label: '\\text{blocks east}', cls: 'position', min: 1, max: 12, step: 1, value: 9, unit: '', dec: 0, onInput: reset, aria: 'blocks east' });
-  const N = ctl(d.controls, { label: '\\text{blocks north}', cls: 'position', min: 0, max: 8, step: 1, value: 5, unit: '', dec: 0, onInput: reset, aria: 'blocks north' });
-  const TW = 3.4, TR = 0.9, T = TW + TR;
-  const cy = cycle(() => T, 1.5);
-  function reset() { cy.reset(); }
-  const ox = 330, oy = 590, b = 40;
-  function draw() {
-    const { ctx } = begin(d.c);
-    const e = E.v, n = N.v, L = e + n, tau = cy.now();
-    const tA = (TW * e) / L, walked = Math.min(L, (L * Math.min(tau, TW)) / TW);
-    const ax = ox + Math.min(e, walked) * b, ny = oy - Math.max(0, walked - e) * b;
-    const { r, deg } = polar(e, n), phase = tau < TW ? 1 : tau < T ? 2 : 3, done = tau >= T - 1e-9;
-    cityGrid(ctx, ox, oy, b, 12, 12);
-    rose(ctx, 140, 250);
-    /* step 1: the first vector, drawn as she walks it */
-    if (walked > 0.02) arrow(ctx, ox, oy, ax, oy, C('position'), 5);
-    if (walked >= e) text(ctx, fmt(e, 0) + ' blocks east', ox + e * b * 0.86, oy - 24, C('position'), { weight: 600, size: 18, align: 'center', bg: PAL.panel });
-    /* step 2: the second vector from the head of the first */
-    if (walked > e + 0.02) arrow(ctx, ox + e * b, oy, ox + e * b, ny, C('position'), 5);
-    if (walked >= L - 1e-9 && n > 0) beside(ctx, ox + e * b, oy, ox + e * b, oy - n * b, fmt(n, 0) + ' blocks north', C('position'), -1, 26, 18);
-    /* step 4: the resultant, from the tail of the first to the head of the last */
-    if (tau > TW) {
-      const f = Math.min(1, (tau - TW) / TR), [hx, hy] = tip(ox, oy, f * r * b, deg);
-      if (done) { protractor(ctx, ox, oy, 100, deg); ruler(ctx, ox, oy, deg, r * b + b * 0.5, b, 1, deg > 45 ? -1 : 1, 24); }
-      arrow(ctx, ox, oy, hx, hy, C('position'), 6);
-      text(ctx, 'D', (ox + hx) / 2 + 26 * sin(deg), (oy + hy) / 2 + 26 * cos(deg), C('position'), { weight: 700, size: 26, align: 'center', bg: PAL.panel });
-      if (done) thetaLabel(ctx, ox, oy, deg, 1, 150, 44);
-    }
-    /* the walker */
-    if (!done) walker(ctx, tau < TW ? ax : ox + e * b, tau < TW ? ny : oy - n * b, tau < TW && walked > e ? 90 : 0, F.ref('city-walker'));
-    dot(ctx, ox, oy, PAL.ink, true, 6);
-    /* the steps of the book, the current one in ink */
-    const steps = [['Step 1', 'draw the first vector, ' + fmt(e, 0) + ' blocks east'], ['Step 2', 'draw the second, ' + fmt(n, 0) + ' blocks north, from its head'],
-      ['Step 4', 'draw the resultant, first tail to last head'], ['Steps 5 and 6', 'measure it with a ruler and a protractor']];
-    const cur = tau < tA ? 0 : tau < TW ? 1 : !done ? 2 : 3;
-    steps.forEach(([k, s], i) => { const on = i === cur, col = on ? PAL.ink : PAL.muted, y = 150 + 78 * i; text(ctx, k, 900, y, col, { size: 19, weight: 600 }); text(ctx, s, 900, y + 26, col, { size: 18 }); });
-    topline(ctx, done ? 'The resultant $\\kD$ is ' + fmt(r, 1) + ' blocks at ' + compass(deg) + ', measured with a ruler and a protractor.'
-      : cur === 0 ? 'In step 1 she walks ' + fmt(e, 0) + ' blocks east, and the first arrow is drawn with a ruler.'
-        : cur === 1 ? 'In step 2 she walks ' + fmt(n, 0) + ' blocks north, and the second arrow starts at the head of the first.'
-          : 'In step 4 the resultant is drawn from the tail of the first vector to the head of the last.');
-    readout(d.readout, `\\kD = ${fmt(r, 1)}\\ \\text{blocks},\\quad \\ktheta = ${fmt(deg, 1)}^\\circ\\ \\text{north of east}`,
-      'The Pythagorean theorem gives the same length, √(' + fmt(e, 0) + '² + ' + fmt(n, 0) + '²) = ' + fmt(r, 1) + ' blocks.');
-  }
-  register(d.fig, { update: (dt) => cy.step(dt, () => 1), draw });
-})();
-
-/* =====================================================================
-   FIGURE 3.14 (and 3.15 to 3.17): Example 3.1, the woman who takes a walk.
-   Three legs walked in turn and laid head to tail, then the resultant
-   drawn and measured. Finite motion, so it gets the scrubber.
-===================================================================== */
-(function () {
-  const d = sim('sim-walk', 640);
-  const A = ctl(d.controls, { label: '\\kA', cls: 'position', min: 5, max: 40, step: 0.5, value: 25, unit: 'm', dec: 1, onInput: reset, aria: 'first leg' });
-  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 5, max: 40, step: 0.5, value: 23, unit: 'm', dec: 1, onInput: reset, aria: 'second leg' });
-  const Cm = ctl(d.controls, { label: '\\kC', cls: 'position', min: 5, max: 40, step: 0.5, value: 32, unit: 'm', dec: 1, onInput: reset, aria: 'third leg' });
-  const TW = 3.6, TR = 0.9, T = TW + TR, S = 6.5;   /* canvas units to a meter: the walk reaches 36 m north and 32 m south, and the ruler stays on the canvas */
-  const cy = cycle(() => T, 1.5);
-  function reset() { cy.reset(); }
-  const ox = 330, oy = 370;
-  function draw() {
-    const { ctx } = begin(d.c);
-    const mags = [A.v, B.v, Cm.v], L = mags[0] + mags[1] + mags[2], tau = cy.now(), done = tau >= T - 1e-9;
-    const lab = labeller(ctx, 640, { headline: true }); lab.block(990, 120, 1400, 270);
-    const walked = (L * Math.min(tau, TW)) / TW;
-    /* the axes through the starting point, ticked every 10 m */
-    arrow(ctx, ox - 40, oy, 960, oy, PAL.ink, 2); arrow(ctx, ox, oy + 270, ox, 70, PAL.ink, 2);
-    for (let m = 10; m <= 80; m += 10) line(ctx, ox + m * S, oy - 5, ox + m * S, oy + 5, PAL.ink, 1.5);
-    for (let m = 10; m <= 30; m += 10) line(ctx, ox - 5, oy - m * S, ox + 5, oy - m * S, PAL.ink, 1.5);
-    text(ctx, 'x (east), a tick every 10 m', 972, oy, PAL.ink, { size: 17, align: 'left' }); text(ctx, 'y (north)', ox + 12, 76, PAL.ink, { size: 17 });
-    rose(ctx, 1240, 500, 36);
-    /* the legs, laid down as she walks them */
-    let px = ox, py = oy, left = walked, cur = -1, wx = ox, wy = oy; const legLabels = [];
-    for (let i = 0; i < 3; i++) {
-      const seg = Math.min(mags[i], Math.max(0, left)); left -= mags[i];
-      const [fx, fy] = tip(px, py, mags[i] * S, WALK_DEG[i]), [hx, hy] = tip(px, py, seg * S, WALK_DEG[i]);
-      if (seg > 0.05) arrow(ctx, px, py, hx, hy, C('position'), 5);
-      if (seg >= mags[i] - 1e-9) legLabels.push([{ x1: px, y1: py, x2: fx, y2: fy }, i === 2 ? 'right' : 'left', NAMES[i] + ' = ' + fmt(mags[i], 1) + ' m']);
-      if (seg > 0 && seg < mags[i]) { cur = i; wx = hx; wy = hy; } else if (seg >= mags[i] - 1e-9) { wx = fx; wy = fy; }
-      px = fx; py = fy;
-    }
-    const pol = polar(px - ox, oy - py), r = pol.r / S, deg = pol.deg;
-    /* the resultant */
-    if (tau > TW) {
-      const f = Math.min(1, (tau - TW) / TR), [hx, hy] = tip(ox, oy, f * r * S, deg);
-      if (done) { protractor(ctx, ox, oy, 96, deg); ruler(ctx, ox, oy, deg, r * S + 2 * S, 10 * S, 1, -1, 22, 10); }
-      arrow(ctx, ox, oy, hx, hy, C('position'), 6);
-      if (done) {
-        const small = Math.abs(deg) < 12, tx = ox + 150 * cos(deg / 2) + (small ? 20 : 0), ty = oy - 150 * sin(deg / 2) + (small ? (deg < 0 ? 92 : -30) : 0);
-        lab.add('θ = ' + fmt(Math.abs(deg), 2) + '°', tx, ty, 1, 0, C('angle'), 20, 1);
-        lab.beside({ x1: ox, y1: oy, x2: hx, y2: hy }, 'left', 'R = ' + fmt(r, 1) + ' m', C('position'), 22, { offset: 0.75, gap: 34 });
-      }
-    }
-    legLabels.forEach(([seg, side, s]) => lab.beside(seg, side, s, C('position'), 18, { gap: 18 }));
-    if (!done) walker(ctx, wx, wy, cur >= 0 ? WALK_DEG[cur] : 0, F.ref('woman'));
-    dot(ctx, ox, oy, PAL.ink, true, 6);
-    lab.flush();
-    /* the legs of the example, the current one in ink, and the resultant when it is drawn */
-    const legs = ['A = ' + fmt(mags[0], 1) + ' m at 49.0° north of east', 'B = ' + fmt(mags[1], 1) + ' m at 15.0° north of east', 'C = ' + fmt(mags[2], 1) + ' m at 68.0° south of east'];
-    legs.forEach((s, i) => text(ctx, s, 1000, 150 + 44 * i, i === cur ? PAL.ink : PAL.muted, { size: 19, weight: i === cur ? 600 : 400 }));
-    topline(ctx, done ? 'The resultant $\\kR$ is ' + fmt(r, 1) + ' m at ' + compass(deg, 2) + ', measured with a ruler and a protractor.'
-      : cur >= 0 ? 'She walks leg ' + NAMES[cur] + ', ' + fmt(mags[cur], 1) + ' m, with its tail at the head of the leg before.'
-        : 'The resultant is drawn from the tail of the first vector to the head of the last.');
-    readout(d.readout, `\\kR = ${fmt(r, 1)}\\ \\text{m},\\quad \\ktheta = ${fmt(Math.abs(deg), 2)}^\\circ\\ \\text{${deg < 0 ? 'south' : 'north'} of east}`,
-      'The head-to-tail method works for any number of vectors and is limited in accuracy only by the precision of the drawing and of the ruler and protractor.');
-  }
-  register(d.fig, { update: (dt) => cy.step(dt, () => 1), draw });
-})();
-
-/* =====================================================================
-   FIGURE 3.18: vector addition is commutative. The walk of Example 3.1
-   laid head to tail in the order A, B, C and again in the chosen order;
-   the two end at one point and the resultant is one arrow. No motion.
-===================================================================== */
-(function () {
-  const d = sim('sim-order', 940);
-  /* The order of addition is one of six arrangements, not a quantity to slide through, and six
-     options would wrap a button row, so it is a dropdown (rule 26.1). */
-  const O = F.select(d.controls, { label: '\\text{order}', options: ORDERS.map((o, i) => ({ value: String(i), label: o.map((j) => NAMES[j]).join(' + ') })), value: '4', aria: 'order of addition' });
-  const TA = ctl(d.controls, { label: '\\ktheta_{\\text{A}}', cls: 'angle', min: -180, max: 180, step: 1, value: 49, unit: '°', dec: 0, aria: 'direction of A' });
-  const TB = ctl(d.controls, { label: '\\ktheta_{\\text{B}}', cls: 'angle', min: -180, max: 180, step: 1, value: 15, unit: '°', dec: 0, aria: 'direction of B' });
-  const TC = ctl(d.controls, { label: '\\ktheta_{\\text{C}}', cls: 'angle', min: -180, max: 180, step: 1, value: -68, unit: '°', dec: 0, aria: 'direction of C' });
-  /* The three legs are 25, 23 and 32 m, so the walk can reach 80 m from the start when all three
-     point the same way. At 5.2 units to the metre that is 416 units, which the canvas holds in every
-     direction about the origin at (640, 520), so the walk never leaves the drawing at any setting. */
-  const MAG = [25, 23, 32], S = 5.2, ox = 640, oy = 520;
-  function path(ctx, order, degs, color, w, lab) {
-    let px = ox, py = oy;
-    for (const i of order) {
-      const [hx, hy] = tip(px, py, MAG[i] * S, degs[i]);
-      arrow(ctx, px, py, hx, hy, color, w);
-      if (lab) { const nx = (hy - py) / (MAG[i] * S), ny = -(hx - px) / (MAG[i] * S); lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx, ny, color, 22, 22); }
-      px = hx; py = hy;
-    }
-    return [px, py];
-  }
-  /* the tail of each of A, B and C when laid in the given order, as one flat list, so a change of
-     order glides every arrow from its old place to its new one instead of cutting */
-  function tails(order, degs) {
+  const HH = 850;
+  const d = sim('sim-walk', HH);
+  const O = F.choice(d.controls, { label: '\\text{order}', key: 'order', options: ORDERS.map((o, i) => ({ value: String(i), label: o.map((j) => NAMES[j]).join(' + ') })), value: '0', aria: 'order of addition' });
+  /* 12 units to the metre, fixed: in every order the walk stays within 51 m east, 25 m north and 30 m south of the start */
+  const MAG = [25, 23, 32], S = 12, ox = 540, oy = 440, S1 = 5.4;
+  const GIVEN = [[70, 330], [70, 470], [70, 560]];
+  function tails(order) {
     const out = [0, 0, 0, 0, 0, 0]; let px = ox, py = oy;
-    for (const i of order) { out[2 * i] = px; out[2 * i + 1] = py; [px, py] = tip(px, py, MAG[i] * S, degs[i]); }
+    for (const i of order) { out[2 * i] = px; out[2 * i + 1] = py; [px, py] = tip(px, py, MAG[i] * S, WALK_DEG[i]); }
     return out;
   }
+  /* which side of R the walk lies on: the ruler takes the other */
+  function rulerSide(order) {
+    let x = 0, y = 0, s = 0; const Rx = 50.605, Ry = -4.849;
+    order.slice(0, 2).forEach((i) => { x += MAG[i] * cos(WALK_DEG[i]); y += MAG[i] * sin(WALK_DEG[i]); s += Rx * y - Ry * x; });
+    return s > 0 ? -1 : 1;
+  }
   function draw() {
     const { ctx } = begin(d.c);
-    const k = Number(O.value), degs = [TA.v, TB.v, TC.v];
-    const at = O.mix((v) => tails(ORDERS[Number(v)], degs));
+    const k = Number(O.value), cp = C('position'), at = O.mix((v) => tails(ORDERS[Number(v)]));
     const refA = O.from === O.value ? (k !== 0 ? 1 : 0) : k === 0 ? 1 - O.k : O.from === '0' ? O.k : 1;
-    const lab = labeller(ctx, 940); lab.block(0, 0, 1400, 96); lab.block(1040, 96, 1400, 220);
-    line(ctx, ox - 430, oy, ox + 430, oy, PAL.rule, 2); line(ctx, ox, oy - 420, ox, oy + 410, PAL.rule, 2);
-    text(ctx, 'east', ox + 430, oy + 20, PAL.muted, { size: 15, align: 'right' });
-    /* the reference walk, A then B then C, carries no labels: each leg is named once, on the chosen order */
-    if (refA > 0) path(ctx, ORDERS[0], degs, alpha(PAL.ink, 0.45 * refA), 3, null);
-    [0, 1, 2].forEach((i) => {
-      const px = at[2 * i], py = at[2 * i + 1], [hx, hy] = tip(px, py, MAG[i] * S, degs[i]);
-      arrow(ctx, px, py, hx, hy, C('position'), 5);
-      const nx = (hy - py) / (MAG[i] * S), ny = -(hx - px) / (MAG[i] * S); lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx, ny, C('position'), 22, 22);
+    const hl = topline(ctx, k === 0 ? 'Laid head to tail as $\\mathbf{A}$, $\\mathbf{B}$, $\\mathbf{C}$, the walk ends ' + '50.8 m from the start, 5.47° south of east.'
+      : 'Added as ' + ORDERS[k].map((i) => '$\\mathbf{' + NAMES[i] + '}$').join(', ') + ', the walk ends at the same point.');
+    const lab = labeller(ctx, HH, { headline: hl });
+    /* the three displacements as given, each from its own east line */
+    GIVEN.forEach(([gx, gy], i) => {
+      const [hx, hy] = tip(gx, gy, MAG[i] * S1, WALK_DEG[i]);
+      line(ctx, gx - 10, gy, gx + 230, gy, PAL.rule, 2);
+      arcDeg(ctx, gx, gy, 58, 0, WALK_DEG[i], C('angle'));
+      arrow(ctx, gx, gy, hx, hy, cp, 5);
+      const sg = WALK_DEG[i] > 0 ? -1 : 1;
+      text(ctx, 'θ_' + NAMES[i] + ' = ' + fmt(Math.abs(WALK_DEG[i]), 1) + '°', gx + 74, gy + sg * (i === 1 ? -20 : 24), C('angle'), { size: 20, weight: 600, align: 'left', bg: PAL.panel });
+      text(ctx, NAMES[i] + ' = ' + fmt(MAG[i], 1) + ' m', i === 2 ? hx + 22 : (gx + hx) / 2 - (i === 0 ? 14 : 0), i === 2 ? hy - 30 : (gy + hy) / 2 - (i === 0 ? 34 : 30), cp, { size: 22, weight: 600, align: i === 0 ? 'right' : 'left', bg: PAL.panel });
     });
-    const [ex, ey] = [0, 1, 2].reduce(([x, y], i) => tip(x, y, MAG[i] * S, degs[i]), [ox, oy]);
-    const pol = polar(ex - ox, oy - ey), r = pol.r / S, deg = pol.deg;
-    arrow(ctx, ox, oy, ex, ey, C('position'), 6.5);
-    if (r > 0.5) { const L = r * S, nx = (ey - oy) / L, ny = -(ex - ox) / L; lab.add('R = ' + fmt(r, 1) + ' m', (ox + ex) / 2, (oy + ey) / 2, nx, ny, C('position'), 22, 30); }
-    dot(ctx, ox, oy, PAL.ink, true, 6); dot(ctx, ex, ey, PAL.ink, true, 6);
-    lab.add('start', ox, oy, -0.7, 0.7, PAL.muted, 17, 22);
+    text(ctx, 'east', 300, GIVEN[0][1] + 18, PAL.muted, { size: 17, align: 'right' });
+    /* the sum: the east line through the start, the measuring tools, then the arrows over them */
+    line(ctx, ox - 40, oy, 1330, oy, PAL.rule, 2); text(ctx, 'east', 1330, oy - 16, PAL.muted, { size: 17, align: 'right' });
+    rose(ctx, 1300, 180, 40);
+    const ex = ox + 50.605 * S, ey = oy + 4.849 * S, r = 50.84, deg = -5.47;
+    const sideNow = rulerSide(ORDERS[k]), sideWas = rulerSide(ORDERS[Number(O.from)]);
+    const moving = O.from !== O.value && O.k < 1 && sideNow !== sideWas, ra = moving ? Math.abs(2 * O.k - 1) : 1, side = moving && O.k < 0.5 ? sideWas : sideNow;
+    protractor(ctx, ox, oy, 104, deg);
+    F.faded(ctx, ra, [0, 0], () => ruler(ctx, ox, oy, deg, 56 * S, 10 * S, 1, side, 26, 10));
+    arcDeg(ctx, ox, oy, 250, 0, deg, C('angle'), 3);
+    text(ctx, 'θ = 5.47°', ox + 262, oy - 20, C('angle'), { size: 22, weight: 600, align: 'left', bg: PAL.panel });
+    if (refA > 0) { let px = ox, py = oy; for (const i of ORDERS[0]) { const [hx, hy] = tip(px, py, MAG[i] * S, WALK_DEG[i]); arrow(ctx, px, py, hx, hy, alpha(PAL.ink, 0.4 * refA), 3); px = hx; py = hy; } }
+    arrow(ctx, ox, oy, ex, ey, cp, 8);
+    [0, 1, 2].forEach((i) => {
+      const px = at[2 * i], py = at[2 * i + 1], [hx, hy] = tip(px, py, MAG[i] * S, WALK_DEG[i]);
+      arrow(ctx, px, py, hx, hy, cp, 5);
+      const L = MAG[i] * S, nx = (hy - py) / L, ny = -(hx - px) / L, out = (ox + 25 * S - (px + hx) / 2) * nx + (oy - (py + hy) / 2) * ny > 0 ? -1 : 1;
+      lab.add(NAMES[i], (px + hx) / 2, (py + hy) / 2, nx * out, ny * out, cp, 26, 26);
+    });
+    lab.add('R = 50.8 m', ox + 0.52 * (ex - ox), oy + 0.52 * (ey - oy), 0.1 * -side, -side, cp, 24, side > 0 ? 30 : 84);
+    dot(ctx, ox, oy, PAL.ink, true, 7); dot(ctx, ex, ey, PAL.ink, true, 7);
+    text(ctx, 'start', ox - 16, oy - 20, PAL.muted, { size: 17, align: 'right' });
     lab.flush();
-    text(ctx, 'A = 25.0 m, B = 23.0 m, C = 32.0 m', 1384, 130, PAL.muted, { size: 17, align: 'right' });
-    if (k !== 0) { line(ctx, 1324, 168, 1384, 168, alpha(PAL.ink, 0.45), 3); text(ctx, 'the walk A, then B, then C', 1310, 168, PAL.muted, { size: 17, align: 'right' }); }
-    topline(ctx, k === 0 ? 'Added as A, then B, then C, the resultant $\\kR$ is ' + fmt(r, 1) + ' m at ' + compass(deg, 2) + '.'
-      : 'Added as ' + orderName(k) + ', the sum ends at the same point, so $\\kR$ is again ' + fmt(r, 1) + ' m at ' + compass(deg, 2) + '.');
+    if (k !== 0) F.legend(ctx, { l: 1040, t: 100, r: 1384, b: 150 }, [{ s: 'the walk as A, B, C', color: alpha(PAL.ink, 0.4), w: 3 }], { corner: 'tr', panel: false });
     const lhs = ORDERS[k].map((i) => '\\mathbf{' + NAMES[i] + '}').join(' + ');
-    readout(d.readout, (k === 0 ? lhs : lhs + ' = \\mathbf{A} + \\mathbf{B} + \\mathbf{C}') + ` = \\mathbf{R},\\quad \\kR = ${fmt(r, 1)}\\ \\text{m}`,
-      'Vector addition is commutative, so the sum is the same in whatever order the vectors are added, just as 2 + 3 and 3 + 2 are both 5.');
+    tex(d.readout, (k === 0 ? lhs : lhs + ' = \\mathbf{A} + \\mathbf{B} + \\mathbf{C}') + ` = \\mathbf{R} = ${kp('50.8')}\\ \\text{m at}\\ ${ka('5.47^\\circ')}\\ \\text{south of east}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
    FIGURE 3.19 (and 3.20 to 3.23): the negative of a vector and Example
-   3.2, the woman sailing a boat. A, then B to the dock and −B to where she
-   ends up, with both resultants from the starting point. No motion.
+   3.2, the woman sailing a boat. On the left B and its negative from one
+   point; on the right A, then B to the dock and −B to where she ends up,
+   with both resultants from the starting point.
 ===================================================================== */
 (function () {
-  const d = sim('sim-subtraction', 780);
-  const A = ctl(d.controls, { label: '\\kA', cls: 'position', min: 5, max: 35, step: 0.5, value: 27.5, unit: 'm', dec: 1, aria: 'first leg' });
-  const TA = ctl(d.controls, { label: '\\ktheta_{\\text{A}}', cls: 'angle', min: 0, max: 180, step: 1, value: 66, unit: '°', dec: 0, aria: 'direction of A' });
-  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 5, max: 35, step: 0.5, value: 30, unit: 'm', dec: 1, aria: 'second leg' });
-  const TB = ctl(d.controls, { label: '\\ktheta_{\\text{B}}', cls: 'angle', min: 0, max: 180, step: 1, value: 112, unit: '°', dec: 0, aria: 'direction of B' });
-  /* Six units to the metre, fixed. Both legs point into the northern half, so the drawing reaches at most
-     70 m north of the start (A + B straight up), 35 m south (A along the shore and −B straight down) and
-     70 m east or west; with the start at (560, 530) the canvas holds every setting of the four sliders. */
-  const S = 6, ox = 560, oy = 530;
+  const HH = 800;
+  const d = sim('sim-subtraction', HH);
+  const B = ctl(d.controls, { label: '\\kB', cls: 'position', min: 10, max: 35, step: 0.5, value: 30, unit: 'm', dec: 1, aria: 'second leg' });
+  const TB = ctl(d.controls, { label: '\\ktheta_{\\text{B}}', cls: 'angle', min: 0, max: 180, step: 1, value: 112, unit: '°', dec: 0, aria: 'direction of B, north of east' });
+  /* A is the example's 27.5 m at 66.0° north of east. Nine units to the metre, fixed: B and −B reach at most 35 m
+     from the head of A, which the stage holds on every side. */
+  const AM = 27.5, AD = 66, S = 9, ox = 700, oy = 655, S2 = 4.6, px = 225, py = 440;
   function draw() {
     const { ctx } = begin(d.c);
-    const [ax, ay] = tip(ox, oy, A.v * S, TA.v), [bx, by] = tip(ax, ay, B.v * S, TB.v), [nx, ny] = tip(ax, ay, B.v * S, TB.v + 180);
+    const cp = C('position'), ca = C('angle'), tb = TB.v, bm = B.v;
+    const [ax, ay] = tip(ox, oy, AM * S, AD), [bx, by] = tip(ax, ay, bm * S, tb), [nx, ny] = tip(ax, ay, bm * S, tb + 180);
     const sum = polar((bx - ox) / S, (oy - by) / S), dif = polar((nx - ox) / S, (oy - ny) / S);
-    const lab = labeller(ctx, 780); lab.block(0, 0, 1400, 96); lab.block(1000, 96, 1400, 380);
-    const side = (s, x1, y1, x2, y2, color, sgn, size, start) => { const L = Math.hypot(x2 - x1, y2 - y1) || 1; lab.add(s, (x1 + x2) / 2, (y1 + y2) / 2, ((y2 - y1) / L) * sgn, (-(x2 - x1) / L) * sgn, color, size, start); };
-    line(ctx, ox - 430, oy, ox + 430, oy, PAL.rule, 2); text(ctx, 'east', ox + 430, oy - 16, PAL.muted, { size: 15, align: 'right' });
-    line(ctx, ax - 60, ay, ax + 60, ay, PAL.rule, 1.5, [6, 6]);
-    /* the dock at the head of B and the boat where she ends up, under the arrows so that every head shows */
-    dock(ctx, bx + 6, by - 10, F.ref('dock')); boat(ctx, nx, ny + 8, F.ref('sailor'), 0.9);
-    /* the two resultants, then the legs on top of them */
-    arrow(ctx, ox, oy, bx, by, C('position'), 6.5); arrow(ctx, ox, oy, nx, ny, C('position'), 6.5);
-    arrow(ctx, ox, oy, ax, ay, C('position'), 4); arrow(ctx, ax, ay, bx, by, C('position'), 4); arrow(ctx, ax, ay, nx, ny, C('position'), 4);
-    side('A', ox, oy, ax, ay, C('position'), 1, 22, 22); side('B', ax, ay, bx, by, C('position'), 1, 22, 22); side('−B', ax, ay, nx, ny, C('position'), 1, 22, 22);
-    side('R′ = ' + fmt(sum.r, 1) + ' m', ox, oy, bx, by, C('position'), -1, 20, 30);
-    side('R = ' + fmt(dif.r, 1) + ' m', ox, oy, nx, ny, C('position'), -1, 20, 30);
-    /* each named beside itself */
-    lab.add('the dock, at A + B', bx + 50, by - 24, 1, -1, F.ref('dock'), 18, 40);
-    lab.add('where she ends up, at A − B', nx, ny + 20, 1, 1, F.ref('sailor'), 18, 50);
-    dot(ctx, ox, oy, PAL.ink, true, 6); lab.add('start', ox, oy, -1, 0.6, PAL.muted, 17, 22);
+    const hl = topline(ctx, 'Sailing $-\\mathbf{B}$ in place of $\\mathbf{B}$ leaves her ' + fmt(2 * bm, 1) + ' m from the dock.');
+    const lab = labeller(ctx, HH, { headline: hl });
+    /* the negative of a vector: B and −B from one point */
+    line(ctx, px - 190, py, px + 190, py, PAL.rule, 2); text(ctx, 'east', px + 190, py + 18, PAL.muted, { size: 17, align: 'right' });
+    const [qx, qy] = tip(px, py, bm * S2, tb), [mx, my] = tip(px, py, bm * S2, tb + 180);
+    arcDeg(ctx, px, py, 50, 0, tb, ca); arcDeg(ctx, px, py, 66, 0, tb - 180, ca);
+    arrow(ctx, px, py, qx, qy, cp, 5); arrow(ctx, px, py, mx, my, cp, 5); dot(ctx, px, py, PAL.ink, true, 6);
+    if (tb > 2) lab.add(fmt(tb, 0) + '°', px + 50 * cos(tb / 2), py - 50 * sin(tb / 2), cos(tb / 2), -sin(tb / 2), ca, 20, 20);
+    if (tb < 178) lab.add(fmt(180 - tb, 0) + '°', px + 66 * cos((tb - 180) / 2), py - 66 * sin((tb - 180) / 2), cos((tb - 180) / 2), -sin((tb - 180) / 2), ca, 20, 20);
+    lab.add('B = ' + fmt(bm, 1) + ' m', qx, qy, cos(tb), -sin(tb), cp, 22, 24);
+    lab.add('−B = ' + fmt(bm, 1) + ' m', mx, my, -cos(tb), sin(tb), cp, 22, 24);
+    /* the two sums */
+    line(ctx, ox - 240, oy, ox + 470, oy, PAL.rule, 2); text(ctx, 'east', ox + 470, oy + 18, PAL.muted, { size: 17, align: 'right' });
+    rose(ctx, 1300, 180, 40);
+    dock(ctx, bx + 8, by - 12, F.ref('dock')); boat(ctx, nx + 8, ny + 26, F.ref('sailor'), 0.9);
+    arrow(ctx, ox, oy, bx, by, cp, 8); arrow(ctx, ox, oy, nx, ny, cp, 8);
+    arrow(ctx, ox, oy, ax, ay, cp, 5); arrow(ctx, ax, ay, bx, by, cp, 5); arrow(ctx, ax, ay, nx, ny, cp, 5);
+    const side = (s, x1, y1, x2, y2, sgn, size, start, f = 0.5) => { const L = Math.hypot(x2 - x1, y2 - y1) || 1; lab.add(s, x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, ((y2 - y1) / L) * sgn, (-(x2 - x1) / L) * sgn, cp, size, start); };
+    side('A', ox, oy, ax, ay, 1, 26, 24, 0.6); side('B', ax, ay, bx, by, 1, 26, 24); side('−B', ax, ay, nx, ny, 1, 26, 24);
+    side('R′ = ' + fmt(sum.r, 1) + ' m', ox, oy, bx, by, -1, 22, 28, 0.55); side('R = ' + fmt(dif.r, 1) + ' m', ox, oy, nx, ny, -1, 22, 28, 0.6);
+    lab.add('the dock', bx + 60, by - 40, 0.6, -1, F.ref('dock'), 20, 24);
+    lab.add('where she ends up', nx + 30, ny + 50, 0.6, 1, F.ref('sailor'), 20, 24);
+    dot(ctx, ox, oy, PAL.ink, true, 7); lab.add('start', ox, oy, -1, 0.5, PAL.muted, 17, 22);
     lab.flush();
-    topline(ctx, '$\\mathbf{A} - \\mathbf{B}$ is ' + fmt(dif.r, 1) + ' m at ' + compass(dif.deg) + ', while the dock at $\\mathbf{A} + \\mathbf{B}$ is ' + fmt(sum.r, 1) + ' m at ' + compass(sum.deg) + '.');
-    readout(d.readout, `\\mathbf{A} - \\mathbf{B} = \\mathbf{A} + (-\\mathbf{B}),\\quad \\kR = ${fmt(dif.r, 1)}\\ \\text{m}`);
-    texNote(d.readout, `\\text{The dock and the place she reaches are } 2\\kB = ${fmt(2 * B.v, 1)}\\ \\text{m apart. The example's ruler and protractor read 23.0 m at 7.5° south of east.}`);
+    const dir = (p) => `${ka(fmt(Math.abs(fold(p.deg)), 1) + '^\\circ')}\\ \\text{${fold(p.deg) >= 0 ? 'north' : 'south'} of east}`;
+    tex(d.readout, `\\mathbf{A} - \\mathbf{B} = \\mathbf{A} + (-\\mathbf{B}) = \\mathbf{R} = ${kp(fmt(dif.r, 1))}\\ \\text{m at}\\ ${dir(dif)} \\\\ \\mathbf{A} + \\mathbf{B} = \\mathbf{R}' = ${kp(fmt(sum.r, 1))}\\ \\text{m at}\\ ${dir(sum)}`);
+    if (bm === 30 && tb === 112) d.readout.appendChild(el('small', null, 'Measured on its drawing with a ruler and a protractor, the example reads 23.0 m at 7.5° south of east.'));
   }
   register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
    SIM: multiplying a vector by a scalar. The first leg of the sailing
-   example and the same vector times c, which keeps the direction when c is
-   positive and reverses it when c is negative. No motion.
+   example, 27.5 m at 66.0° north of east, and the same vector times c.
 ===================================================================== */
 (function () {
-  const d = sim('sim-scalar', 740);
-  const A = ctl(d.controls, { label: '\\kA', cls: 'position', min: 5, max: 30, step: 0.5, value: 27.5, unit: 'm', dec: 1, aria: 'magnitude of A' });
-  const TA = ctl(d.controls, { label: '\\ktheta_{\\text{A}}', cls: 'angle', min: 0, max: 180, step: 1, value: 66, unit: '°', dec: 0, aria: 'direction of A' });
-  const K = ctl(d.controls, { label: 'c', cls: '', min: -3, max: 3, step: 0.5, value: 3, unit: '', dec: 1, aria: 'scalar' });
-  /* 3.4 units to the metre, fixed: cA reaches 90 m, which is 306 units, and the canvas holds that above
-     and below the origin of the right-hand drawing at every setting of the three sliders. */
-  const S = 3.4, o1 = [300, 410], o2 = [950, 410];
-  function arc(ctx, x, y, deg, r) {
-    if (deg < 0.5) return;
-    ctx.save(); ctx.strokeStyle = C('angle'); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, r, 0, -deg * RAD, true); ctx.stroke(); ctx.restore();
-  }
+  const HH = 740;
+  const d = sim('sim-scalar', HH);
+  const K = ctl(d.controls, { label: 'c', cls: '', key: 'c', min: -3, max: 3, step: 0.5, value: 3, unit: '', dec: 1, aria: 'scalar',
+    specials: [{ at: 3, label: 'three times as far' }, { at: -2, label: 'doubled and reversed' }, { at: 0.5, label: 'divided by 2' }] });
+  /* 3.9 units to the metre, fixed: 3A is 82.5 m, which the stage holds above and below the east line */
+  const AM = 27.5, AD = 66, S = 3.9, o1 = [330, 400], o2 = [900, 400];
   function draw() {
     const { ctx } = begin(d.c);
-    const c = K.v, mag = Math.abs(c) * A.v, deg = c < 0 ? (TA.v + 180) % 360 : TA.v;
-    const lab = labeller(ctx, 740); lab.block(0, 0, 1400, 96);
-    for (const [x, y] of [o1, o2]) { line(ctx, x - 200, y, x + 320, y, PAL.rule, 2); text(ctx, 'east', x + 320, y + 20, PAL.muted, { size: 15, align: 'right' }); }
-    const [ax, ay] = tip(o1[0], o1[1], A.v * S, TA.v);
-    arrow(ctx, o1[0], o1[1], ax, ay, C('position'), 5);
-    lab.add('A = ' + fmt(A.v, 1) + ' m', (o1[0] + ax) / 2, (o1[1] + ay) / 2, (ay - o1[1]) / (A.v * S), -(ax - o1[0]) / (A.v * S), C('position'), 22, 26);
-    arc(ctx, o1[0], o1[1], TA.v, 44); lab.add('θ = ' + fmt(TA.v, 0) + '°', o1[0] + 44 * cos(TA.v / 2), o1[1] - 44 * sin(TA.v / 2), cos(TA.v / 2), -sin(TA.v / 2), C('angle'), 18, 26);
-    const cs = (c < 0 ? '−' : '') + fmt(Math.abs(c), 1);
-    text(ctx, '× ' + cs, 640, 400, PAL.ink, { size: 34, weight: 600, align: 'center' });
-    if (mag > 0.01) {
-      const [hx, hy] = tip(o2[0], o2[1], mag * S, deg);
-      arrow(ctx, o2[0], o2[1], hx, hy, C('position'), 5);
-      lab.add(cs + 'A = ' + fmt(mag, 1) + ' m', (o2[0] + hx) / 2, (o2[1] + hy) / 2, (hy - o2[1]) / (mag * S), -(hx - o2[0]) / (mag * S), C('position'), 22, 26);
-      arc(ctx, o2[0], o2[1], deg, 44); lab.add(fmt(deg, 0) + '°', o2[0] + 44 * cos(deg / 2), o2[1] - 44 * sin(deg / 2), cos(deg / 2), -sin(deg / 2), C('angle'), 18, 26);
-    } else text(ctx, '0A: the vector vanishes', o2[0], o2[1] - 30, PAL.muted, { size: 17, align: 'center' });
-    for (const [x, y] of [o1, o2]) dot(ctx, x, y, PAL.ink, true, 6);
+    const c = K.v, mag = Math.abs(c) * AM, cp = C('position'), ca = C('angle');
+    const cs = (c < 0 ? '−' : '') + fmt(Math.abs(c), Number.isInteger(c) ? 0 : 1);
+    const hl = topline(ctx, c === 0 ? 'Multiplied by 0, the vector has no length and no direction.'
+      : cs + ' × $\\mathbf{A}$ is ' + fmt(mag, 1) + ' m ' + (c < 0 ? 'in the opposite direction, 66.0° south of west.' : 'in the same direction, 66.0° north of east.'));
+    const lab = labeller(ctx, HH, { headline: hl });
+    for (const [x, y] of [o1, o2]) {
+      line(ctx, x - 210, y, x + 230, y, PAL.rule, 2); text(ctx, 'east', x + 230, y + 18, PAL.muted, { size: 17, align: 'right' }); text(ctx, 'west', x - 210, y + 18, PAL.muted, { size: 17, align: 'left' });
+      const [ux, uy] = tip(x, y, 330, AD), [vx, vy] = tip(x, y, 330, AD + 180); line(ctx, vx, vy, ux, uy, alpha(PAL.ink, 0.3), 2, [4, 8]);
+    }
+    const [ax, ay] = tip(o1[0], o1[1], AM * S, AD);
+    arcDeg(ctx, o1[0], o1[1], 50, 0, AD, ca); lab.add('66.0°', o1[0] + 50 * cos(33), o1[1] - 50 * sin(33), cos(33), -sin(33), ca, 20, 18);
+    arrow(ctx, o1[0], o1[1], ax, ay, cp, 6);
+    lab.add('A = 27.5 m', (o1[0] + ax) / 2, (o1[1] + ay) / 2, -sin(AD), -cos(AD), cp, 24, 26);
+    text(ctx, '× ' + cs, (o1[0] + o2[0]) / 2, 388, PAL.ink, { size: 40, weight: 600, align: 'center' });
+    if (c !== 0) {
+      const dg = c < 0 ? AD + 180 : AD, [hx, hy] = tip(o2[0], o2[1], mag * S, dg);
+      if (c > 0) { arcDeg(ctx, o2[0], o2[1], 50, 0, AD, ca); lab.add('66.0°', o2[0] + 50 * cos(33), o2[1] - 50 * sin(33), cos(33), -sin(33), ca, 20, 18); }
+      else { arcDeg(ctx, o2[0], o2[1], 50, 180, 180 + AD, ca); lab.add('66.0°', o2[0] + 50 * cos(213), o2[1] - 50 * sin(213), cos(213), -sin(213), ca, 20, 18); }
+      arrow(ctx, o2[0], o2[1], hx, hy, cp, 6);
+      lab.add(cs + 'A = ' + fmt(mag, 1) + ' m', (o2[0] + hx) / 2, (o2[1] + hy) / 2, sin(AD), cos(AD), cp, 24, 26);
+    }
+    for (const [x, y] of [o1, o2]) dot(ctx, x, y, PAL.ink, true, 7);
     lab.flush();
-    topline(ctx, c === 0 ? 'Multiplying ' + fmt(A.v, 1) + ' m by zero leaves no vector at all.'
-      : 'Multiplying ' + fmt(A.v, 1) + ' m by ' + cs + ' gives ' + fmt(mag, 1) + ' m ' + (c < 0 ? 'in the opposite direction, ' : 'in the same direction, ') + compass(deg, 1) + '.');
-    readout(d.readout, `|c|\\,\\kA = ${fmt(Math.abs(c), 1)} \\times ${fmt(A.v, 1)}\\ \\text{m} = ${fmt(mag, 1)}\\ \\text{m}`);
+    tex(d.readout, `|c|\\,\\kA = |${c < 0 ? '{-' + fmt(-c, 1) + '}' : fmt(c, 1)}| \\times ${kp('27.5')}\\ \\text{m} = ${kp(fmt(mag, 1))}\\ \\text{m}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
-   SIM: resolving a vector into components. The total displacement of the
-   walk in the city and the two displacements, east and north, that add to
-   it head to tail, each measured with a ruler. No motion.
+   SIM: resolving a vector into components. The reader turns and stretches
+   the displacement D on the grid of blocks; the east (or west) and north
+   displacements that add to it head to tail are read off the grid.
 ===================================================================== */
 (function () {
-  const d = sim('sim-components', 700);
-  const D = ctl(d.controls, { label: '\\kD\\ \\text{(blocks)}', cls: 'position', min: 1, max: 12, step: 0.1, value: 10.3, unit: '', dec: 1, aria: 'magnitude in blocks' });
-  const TH = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 90, step: 0.1, value: 29.0, unit: '°', dec: 1, aria: 'direction' });
-  const ox = 330, oy = 590, b = 40;
+  const HH = 770;
+  const d = sim('sim-components', HH);
+  const D = ctl(d.controls, { label: '\\kD', cls: 'position', min: 1, max: 12, step: 0.1, value: 10.3, unit: 'blocks', dec: 1, aria: 'magnitude in blocks' });
+  const TH = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: Math.PI, step: Math.PI / 1800, value: 29 * RAD, unit: '', fmt: (v) => fmt(v / RAD, 1) + '°', aria: 'direction, north of east' });
+  const G = F.polar.grip(d, { t: TH, r: D });
+  /* 52 units to a block, fixed: 12 blocks east or west of the start and 12 north */
+  const b = 52, ox = 700, oy = 672;
+  const ax = { X: (v) => ox + v * b, Y: (v) => oy - v * b, box: { l: ox - 12 * b, r: ox + 12 * b, t: oy - 12 * b, b: oy }, xr: [-12, 12], yr: [0, 12] };
   function draw() {
     const { ctx } = begin(d.c);
-    const Dm = D.v, th = TH.v, ex = Dm * cos(th), no = Dm * sin(th), [hx, hy] = tip(ox, oy, Dm * b, th);
-    cityGrid(ctx, ox, oy, b, 12, 12);
-    rose(ctx, 140, 250);
-    protractor(ctx, ox, oy, 100, th);
-    /* the rulers along the two components */
-    if (ex > 0.3) ruler(ctx, ox, oy, 0, ex * b, b, 1, -1, 40);
-    if (no > 0.3) ruler(ctx, ox + ex * b, oy, 90, no * b, b, 1, -1, 22);
-    /* the total displacement and its two parts, head to tail */
-    arrow(ctx, ox, oy, hx, hy, C('position'), 6);
-    if (ex > 0.1) arrow(ctx, ox, oy, ox + ex * b, oy, C('position'), 4);
-    if (no > 0.1) arrow(ctx, ox + ex * b, oy, hx, hy, C('position'), 4);
-    const lab = labeller(ctx, 700, { headline: true }); lab.block(ox - 34, oy - 12 * b - 10, ox - 2, oy + 4); lab.block(ox - 10, oy + 8, ox + 12 * b + 10, oy + 34);
-    lab.beside({ x1: ox, y1: oy, x2: hx, y2: hy }, 'left', 'D', C('position'), 26, { gap: 22 }); lab.flush();
-    if (ex > 0.3) text(ctx, fmt(ex, 1) + ' blocks east', ox + (ex * b) / 2, oy + 100, C('position'), { weight: 600, size: 18, align: 'center', bg: PAL.panel });
-    if (no > 0.3) text(ctx, fmt(no, 1) + ' blocks north', ox + ex * b + 76, oy - (no * b) / 2, C('position'), { weight: 600, size: 18, align: 'left', bg: PAL.panel });
-    thetaLabel(ctx, ox, oy, th);
-    dot(ctx, ox, oy, PAL.ink, true, 6);
-    topline(ctx, 'A displacement of ' + fmt(Dm, 1) + ' blocks at ' + compass(th) + ' is ' + fmt(ex, 1) + ' blocks east and ' + fmt(no, 1) + ' blocks north.');
-    readout(d.readout, `\\kD = ${fmt(Dm, 1)}\\ \\text{blocks at } ${fmt(th, 1)}^\\circ\\ \\text{north of east:}\\quad ${fmt(ex, 1)}\\ \\text{blocks east},\\ ${fmt(no, 1)}\\ \\text{blocks north}`);
+    const Dm = D.v, th = Math.round((TH.v / RAD) * 10) / 10, cp = C('position'), ca = C('angle');
+    const ex = Dm * cos(th), no = Dm * sin(th), [hx, hy] = tip(ox, oy, Dm * b, th), west = ex < -0.05;
+    ctx.save(); ctx.fillStyle = PAL.soft;
+    for (let i = -12; i < 12; i++) for (let j = 0; j < 12; j++) ctx.fillRect(ox + i * b + b * 0.1, oy - (j + 1) * b + b * 0.1, b * 0.8, b * 0.8);
+    ctx.restore();
+    line(ctx, ox - 12 * b - 20, oy, ox + 12 * b + 20, oy, PAL.ink, 2); arrow(ctx, ox, oy, ox, oy - 12 * b - 26, PAL.ink, 2);
+    for (let i = -12; i <= 12; i += 2) { line(ctx, ox + i * b, oy - 6, ox + i * b, oy + 6, PAL.ink, 1.5); text(ctx, String(Math.abs(i)), ox + i * b, oy + 24, PAL.muted, { size: 17, align: 'center' }); }
+    for (let j = 2; j <= 12; j += 2) { line(ctx, ox - 6, oy - j * b, ox + 6, oy - j * b, PAL.ink, 1.5); text(ctx, String(j), ox - 14, oy - j * b, PAL.muted, { size: 17, align: 'right' }); }
+    text(ctx, 'blocks west', ox - 12 * b, oy + 56, PAL.ink, { size: 18, align: 'left' }); text(ctx, 'blocks east', ox + 12 * b, oy + 56, PAL.ink, { size: 18, align: 'right' });
+    text(ctx, 'blocks north', ox + 14, oy - 12 * b - 14, PAL.ink, { size: 18, align: 'left' });
+    protractor(ctx, ox, oy, 96, th);
+    /* the two parts, head to tail, then the displacement over them */
+    line(ctx, hx, hy, ox, hy, alpha(PAL.ink, 0.35), 2, [4, 8]);
+    if (Math.abs(ex) > 0.15) arrow(ctx, ox, oy, ox + ex * b, oy, cp, 5);
+    if (no > 0.15) arrow(ctx, ox + ex * b, oy, hx, hy, cp, 5);
+    arrow(ctx, ox, oy, hx, hy, cp, 8);
+    G.draw(ctx, ax, cp);
+    dot(ctx, ox, oy, PAL.ink, true, 7);
+    const lab = labeller(ctx, HH);
+    lab.add('D = ' + fmt(Dm, 1) + ' blocks', (ox + hx) / 2, (oy + hy) / 2, -sin(th) * (west ? -1 : 1), -cos(th) * (west ? -1 : 1), cp, 24, 30);
+    if (Math.abs(ex) > 0.3) text(ctx, fmt(Math.abs(ex), 1) + (west ? ' blocks west' : ' blocks east'), ox + (ex * b) / 2, oy - 26, cp, { weight: 600, size: 22, align: 'center', bg: PAL.panel });
+    if (no > 0.3) text(ctx, fmt(no, 1) + ' blocks north', hx + (west ? -18 : 18), oy - (no * b) / 2, cp, { weight: 600, size: 22, align: west ? 'right' : 'left', bg: PAL.panel });
+    if (th > 3) lab.add('θ = ' + fmt(th, 1) + '°', ox + 110 * cos(th / 2), oy - 110 * sin(th / 2), cos(th / 2), -sin(th / 2), ca, 22, 22);
+    lab.flush();
+    rose(ctx, 1320, 100, 34);
+    tex(d.readout, `\\mathbf{D} = ${kp(fmt(Math.abs(ex), 1))}\\ \\text{blocks ${west ? 'west' : 'east'}} + ${kp(fmt(no, 1))}\\ \\text{blocks north}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();

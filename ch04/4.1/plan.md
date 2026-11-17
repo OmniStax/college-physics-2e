@@ -201,3 +201,44 @@ else was changed.
 Revised in the Manim pass of 2026-09-28:
 - `sim-skaters` · the angle carries a dashed circle at 90°, the right angle the book draws; landing on it morphs the readout by meaning, F_x bending into F₁ and F_y into F₂ under the root, and leaving it bends them back (manim-style 8, 11). Still, as before.
 - `sim-spring` · the relaxed-length slider is gone (rule 24.6: it moved where the spring ends and nothing else); the relaxed length is the book's 0.20 m and the stretch Δx is the one slider. Still.
+
+## Figure re-examination of 2026-11-16 (claude-fable-5-2)
+
+Both figures were judged against the book's images and rebuilt. These lines replace the plan lines above.
+
+1. `sim-skaters` · Figure 4.3 · force, external-force, free-body-diagram · value: the total force
+   answers the angle between the pushes, from the two strengths added (same way) through the book's
+   right angle to their difference (opposite ways) · arrows symbolic · still, no clock in the idea ·
+   $\kFone$ and $\kFtwo$ (10 to 60 N, force), $\theta$ (0° to 180°, angle, dashed circles at 0°,
+   90°, 180°) · headline "A push of 50 N and a push of 40 N, 90° apart, add to a total force of
+   64.0 N at 38.7° from the first push" · no graph · 2D.
+   works: parts: three panels at one scale (3.2 units per newton). Seen from above: the third
+   skater, each pusher behind her on the line of its push with both hands on her, the push drawn
+   beside its skater ending level with the hands. Head to tail: F₁, F₂ from its head, F_tot from
+   the first tail to the last head, drawn heavier. Free-body diagram: the third skater as a dot,
+   only F₁ and F₂ leaving it, θ between them; no resultant there (chapter COLOR.md) · flow: none ·
+   must hold: every arrow of one force has the same length and direction in all three panels; the
+   triangle closes; F_tot = 64.0 N at 38.7° on load, 90 N at 0°, 10 N at 180°; pushers never
+   cover each other or an arrow; along one line the arrows are set side by side so each is seen;
+   the free-body diagram shows two forces only · read off the image: F₁ points east from the
+   skater on the left, F₂ north from the skater below, the triangle has F₁ then F₂ dashed and
+   F_tot solid, part (b) is a dot with F₁ and F₂ only. The book prints no magnitudes; 50 N and
+   40 N are ours and match the image's proportions.
+   Before: the overhead panel and the free-body panel showed the same parallelogram, the caption's
+   head-to-tail triangle was not drawn, and the drawing was small in its stage.
+2. `sim-spring` · Figure 4.4 · force-standard, force · value: the reading of a spring scale is the
+   stretch counted in standard stretches · arrows symbolic · still · $\kdx$ (0 to 9 cm, position,
+   dashed circle at the 1 cm standard; the book's face runs 0 to 9) · headline "A stretch of 6.0 cm
+   is 6.0 standard stretches of 1 cm, so the restoring force is 6.0 units" · no graph · 2D.
+   works: parts: (a) support, relaxed spring, end plate, bracket x; (b) the same spring pulled by a
+   hand, brackets x and Δx beneath as the book has them, F_restore from the pulled end toward the
+   support; (c) a spring scale: ring, case, numbered face 0 to 9, spring in its slot, pointer on
+   the spring's end, rod and hook, F_restore along the rod, bracket Δx under the face · flow: none
+   · must hold: one scale (40 units per cm) in all rows; the zero of the face stands under the
+   relaxed end and the pointer under the pulled end, joined by dashed lines; the Δx brackets of
+   (b) and (c) are equal; the F_restore arrows of (b) and (c) are equal and grow with the stretch;
+   the scale reads 6 on load; at 0 no arrow and no Δx · read off the image: x about 1.8 times the
+   6-unit stretch (so x is 11 cm here, shown as x with no number, as the book gives none), face 0
+   to 9, pointer at 6, Δx bracket from 0 to the pointer, F_restore pointing left in (b) and (c).
+   Before: the scale had no Δx bracket and no force arrow, a relaxed length of 0.20 m the book
+   does not give, and nothing tied the pointer to the spring's stretch.

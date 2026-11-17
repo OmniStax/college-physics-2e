@@ -96,65 +96,109 @@ preparation's decision): the `subtraction` span reinforces it and uses
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-components` · replaces Figures 3.24, 3.25 and 3.26 (one run: the
-   vector with its components, the components as $A\cos\theta$ and
-   $A\sin\theta$, the walk in the city with the numbers) ·
-   components-from-magnitude-angle · **still**: the picture answers its
-   sliders and nothing else, there is no time in a vector's components ·
-   the vector $\mathbf{A}$ drawn from the origin of an $x$, $y$ frame with
-   a compass rose, its component vectors $\mathbf{A}_x$ along the axis and
-   $\mathbf{A}_y$ standing on its head, dashed as the book draws them,
-   the right angle marked, the angle arc, and the two component equations
-   written with the live numbers beside the drawing · $\kA$ (0.5 to 12.0
-   blocks, step 0.1, default 10.3, position hue), $\theta$ (−180º to 180º,
-   step 0.1, default 29.1, ink; the step is 0.1 so the default is not snapped away, as pass 19 found) · "A = 10.3 blocks at 29.1º has the
-   components Ax = 9.0 blocks and Ay = 5.0 blocks" · none · no. Readout:
-   $\kAx = \kA\cos\theta = (10.3\ \text{blocks})(\cos 29.1º) = 9.0\
-   \text{blocks}$ and the same for $\kAy$ on one line; small line: the
-   component vectors add to $\mathbf{A}$, but their magnitudes do not,
-   9.0 + 5.0 is not 10.3. The angle runs the whole circle so that a
-   component can come out negative. Draws position.
+1. `sim-components` · replaces Figures 3.24, 3.25 and 3.26 ·
+   components-from-magnitude-angle · value add: the components followed
+   round all four quadrants, where the book draws one · arrows: symbolic ·
+   **still**, a vector's components have no time in them · $\kA$ (2.0 to
+   12.0 blocks, step 0.1, default 10.3, position), $\theta$ (−180° to
+   180°, step 0.1, default 29.1°, angle, ticks at 0 and ±90°) · headline
+   "10.3 blocks at 29.1° is 9.0 blocks east and 5.0 blocks north" · graph
+   none · 2D. Rebuilt 2026-11-17 (figure re-examination): the old drawing
+   was a small triangle on a bare frame. It is now drawn on the city's
+   blocks at 36 units a block (the whole stage), the quadrant the vector is
+   in is shaded and each quadrant carries the signs its components take,
+   every label has its value, and the names go through `F.labeller`.
+   Readout: $\kAx = \kA\cos\theta = (10.3\ \text{blocks})\cos 29.1° =
+   9.0\ \text{blocks}$ and the same for $\kAy$, one line each; note: walked
+   one after the other the components come to 9.0 + 5.0 = 14.0 blocks, more
+   than the 10.3 blocks of A (the text's 3 m + 4 m ≠ 5 m).
+   works: parts: A from the origin; $A_x$ dashed along the x-axis from the
+   origin; $A_y$ dashed from the head of $A_x$ to the head of A; the right
+   angle where they meet; θ from the +x-axis to A; a compass rose · flow:
+   none · must hold: $A_x$ and $A_y$ head to tail end at the head of A at
+   every angle; the right angle sits at the foot of $A_y$; a component's
+   sign matches the words of its quadrant; the default reads 9.0 and 5.0
+   blocks; no label lies on an arrow or on an axis number · read off the
+   image: Figure 3.26 has A = 10.3 blocks, θ = 29.1°, $A_x$ = (10.3
+   blocks)(cos 29.1°) = 9.0 blocks east, $A_y$ = (10.3 blocks)(sin 29.1°) =
+   5.0 blocks north, axes numbered 0 to 9 and 0 to 5 in blocks, compass
+   rose at the left; the alt text agrees.
 2. `sim-resultant` · replaces Figure 3.27 · magnitude-direction-from-
-   components · **still**, for the same reason · the two components laid
-   head to tail from the origin and the vector they add to, with the right
-   angle marked and the angle arc; the direction is also said as a
-   compass direction, as the problems ask for it · $\kAx$ (−12.0 to 12.0
-   blocks, step 0.5, default 9.0, position hue), $\kAy$ (−12.0 to 12.0,
-   step 0.5, default 5.0, position hue) · "Ax = 9.0 blocks and Ay = 5.0
-   blocks add to A = 10.3 blocks at 29.1º, which is 29.1º north of east" ·
-   none · no. Readout: $\kA = \sqrt{\kAx^2 + \kAy^2} = \sqrt{9.0^2 + 5.0^2}
-   = 10.3\ \text{blocks}$ and $\theta = \tan^{-1}(\kAy/\kAx) =
-   \tan^{-1}(5.0/9.0) = 29.1º$; when $\kAx$ is negative the small line
-   says that the inverse tangent gives the angle of the line and the arrow
-   points the other way along it, so the compass direction is the one to
-   read off the drawing. Draws position.
+   components · value add: the direction in every quadrant, with the angle
+   the inverse tangent returns drawn where it is not the vector's own
+   (the problems ask for "south of west" and the like; 3.1's walk already
+   teaches the Pythagorean step in the first quadrant) · arrows: symbolic ·
+   **still** · $\kAx$ and $\kAy$ (−12.0 to 12.0 blocks, step 0.5, defaults
+   9.0 and 5.0, position), and the head of A is dragged over the blocks
+   (`F.drag` on the two sliders) · headline "9.0 blocks east and 5.0 blocks
+   north make A = 10.3 blocks, 29.1° north of east" · graph none · 2D.
+   Rebuilt 2026-11-17 on the same city grid as `sim-components`: each
+   quadrant names its compass words and what to do with the inverse
+   tangent there (nothing, + 180°, − 180°); with $A_x < 0$ the angle
+   $\tan^{-1}(A_y/A_x)$ is drawn muted, on the same line through the
+   origin, pointing the other way. Readout: $\kA = \sqrt{\kAx^2+\kAy^2} =
+   \sqrt{(9.0\ \text{blocks})^2+(5.0\ \text{blocks})^2} = 10.3\
+   \text{blocks}$ and $\theta = \tan^{-1}(\kAy/\kAx) = \dots = 29.1°$, with
+   ± 180° in the chain where $A_x < 0$.
+   works: parts: $A_x$ along the x-axis from the origin, $A_y$ from its
+   head, A from the origin to the head of $A_y$, θ at the origin · flow:
+   none · must hold: A ends where the two components end; θ is measured
+   from the +x-axis to A itself in every quadrant; the muted line is
+   collinear with A and opposite to it; the compass words agree with the
+   quadrant; the default reads 10.3 blocks and 29.1° · read off the image:
+   Figure 3.27 carries no numbers, only $A = \sqrt{A_x^2+A_y^2}$ along A
+   and $\theta = \tan^{-1}(A_y/A_x)$; the text beside it works 9 and 5
+   blocks to 10.3 blocks and 29.1°.
 3. `sim-add` · Figure 3.28 + 3.29 + 3.30 + 3.31 + 3.32 ·
    analytical-vector-addition, components-from-magnitude-angle,
-   magnitude-direction-from-components · variation by slider: the reader
-   sees each component grow on a fixed scale as a leg is dragged · still,
-   no time in a sum · $\kA$ and $\kB$ 5 to 60 m (step 0.5, defaults 53.0
-   and 34.0, position), $\kthetaA$ and $\kthetaB$ −180° to 180° (defaults
-   20.0° and 63.0°, angle, ticks at 0 and ±90°) · headline "A and B add to
-   R = 81.2 m, 36.6° north of east" with symbols typeset · graph none · 2D.
-   One scale, 3 units a metre, fixed from the 120 m reach of two 60 m legs
-   (origin centred, canvas 1020 tall to hold ±120 m); the component rows
-   below that disc and the columns to its left, dashed for the legs and
-   solid for the resultant, each named with its value as Figure 3.32 does;
-   A, B, R and the three angles named through `F.labeller` with the
-   headline band and the three arrows blocked, so a name steps off a line
-   rather than onto it; no side table (the readout carries the four steps,
-   computed from the rounded components so its sums hold as written);
-   θ written as tan⁻¹(Ry/Rx) ± 180° when Rx < 0, with a one-line note.
-   Shares its code with sim-subtract; rewritten 2026-10-05 on the review's
-   filing.
+   magnitude-direction-from-components · value add: each component seen to
+   grow, shrink and change sign as a leg is turned, and the sums along each
+   axis kept in step · arrows: symbolic · **still** · $\kA$ 10 to 60 m and
+   $\kB$ 10 to 40 m (step 0.5, defaults 53.0 and 34.0, position),
+   $\theta_A$ 0° to 90° and $\theta_B$ 0° to 180° (step 0.5, defaults 20.0°
+   and 63.0°, angle) · headline "A and B add to R = 81.2 m, 36.6° north of
+   east" · graph none · 2D. Rebuilt 2026-11-17: the 120 m disc of the old
+   version drew Example 3.3 at a fifth of the stage. The angles are now
+   kept to where a walk stays north of its start, so one scale of 6.2 units
+   a metre (40 m west, 100 m east, 100 m north) draws the example across
+   the stage; the rows sit under the lowest point and the columns left of
+   the leftmost point, as Figure 3.32 has them; the x-axis starts at the
+   leftmost point so that it never runs through a column. θ is named just
+   past R, as the book does, since A cuts its arc. Readout: steps 2 to 4
+   with units on every number, computed from the rounded components so the
+   sums hold as written.
+   works: parts: A from the origin, B from the head of A, R from the origin
+   to the head of B; $A_x$, $B_x$ dashed and head to tail under the walk,
+   $R_x$ solid under them and as long as the two together; $A_y$, $B_y$,
+   $R_y$ the same at the left; $\theta_A$ and θ at the origin, $\theta_B$
+   at the head of A from a horizontal · flow: none · must hold: every
+   component starts and ends level with the points of the walk it belongs
+   to; $R_x$ spans exactly $A_x$ then $B_x$, and $R_y$ the same; a west
+   component points left; the default reads the book's seven numbers · read
+   off the image: Figure 3.32 has A = 53 m, $\theta_A$ = 20°, B = 34 m,
+   $\theta_B$ = 63°, R = 81.2 m, θ = 36.6°, $A_x$ = 49.8 m, $B_x$ = 15.4 m,
+   $R_x$ = 65.2 m, $A_y$ = 18.1 m, $B_y$ = 30.3 m, $R_y$ = 48.4 m; legs
+   dashed, resultant's components solid black.
 4. `sim-subtract` · Figure 3.33 · analytical-vector-addition,
-   vector-subtraction · variation by slider: the reversed components of
-   −B seen against A's on one fixed scale · still · the same four sliders,
-   defaults and fixed scale as `sim-add`, B kept as a muted dashed ghost
-   from the head of A · headline "A − B gives R = 36.5 m, 19.5° south of
-   east" typeset · graph none · 2D. Built from the same function as
-   `sim-add` with sign −1; zero printed without a sign; θ with ± 180° when
-   Rx < 0. Rewritten 2026-10-05 with `sim-add`.
+   vector-subtraction · value add: B and −B seen together from the head of
+   A while B turns, so the components of −B are seen to be B's with the
+   sign changed · arrows: symbolic · **still** · $\kB$ 10 to 40 m (default
+   34.0, position), $\theta_B$ −180° to 180° (default 63.0°, angle, ticks
+   at 0 and ±90°); A is the 53.0 m at 20.0° of Example 3.3 and has no
+   slider, which keeps B and −B within 40 m of one fixed point and lets the
+   scale be 7.6 units a metre · headline "A − B gives R = 36.5 m, 19.5°
+   south of east" · graph none · 2D. Rebuilt 2026-11-17 from the same
+   function as `sim-add` with sign −1; B itself is drawn muted and dashed
+   from the head of A.
+   works: parts: A from the origin, −B from the head of A, R from the
+   origin to the head of −B, B muted from the head of A; rows $A_x$,
+   $-B_x$, $R_x$ and columns $A_y$, $-B_y$, $R_y$ · flow: none · must
+   hold: B and −B are equal and opposite at every setting; $-B_x$ and
+   $-B_y$ point against B's; $R_x$ and $R_y$ run from the origin's level to
+   the head of −B · read off the image: Figure 3.33 carries no numbers;
+   with the legs of Figure 3.28 the components are 49.8 − 15.4 = 34.4 m
+   and 18.1 − 30.3 = −12.2 m, R = 36.5 m at −19.5° (worked here, not
+   printed in the book).
 5. `fig-paths` · Figure (unnumbered, inside problem 1) · the map of the
    city with paths A to D, blocks 120 m on a side · a figure that serves
    exercises, copied over as it is: the book's image

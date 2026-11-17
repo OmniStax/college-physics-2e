@@ -61,8 +61,6 @@
     "force",
     "acceleration",
     "velocity",
-    "time",
-    "position",
     "mass"
    ],
    "ai": [
@@ -85,6 +83,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: library children and rider, bigger scene, labeller, fixed FBD scale"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: larger scene, moving ground, head-to-tail sum, a against F_net"
     }
    ]
   },
@@ -124,6 +126,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "readout separator, note shortened, graph labels on a panel"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: larger scenes, a1 and a2 as the book names them, x10 step on graph"
     }
    ]
   },
@@ -155,7 +161,8 @@
    ],
    "draws": [
     "force",
-    "acceleration"
+    "acceleration",
+    "mass"
    ],
    "ai": [
     {
@@ -177,6 +184,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: seated rider, flames, thrusts at nozzles, N off rail, dropdown"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "sled redrawn from the book image, readout ends on a, count as a choice"
     }
    ]
   },
@@ -208,6 +219,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "graph labels placed, note cut to one sentence"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: Earth beside a second place, dials, forces to one scale"
     }
    ]
   }
@@ -988,14 +1003,14 @@
   },
   {
    "id": "load",
-   "label": "the mass on the scale",
+   "label": "the block on the scale",
    "figures": [
     "sim-weight"
    ]
   },
   {
    "id": "scale",
-   "label": "the bathroom scale",
+   "label": "the scale",
    "figures": [
     "sim-weight"
    ]

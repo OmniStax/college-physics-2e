@@ -65,161 +65,94 @@ in the components passage, and `displacement` and `distance-traveled`
 
 ## Figures
 
-id · replaces · concepts · what moves · sliders · headline · graph · 3D
+Re-examined as a set on 2026-11-17 (claude-fable-5-2). The section had seven
+sims that drew the same two triangles again and again, each small in a blank
+stage. Three ideas repeated: `sim-vector-2d`, `sim-head-to-tail` and
+`sim-components` were one 9-5-10.3 triangle on one grid; `sim-head-to-tail`
+and `sim-walk` were the same walked construction; `sim-walk` at rest was
+`sim-order` with the order A, B, C. Five drawn figures remain, one per idea.
 
-1. `sim-vector-2d` · replaces Figure 3.8 (the walk of 9 blocks east and
-   5 blocks north drawn as one arrow) and Figure 3.9 (the ruler and
-   protractor laid on it) · vector-in-two-dimensions · **still**: the
-   idea is a picture of an arrow, and nothing in it has a time · a grid
-   of city blocks, the displacement $\kD$ drawn as an arrow from the
-   starting point, a ruler laid along the arrow with its ticks in blocks
-   and a protractor arc at the tail reading the angle from the east-west
-   axis; the compass rose beside it · magnitude $\kD$ in blocks (1.0 to
-   12.0, step 0.1, default 10.3, position hue), direction θ in degrees
-   (0 to 90, step 0.1, default 29.1, ink) · "D = 10.3 blocks at 29.1°
-   north of east: the arrow is 10.3 units long on the ruler and the
-   protractor reads 29.1°" · none · no. Readout: $\kD = 10.3\
-   \text{blocks}$, $\theta = 29.1º$ north of east; small line: the
-   arrow's length is proportional to the magnitude and its direction is
-   the vector's direction, so the two numbers and the arrow say the same
-   thing. Draws position.
-2. `sim-head-to-tail` · replaces Figure 3.10 (a to c) and the step
-   figures 3.11, 3.12 and 3.13 · head-to-tail-method, resultant-vector ·
-   **moves**: a person walks the first leg east, then the second leg
-   north from the head of the first, and only then is the resultant drawn
-   from the tail of the first to the head of the last and measured with
-   the ruler and the protractor; the steps of the book happen in the
-   order the book lists them, and the walk has a time in it · blocks
-   east (1 to 12, step 1, default 9, position hue), blocks north (0 to 8,
-   step 1, default 5, position hue) · during the walk "step 1: 9 blocks
-   east" and "step 2: 5 blocks north, tail at the head of the first";
-   at the end "the resultant D is 10.3 blocks at 29.1° north of east,
-   measured with a ruler and a protractor" · none · no. Finite, one
-   construction per loop in about 5 real seconds, so it gets the
-   scrubber. Readout: $\kD = \sqrt{9^2 + 5^2}\ \text{blocks} = 10.3\
-   \text{blocks}$ at $\theta = 29.1º$; small line on the resultant being
-   drawn from the tail of the first vector to the head of the last.
-   Draws position.
-3. `sim-walk` · replaces Figures 3.14, 3.15, 3.16 and 3.17 (Example 3.1:
-   the three vectors drawn, laid head to tail, the resultant, the ruler
-   and protractor) · head-to-tail-method, resultant-vector · **moves**:
-   the woman walks the three legs in turn, each arrow laid down with its
-   tail at the head of the one before, and the resultant is drawn and
-   measured at the end · $\kA$ (5.0 to 40.0 m, step 0.5, default 25.0),
-   $\kB$ (5.0 to 40.0 m, default 23.0), $\kC$ (5.0 to 40.0 m, default
-   32.0), all position hue; the directions stay the book's 49.0° north
-   of east, 15.0° north of east and 68.0° south of east, since the
-   angles are what the next figure varies · "the resultant R is 50.8 m
-   at 5.47° south of east" once the walk is done, and the leg being
-   walked while it runs · none · no. Finite, so it gets the scrubber.
-   Readout: $\kR = 50.8\ \text{m}$, $\theta = 5.47º$ south of east; small
-   line: the method works for any number of vectors and is limited only
-   by the precision of the drawing. Draws position.
-4. `sim-order` · replaces Figure 3.18 (the same three vectors added as
-   C, then A, then B) · vector-addition-commutative · **still**: the
-   idea is that two constructions end at one point, and the comparison
-   is a picture · the walk of Example 3.1 laid head to tail in the order
-   A, B, C in muted ink and again in the chosen order in full ink, both
-   from the same starting point, the resultant drawn once because it is
-   the same arrow · the order as a dropdown of the six arrangements, since
-   six options would wrap a button row and an order is a state rather
-   than a quantity (rule 26.1), default C + A + B, and the three
-   directions θ_A (−180 to 180, default 49.0), θ_B (default 15.0), θ_C
-   (default −68.0), all ink · "Added as C, then A, then B, the sum ends
-   at the same point, so R is again 50.8 m at 5.47° south of east." ·
-   none · 2D. The scale is a fixed 3.5 units to the metre, which holds
-   the 80 m the three legs can reach when they all point the same way, so
-   the walk never leaves the drawing. Each leg is named once, on the
-   chosen order; the faint reference walk carries no labels of its own.
-   Readout: $\mathbf{C} + \mathbf{A} + \mathbf{B} = \mathbf{A} +
-   \mathbf{B} + \mathbf{C} = \mathbf{R}$, $\kR = 50.8\ \text{m}$; small
-   line: vector addition is commutative, as 2 + 3 and 3 + 2 are. Draws
-   position (the resultant's magnitude in the readout). Revised 2026-09-28: a change of order no longer cuts; each of A, B and C glides from its old tail to its new one while the resultant holds (manim 15, 16).
-5. `sim-subtraction` · replaces Figure 3.19 (B and −B) and Figures 3.20
-   to 3.23 (Example 3.2: A and B, −B, A + (−B) = R, A + B = R′) ·
-   vector-subtraction · **still**: the picture answers its sliders; the
-   two destinations, the dock and the place the sailor ends up, are
-   compared side by side, which a walk through time would not show
-   better · the first leg $\mathbf{A}$ from the starting point; from its
-   head both $\mathbf{B}$ (to the dock) and $-\mathbf{B}$ (the mistaken
-   leg, drawn dashed in the reverse direction), which is what Figure 3.19
-   shows; the two resultants $\mathbf{R} = \mathbf{A} - \mathbf{B}$ and
-   $\mathbf{R}' = \mathbf{A} + \mathbf{B}$ from the origin; the dock
-   marked at the head of $\mathbf{R}'$ and a boat at the head of
-   $\mathbf{R}$ · $\kA$ (5.0 to 40.0 m, default 27.5, position hue),
-   θ_A (0 to 180, default 66.0, ink), $\kB$ (5.0 to 40.0 m, default
-   30.0, position hue), θ_B (0 to 180, default 112.0, ink) · "A − B is
-   22.6 m at 6.9° south of east, while the dock at A + B is 52.9 m at
-   90.1° north of east." · none · 2D. The scale is a fixed 4 units to the
-   metre, which holds the 80 m the two legs can reach together, so the
-   drawing never runs off the canvas. The small line says that these
-   numbers are computed from the two legs while the example measures its
-   own drawing with a ruler and a protractor and reports 23.0 m at 7.5°
-   south of east, and that a reading taken off a drawing is good to about
-   a part in fifty, so the two agree as closely as the graphical method
-   allows. Readout: $\mathbf{A} - \mathbf{B} =
-   \mathbf{A} + (-\mathbf{B})$, $\kR = 22.6\ \text{m}$; small line: the dock
-   and the place she reaches are 2B = 60.0 m apart. Draws position. The
-   sim computes the difference exactly, 22.6 m at 6.9° south of east,
-   where the book's drawing measured 23.0 m at 7.5°; the sum agrees with
-   the book's 52.9 m at 90.1°, and the text keeps the book's numbers.
-6. `sim-scalar` · new (the passage has no sketch) · scalar-multiplication
-   · **still** · the vector $\mathbf{A}$ of the sailing example drawn from
-   the origin and, beneath it from a second origin, $c\mathbf{A}$, the
-   same direction when c is positive and the reverse when it is negative
-   · $\kA$ (5.0 to 40.0 m, default 27.5, position hue), θ_A (0 to 180,
-   default 66.0, ink), the scalar c (−3.0 to 3.0, step 0.5, default 3.0,
-   ink) · "3 × 27.5 m = 82.5 m in the same direction, 66.0° north of
-   east" or, for a negative c, "… in the opposite direction" · none ·
-   no. Readout: $|c|\,\kA = 3.0 \times 27.5\ \text{m} = 82.5\ \text{m}$;
-   small line: dividing by 2 is multiplying by 1/2. Draws position.
-7. `sim-components` · new (the passage has no sketch) · resolving-vector
-   · **still** · the total displacement of the walk in the city, 10.3
-   blocks at 29.0° north of east, drawn on the grid of blocks with the
-   two vectors that add to it, east and north, drawn head to tail beneath
-   and beside it, each measured with a ruler in blocks; the finding of
-   the parts is the inverse of the head-to-tail figure above · $\kD$ (1.0
-   to 12.0 blocks, step 0.1, default 10.3, position hue), θ (0 to 90,
-   step 0.1, default 29.0, ink) · "10.3 blocks at 29.0° north of east is
-   9.0 blocks east and 5.0 blocks north" · none · no. Readout: the east
-   component and the north component as measured lengths, $9.0\
-   \text{blocks east}$ and $5.0\ \text{blocks north}$, written with the
-   position macros; small line: the two components added head to tail
-   give back the vector. Draws position.
-8. `fig-paths` · the map of paths (the figure of problems 1 and 2, which
-   3.3's problems 1 and 2 use too) · none · **still**, a faithful copy
-   under rule 14: labelled Figure, no sliders, no motion · the grid of
-   blocks 120 m on a side, the compass, the Start and the second start,
-   and paths A, B, C and D told apart by their dash patterns, since the
-   page colours only types · none · "All blocks are 120 m on a side, and
-   each path is walked in the direction of its arrowheads." · none · 2D.
-   The header and the lead above it say what the map shows rather than
-   which problems refer to it, since a page never talks about itself
-   (rule 17). Draws nothing, and the book's image is its original.
+id · replaces · concepts · value add · arrows · moving or still · controls · headline · graph · 3D
 
-Photographs, one:
+1. Figures 3.8 and 3.9 · **reverted to the book's images**, two kept
+   photographs (`sim-vector-2d` keeps its id for 3.8; `fig-ruler-protractor`
+   is 3.9). The sim's two sliders set a length and an angle that its ruler
+   and protractor then read back, which shows nothing the book's map with the
+   helicopter path and its ruler drawing do not, and the same triangle is
+   drawn live in the two figures below.
+2. `sim-head-to-tail` · Figure 3.10 + 3.11 + 3.12 + 3.13 · head-to-tail-method,
+   resultant-vector · flow by animation (the construction happens in the
+   book's order) and variation by slider · arrows symbolic (displacement
+   vectors), grown from the tail as each is drawn · a story, not a clock: the
+   steps are the stops of a story slider (start, Step 1, Step 2, Step 4,
+   Steps 5, 6), which opens at the last stop so the finished construction is
+   the poster · blocks east (1 to 12, default 9), blocks north (1 to 8,
+   default 5), both position · the step in the book's words · none · 2D.
+   works: parts: the first vector along the east axis from the starting
+   point; the second from the head of the first, north; the resultant D from
+   the tail of the first to the head of the second; a ruler laid beside D
+   with a tick per block; a protractor centred on the starting point · flow:
+   first vector, then second, then D, then the tools · must hold: the tail
+   of the second vector is on the head of the first; D starts at the
+   starting point and ends on the head of the second; the ruler's zero is at
+   D's tail and its reading at D's head is D; the protractor's arc runs from
+   the east axis to D · read off the image: 9 units east, 5 north, 10.3
+   units, θ = 29.1°.
+3. `sim-walk` · Figure 3.14 + 3.15 + 3.16 + 3.17 + 3.18 (the order figure
+   is folded in; `sim-order` is gone) · head-to-tail-method,
+   resultant-vector, vector-addition-commutative · variation by a choice:
+   the six orders, each leg gliding to its new place · arrows symbolic ·
+   still, with a morph on a change of order · one choice, the order, as a
+   row of six buttons, default A + B + C (the example's own); the angle
+   sliders of the old order figure are dropped, since turning a leg does not
+   change the idea and a free angle forced a scale at which the example was
+   a quarter of the stage · "the walk ends at the same point" · none · 2D.
+   works: parts: on the left A, B and C each from its own east line with its
+   angle (Figure 3.14); on the right the three head to tail from the start,
+   the resultant R from the start to the last head, a ruler along R ticked
+   every 10 m and a protractor at the start turned upside down, since R is
+   south of east (Figures 3.15 to 3.17); the walk as A, B, C stays in faint
+   ink when another order is chosen (Figure 3.18) · must hold: every leg
+   keeps its length and direction in every order; all six orders end on the
+   head of R; the ruler reads 50.8 at R's head; R lies below the east line ·
+   read off the image and the text: A 25.0 m at 49.0° north of east, B 23.0 m
+   at 15.0° north of east, C 32.0 m at 68.0° south of east, R = 50.8 m,
+   θ = 5.47° south of east (checked: 50.84 m, 5.47°).
+4. `sim-subtraction` · Figure 3.19 + 3.20 + 3.21 + 3.22 + 3.23 ·
+   vector-subtraction · variation by slider: the dock and the place she ends
+   up stay opposite each other across the head of A, 2B apart · arrows
+   symbolic · still · B (10 to 35 m, default 30.0, position) and θ_B (0 to
+   180°, default 112, angle); A is fixed at the example's 27.5 m at 66.0°,
+   since it changes nothing about the idea · "Sailing −B in place of B
+   leaves her 60.0 m from the dock." · none · 2D.
+   works: parts: on the left B and −B from one point with their angles from
+   the east line (Figures 3.19 and 3.21: 112° north of east and 68° south of
+   east); on the right A from the start, B and −B both from the head of A, R′
+   from the start to the head of B (the dock) and R from the start to the
+   head of −B (the boat) · must hold: −B is as long as B and opposite; the
+   two angles on the left add to 180°; both resultants start at the start ·
+   read off the image and the text: A = 27.5 m at 66°, B = 30.0 m at 112°,
+   R′ = 52.9 m at 90.1° north of east, R = 23.0 m at 7.5° south of east. The
+   last pair is the book's reading of its own drawing; the figure computes
+   22.6 m at 6.8° and says so in a note at the book's setting.
+5. `sim-scalar` · Sim · scalar-multiplication · variation by slider · arrows
+   symbolic · still · the scalar c alone (−3 to 3 by 0.5, default 3), with
+   the text's cases marked on it: 3, −2 and 1/2; the sliders for A and its
+   angle are dropped, since they do not change the idea · "3 × A is 82.5 m
+   in the same direction, 66.0° north of east." · none · 2D.
+6. `sim-components` · Sim · resolving-vector · variation by dragging the
+   head of the vector · arrows symbolic · still · D (1 to 12 blocks, default
+   10.3) and θ (0 to 180° north of east, default 29.0), the head of the
+   arrow draggable; past 90° the first part points west, which the old sim
+   could not show · no headline, the readout says it · none · 2D.
+7. `fig-paths` · the map of paths of problems 1 and 2 · kept as a still
+   redraw: the book's image is 411 pixels wide and its four paths are told
+   apart by colour alone; the redraw is checked against it block by block
+   (A: 3 north, 1 east; B: 4 east, 3 north, 3 west; C: 1 north, 5 east,
+   2 south, 1 west, 1 north, 3 west; D: 2 south, 6 east, 4 north, 1 west).
 
-- Figure 3.7, the Hawaiian Islands map (credit: US Geological Survey):
-  **drop**. It is the splash image at the head of the section, and no
-  sentence of the text points at it. Not copied.
-
-Figures that serve exercises: `fig-paths` above. The five diagrams inside
-conceptual questions 4 and 5 and problems 4, 5 and 11 (the cabin and the
-lake, the circle round San Francisco, the two-leg walks, the velocities
-$\mathbf{v}_A$ and $\mathbf{v}_B$) are kept on the exercise cards as the
-book's own images, copied into `media/ch03/`, so the reader sees exactly
-what the problem is about; problems 4 and 10 are unkeyed and their images
-travel with nothing, but they are copied since 3.3's problems reuse two of
-them.
-
-Extra simulations (rule 15): one considered, none built. A simulation
-that lets the reader lay a fourth and fifth vector down and watch the
-resultant keep up would show that the method is valid for any number of
-vectors, but the three-leg walk and the order sim already show it for
-three, and the sentence in the text says the rest. Nothing else opens a
-view the eight figures do not give.
-
-Figure pass (2026-09-14, Claude Fable 5.1): the runner in `sim-head-to-tail` and `sim-walk` is the drawing layer's `person()`, turned to walk along each leg; `sim-walk` drops the metre labels the ruler covered and says instead that a tick is 10 m. `sim-order` is redrawn at 5.2 units to the metre on a 940-unit canvas (the 80 m reach still fits in every direction) with the leg names, R and the start through `labeller()`, and the reference walk in half-strength ink. `sim-subtraction` is redrawn at 6 units to the metre on a 780-unit canvas, with the legs narrowed to 5 to 35 m so the reach fits (the book's 27.5 m and 30.0 m stay the defaults), every label through `labeller()`, and a larger dock and sailing boat. `sim-scalar` is at 3.4 units to the metre with $A$ narrowed to 5 to 30 m, both arrows carrying an angle arc, labels through `labeller()`. `fig-paths` gains a bottom margin. Every headline wraps through `topline()`.
+Photographs: Figure 3.7, the Hawaiian Islands map, stays dropped (a splash
+image no sentence points at).
 
 ## Exercises
 

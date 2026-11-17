@@ -19,12 +19,6 @@ const powLabel = (e) => POW[String(Math.round(e))] ?? String(Math.pow(10, Math.r
 const inbox = (ctx, box, f) => { ctx.save(); ctx.beginPath(); ctx.rect(box.l, box.t, box.r - box.l, box.b - box.t); ctx.clip(); f(); ctx.restore(); };
 /* an arrow long enough to be seen: the book draws the friction on the rocket sled larger than scale for the same reason */
 const alen = (v, k, min) => Math.max(min ?? 26, Math.abs(v) * k);
-/* a label beside the head of a rightward arrow, flipped back to its tail once the head is so far
-   along the strip that the label would run past the right edge of the canvas */
-function headLabel(ctx, s, tail, head, y, color, size) {
-  const sz = size ?? 20, late = head + 14 + 0.55 * sz * s.length > 1345;
-  text(ctx, s, late ? tail - 14 : head + 14, y, color, { size: sz, weight: 600, align: late ? 'right' : 'left' });
-}
 
 /* ---------- sprites, in ink ---------- */
 /* a basketball centred on (x, y) */
@@ -32,21 +26,6 @@ function basketball(ctx, x, y, color, r) {
   ctx.save(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
   ctx.strokeStyle = PAL.panel; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.moveTo(x, y - r); ctx.lineTo(x, y + r); ctx.stroke();
-  ctx.restore();
-}
-/* a lawn mower, its deck centred on (x, y), the handle trailing to the left */
-function mower(ctx, x, y, color) {
-  ctx.save(); ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.moveTo(x - 44, y + 12); ctx.lineTo(x - 44, y - 10); ctx.lineTo(x - 14, y - 24); ctx.lineTo(x + 30, y - 24); ctx.lineTo(x + 44, y - 6); ctx.lineTo(x + 44, y + 12); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.arc(x - 30, y + 20, 11, 0, TAU); ctx.arc(x + 30, y + 20, 11, 0, TAU); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(x - 40, y - 14); ctx.lineTo(x - 104, y - 78); ctx.moveTo(x - 104, y - 78); ctx.lineTo(x - 128, y - 78); ctx.stroke();
-  ctx.restore();
-}
-/* a bathroom scale standing on the floor at (x, y), w wide */
-function bathScale(ctx, x, y, w, color) {
-  ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = PAL.panel; ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.rect(x - w / 2, y - 34, w, 34); ctx.fill(); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, y - 17, 12, 0, TAU); ctx.stroke();
   ctx.restore();
 }
 
@@ -212,73 +191,70 @@ function bathScale(ctx, x, y, w, color) {
 })();
 
 /* =====================================================================
-   FIGURE 4.6: the same force on a basketball and on an SUV. The idea has
-   no time in it — it answers its sliders — so the figure is a still
-   picture with no transport. The graph carries the reading, since the two
-   accelerations are thousands apart. Its axes are shifted by a decade and
-   two so that neither range straddles zero and no zero line is drawn on a
-   scale that has no zero.
+   FIGURE 4.6: the same push on a basketball and on an SUV. The idea has
+   no time in it, so the figure is still. The two accelerations are
+   thousands apart, so the graph steps both axes by tens: on it the
+   inverse proportion is a straight line that falls one step for every
+   step across, and each body sits on it under its own picture. The axes
+   are shifted by a decade and two so that neither range straddles zero.
 ===================================================================== */
 (function () {
-  const d = sim('sim-mass', 990);
+  const d = sim('sim-mass', 800);
   const Fp = ctl(d.controls, { label: '\\kF', cls: 'force', min: 10, max: 500, step: 5, value: 200, unit: 'N', dec: 0, aria: 'force the player exerts' });
-  const mb = ctl(d.controls, { label: '\\km_{\\htmlData{ref=ball}{\\text{ball}}}', cls: 'mass', min: 0.2, max: 3, step: 0.001, value: 0.624, unit: 'kg', dec: 3, aria: 'mass of the basketball' });
-  const ms = ctl(d.controls, { label: '\\km_{\\htmlData{ref=suv}{\\text{SUV}}}', cls: 'mass', min: 800, max: 3000, step: 20, value: 1800, unit: 'kg', dec: 0, aria: 'mass of the SUV' });
+  const mb = ctl(d.controls, { label: '\\km_{\\htmlData{ref=ball}{1}}', cls: 'mass', key: 'm-ball', min: 0.2, max: 3, step: 0.001, value: 0.624, unit: 'kg', dec: 3, aria: 'mass of the basketball' });
+  const ms = ctl(d.controls, { label: '\\km_{\\htmlData{ref=suv}{2}}', cls: 'mass', key: 'm-suv', min: 800, max: 3000, step: 20, value: 1800, unit: 'kg', dec: 0, aria: 'mass of the SUV' });
   const MX = 1, MY = 2;   /* the decades the two axes are shifted by */
+  const tnum = (s) => s.replace(/,/g, '{,}');
+  let hits = [];
   function draw() {
     const { ctx } = begin(d.c);
-    const ab = Fp.v / mb.v, as = Fp.v / ms.v, cf = C('force'), ca = C('acceleration');
-    /* the two scenes, the same push drawn the same length on each */
-    const L = 40 + Fp.v * 0.34, gy = 300;
-    line(ctx, 80, gy, 680, gy, PAL.muted, 3); line(ctx, 740, gy, 1340, gy, PAL.muted, 3);
-    F.person(ctx, 214, gy, F.ref('player'), { lean: 0.22, reach: { x: 276, y: gy - 50 } });
-    const cb = F.ref('ball'), cs = F.ref('suv');
-    basketball(ctx, 300, gy - 50, cb, 26);
-    arrow(ctx, 332, gy - 50, 332 + L, gy - 50, cf, 5);
-    text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', 332 + L / 2, gy - 78, cf, { size: 20, weight: 600, align: 'center' });
-    text(ctx, 'a basketball of ' + fmt(mb.v, 3) + ' kg', 360, gy + 36, cb, { size: 18, align: 'center' });
-    text(ctx, 'a = ' + sig3(ab) + ' m/s²', 360, gy - 140, ca, { size: 22, weight: 600, align: 'center' });
-    F.person(ctx, 860, gy, F.ref('player'), { lean: 0.22, reach: { x: 922, y: gy - 44 } });
-    car(ctx, 980, gy - 26, cs, 1.5);
-    arrow(ctx, 1046, gy - 50, 1046 + L, gy - 50, cf, 5);
-    text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', 1046 + L / 2, gy - 78, cf, { size: 20, weight: 600, align: 'center' });
-    text(ctx, 'an SUV of ' + commas(fmt(ms.v, 0)) + ' kg', 1020, gy + 36, cs, { size: 18, align: 'center' });
-    text(ctx, 'a = ' + sig3(as) + ' m/s²', 1020, gy - 140, ca, { size: 22, weight: 600, align: 'center' });
-    /* (c) the two free-body diagrams the book draws beneath the scenes: one arrow apiece, the same
-       push drawn the same length on each, which is what makes the two situations comparable */
-    text(ctx, '(c) the free-body diagrams are identical, so the two situations can be compared directly', 700, 420, PAL.muted, { size: 18, align: 'center' });
-    [[360, 'the basketball', cb], [1020, 'the SUV', cs]].forEach(([bx, name, cr]) => {
-      dot(ctx, bx - 150, 500, cr, true, 10);
-      arrow(ctx, bx - 150, 500, bx - 150 + L, 500, cf, 5);
-      text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', bx - 150 + L / 2, 472, cf, { size: 20, weight: 600, align: 'center' });
-      text(ctx, name, bx - 150, 534, cr, { size: 18 });
-    });
-    /* acceleration against mass, both axes stepping by tens */
-    const gbox = { l: 220, r: 1230, t: 620, b: 910 };
+    const ab = Fp.v / mb.v, as = Fp.v / ms.v, ratio = ms.v / mb.v, cf = C('force'), ca = C('acceleration'), cm = C('mass');
+    const cb = F.ref('ball'), cs = F.ref('suv'), cp = F.ref('player');
+    headline(ctx, 'The SUV has ' + sig3(ratio) + ' times the mass of the ball, so the same push gives it 1/' + sig3(ratio) + ' of the acceleration');
+    /* the two scenes: the same player, the same push drawn the same length over each body */
+    const gy = 330, L = 30 + Fp.v * 0.5, S = 1.45;
+    const scene = (px, hand, body, name, m, a, cr, sub, mid) => {
+      line(ctx, px - 110, gy, px + 520, gy, PAL.muted, 3);
+      F.silhouette(ctx, { x: px, y: gy, s: S, pose: 'push', color: cp, hands: [{ x: (hand.x - px) / S, y: (hand.y - gy) / S }, { x: (hand.x - px) / S - 2, y: (hand.y - gy) / S + 7 }] });
+      body();
+      arrow(ctx, hand.x, 150, hand.x + L, 150, cf, 6);
+      text(ctx, 'F = ' + fmt(Fp.v, 0) + ' N', hand.x, 122, cf, { size: 22, weight: 600 });
+      F.rich(ctx, [name + ', m_' + sub + ' = ', [m, cm]], mid, gy + 34, { size: 20, align: 'center' });
+      F.rich(ctx, ['a_' + sub + ' = ', [sig3(a) + ' m/s²', ca]], mid, gy + 66, { size: 23, weight: 600, align: 'center' });
+    };
+    const hb = { x: 196, y: gy - 150 }, hs = { x: 866, y: gy - 120 };
+    scene(120, hb, () => basketball(ctx, hb.x + 40, hb.y, cb, 38), 'the ball', fmt(mb.v, 3) + ' kg', ab, cb, '1', 300);
+    scene(790, hs, () => car(ctx, hs.x + 166, gy - 62, cs, 3.9), 'the SUV', commas(fmt(ms.v, 0)) + ' kg', as, cs, '2', 1010);
+    hits = [{ x: 150, y: gy - 110, r: 70, name: 'the player' }, { x: 820, y: gy - 110, r: 70, name: 'the same player' },
+      { x: hb.x + 40, y: hb.y, r: 40, name: 'the basketball' }, { x: hs.x + 166, y: gy - 70, r: 110, name: 'the stalled SUV' }];
+    /* acceleration against mass, both axes stepping by tens: 0.1 kg to 10,000 kg, 0.01 to 10,000 m/s² */
+    const gbox = { l: 200, r: 1240, t: 470, b: 720 };
     const g = axes(ctx, gbox, [0, 5], [0, 6],
-      { xl: 'm (kg)', xc: C('mass'), yl: 'a (m/s²)', yc: ca, nx: 5, ny: 6, fx: (e) => powLabel(e - MX), fy: (e) => powLabel(e - MY) });
+      { xl: 'm (kg)', xc: cm, yl: 'a (m/s²)', yc: ca, nx: 5, ny: 6, fx: (e) => powLabel(e - MX), fy: (e) => powLabel(e - MY) });
+    const ex = (m) => Math.log10(m) + MX, ey = (a) => Math.log10(a) + MY;
     inbox(ctx, gbox, () => {
       curve(ctx, (e) => Math.log10(Fp.v) - (e - MX) + MY, 0, 5, g.X, g.Y, ca, 5, 40);
       [[mb.v, ab], [ms.v, as]].forEach(([m, a]) => {
-        const ex = Math.log10(m) + MX, ey = Math.log10(a) + MY;
-        line(ctx, g.X(ex), g.Y(0), g.X(ex), g.Y(ey), PAL.muted, 2, [4, 8]);
-        line(ctx, g.X(0), g.Y(ey), g.X(ex), g.Y(ey), PAL.muted, 2, [4, 8]);
+        line(ctx, g.X(ex(m)), g.Y(0), g.X(ex(m)), g.Y(ey(a)), PAL.muted, 2, [4, 8]);
+        line(ctx, g.X(0), g.Y(ey(a)), g.X(ex(m)), g.Y(ey(a)), PAL.muted, 2, [4, 8]);
       });
+      /* one step on the line: ten times the mass, a tenth of the acceleration */
+      const a10 = Fp.v / 10, a100 = Fp.v / 100;
+      line(ctx, g.X(ex(10)), g.Y(ey(a10)), g.X(ex(100)), g.Y(ey(a10)), PAL.ink, 2.5);
+      line(ctx, g.X(ex(100)), g.Y(ey(a10)), g.X(ex(100)), g.Y(ey(a100)), PAL.ink, 2.5);
+      text(ctx, '×10 the mass', g.X(ex(31.6)), g.Y(ey(a10)) - 18, PAL.ink, { size: 18, align: 'center' });
+      text(ctx, '÷10 the acceleration', g.X(ex(100)) + 12, g.Y(ey(a10 / 3.16)), PAL.ink, { size: 18 });
     });
-    /* a mass so large, or a push so small, that the point falls below the floor of the graph is
-       pinned at that edge with its value beside it rather than drawn outside the frame */
-    [[mb.v, ab, 'the ball', cb], [ms.v, as, 'the SUV', cs]].forEach(([m, a, name, cr]) => {
-      const p = pinned(ctx, gbox, g.X, g.Y, Math.log10(m) + MX, Math.log10(a) + MY, ca, sig3(a) + ' m/s²');
-      text(ctx, name, p.x + 16, p.y + 24, cr, { size: 18, weight: 600, bg: PAL.panel });
+    [[mb.v, ab, 'the ball', cb, 1], [ms.v, as, 'the SUV', cs, -1]].forEach(([m, a, name, cr, side]) => {
+      const p = pinned(ctx, gbox, g.X, g.Y, ex(m), ey(a), cr, sig3(a) + ' m/s²');
+      text(ctx, name, p.x + side * 18, p.y - 26, cr, { size: 19, weight: 600, align: side > 0 ? 'left' : 'right', bg: PAL.panel });
+      hits.push({ x: p.x, y: p.y, r: 16, name: name + ': ' + sig3(m) + ' kg, ' + sig3(a) + ' m/s²' });
     });
-    text(ctx, 'every step of ten in the mass is a step of a tenth in the acceleration', g.X(2.6), g.Y(5.5), PAL.muted, { size: 17, align: 'center' });
-    headline(ctx, 'The same ' + fmt(Fp.v, 0) + ' N gives the ' + fmt(mb.v, 3) + ' kg ball ' + sig3(ab) + ' m/s² and the ' + commas(fmt(ms.v, 0)) + ' kg SUV ' + sig3(as) + ' m/s²');
-    readout(d.readout, `\\ka = \\frac{\\kF}{\\km} = \\frac{${fmt(Fp.v, 0)}\\ \\text{N}}{${fmt(mb.v, 3)}\\ \\text{kg}} = ${sig3(ab).replace(/,/g, '{,}')}\\ \\text{m/s}^2`,
-      'The SUV is ' + sig3(ms.v / mb.v) + ' times as massive as the ball, and its acceleration is ' + sig3(ms.v / mb.v) + ' times smaller.');
+    readout(d.readout, `\\ka_{1} = \\frac{\\kF}{\\km_{1}} = \\frac{${fmt(Fp.v, 0)}\\ \\text{N}}{${fmt(mb.v, 3)}\\ \\text{kg}} = ${tnum(sig3(ab))}\\ \\text{m/s}^2 \\\\ \\ka_{2} = \\frac{\\kF}{\\km_{2}} = \\frac{${fmt(Fp.v, 0)}\\ \\text{N}}{${tnum(commas(fmt(ms.v, 0)))}\\ \\text{kg}} = ${sig3(as)}\\ \\text{m/s}^2`);
   }
+  F.hover(d.stage, () => hits);
   register(d.fig, { update: () => {}, draw });
 })();
-
 
 /* =====================================================================
    FIGURE 4.8: the rocket sled of Example 4.2, made into its free-body
@@ -291,13 +267,13 @@ function bathScale(ctx, x, y, w, color) {
    only timeline.
 ===================================================================== */
 (function () {
-  const d = sim('sim-sled', 700);
+  const d = sim('sim-sled', 600);
   const M = 2100, A0 = 49;
   let nn, ff;
   const Tt = ctl(d.controls, { label: '\\kTf', cls: 'force', min: 5000, max: 40000, step: 12.5, value: (M * A0 + 650) / 4, unit: 'N', dec: 0, aria: 'thrust of one rocket',
     specials: [{ at: () => (M * A0 + ff.v) / +nn.value, label: 'Example 4.2' }] });
   const burn = [0, 1, 2, 3].map(() => F.tween(d, 1));
-  nn = F.select(d.controls, {
+  nn = choice(d.controls, {
     label: '\\text{rockets burning}', key: 'rockets', aria: 'number of rockets burning', value: '4',
     options: [{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }],
     onInput: (v) => light(+v),
@@ -320,11 +296,13 @@ function bathScale(ctx, x, y, w, color) {
      the graph's box at x = 1010; the friction, never more than 9 units on that scale, is drawn at
      50, larger than scale as the book draws it */
   const K = 0.0045, W = M * G;
-  const Z = 2.2, P0 = [640, 380], DOT = [180, 400], R = 16;
+  const Z = 2.2, P0 = [620, 330], DOT = [180, 330], R = 16;
   /* the silhouette of the platform and its column of rockets, about its centroid, resampled by arc
      length, and the circle it bends into, point for point in the same winding */
-  const RAW = [[-90, 8], [90, 8], [90, -6], [-46, -6], [-46, -94], [-86, -94], [-86, -6], [-90, -6]].map(([x, y]) => [x * Z, y * Z]);
-  const O = [-38 * Z, -28 * Z];
+  /* read off the book's drawing: a block of four rockets at the back, a fin above them, a canopy
+     amidships and a long nose that drops to the rail */
+  const RAW = [[-86, 8], [128, 8], [150, 0], [128, -10], [64, -30], [34, -52], [6, -56], [-14, -44], [-40, -60], [-52, -112], [-66, -112], [-60, -94], [-86, -94]].map(([x, y]) => [x * Z, y * Z]);
+  const O = [0, -24 * Z];
   const NPT = 120;
   const OUTLINE = (() => {
     const pts = RAW.concat([RAW[0]]), seg = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
@@ -340,20 +318,20 @@ function bathScale(ctx, x, y, w, color) {
   const CIRCLE = OUTLINE.map((_, j) => [R * Math.cos(th0 - TAU * j / NPT), R * Math.sin(th0 - TAU * j / NPT)]);
   const at = (p) => [p[0] - O[0], p[1] - O[1]];
   const ROCKY = [0, 1, 2, 3].map((i) => (-17 - 22 * i) * Z);
-  const WHEELS = [-64, 64], RAIL = 32 * Z;
+  const WHEELS = [-56, 96], RAIL = 22 * Z;
   /* the thrusts end at the nozzles, the normal force rises from the rail's top face under the middle
      of the platform, the friction acts back where the rear wheel meets the rail */
-  const NOZZLE = -86 * Z, NFOOT = at([0, RAIL]), REAR = at([WHEELS[0] * Z, RAIL]);
+  const NOZZLE = -96 * Z, NFOOT = at([20 * Z, RAIL]), REAR = at([156 * Z, 0]);
   /* the parts of the picture that the diagram leaves out: the wheels, the rockets' seams, the flames
      of the rockets that burn, and the rider sitting at the front of the platform */
   function extras(ctx, lv, cs) {
     const [x, y] = P0;
-    WHEELS.forEach((wx) => {
-      const c = { x: x + wx * Z, y: y + 20 * Z };
-      ctx.save(); ctx.fillStyle = PAL.panel; ctx.strokeStyle = cs; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(c.x, c.y, 12 * Z - 3, 0, TAU); ctx.fill(); ctx.stroke(); ctx.restore();
-      dot(ctx, c.x, c.y, cs, true, 6);
-    });
-    for (let i = 1; i < 4; i++) line(ctx, x - 86 * Z, y + (-6 - 22 * i) * Z, x - 46 * Z, y + (-6 - 22 * i) * Z, cs, 2.5);
+    /* the skids that ride the rail, the four nozzles and the seams between the rockets */
+    WHEELS.forEach((wx) => { ctx.save(); ctx.fillStyle = cs; ctx.fillRect(x + (wx - 16) * Z, y + 8 * Z, 32 * Z, RAIL - 8 * Z); ctx.restore(); });
+    ctx.save(); ctx.fillStyle = cs;
+    ROCKY.forEach((ry) => { ctx.beginPath(); ctx.moveTo(x - 86 * Z, y + ry - 12); ctx.lineTo(x + NOZZLE, y + ry - 18); ctx.lineTo(x + NOZZLE, y + ry + 18); ctx.lineTo(x - 86 * Z, y + ry + 12); ctx.closePath(); ctx.fill(); });
+    ctx.restore();
+    for (let i = 1; i < 4; i++) line(ctx, x - 86 * Z, y + (-6 - 22 * i) * Z, x - 44 * Z, y + (-6 - 22 * i) * Z, cs, 2.5);
     lv.forEach((g, i) => {
       if (g < 0.02) return;
       const yc = y + ROCKY[i], x0 = x + NOZZLE, L = 74 * g;
@@ -362,8 +340,11 @@ function bathScale(ctx, x, y, w, color) {
       ctx.fillStyle = alpha(PAL.ink, 0.35); ctx.beginPath(); ctx.moveTo(x0, yc - 7); ctx.quadraticCurveTo(x0 - L * 0.3, yc - 6, x0 - L * 0.55, yc); ctx.quadraticCurveTo(x0 - L * 0.3, yc + 6, x0, yc + 7); ctx.closePath(); ctx.fill();
       ctx.restore();
     });
-    const s = 1, top = y - 6 * Z;
-    F.silhouette(ctx, { x: x + 60 * Z, y: top + 46 * s, s, pose: 'sit', color: cs, feet: [{ x: 38, y: -46 }, { x: 32, y: -44 }] });
+    /* the rider's helmet under the canopy */
+    ctx.save(); ctx.strokeStyle = cs; ctx.lineWidth = 3; ctx.fillStyle = PAL.panel;
+    ctx.beginPath(); ctx.moveTo(x - 10 * Z, y - 44 * Z); ctx.quadraticCurveTo(x + 12 * Z, y - 62 * Z, x + 36 * Z, y - 50 * Z); ctx.lineTo(x + 60 * Z, y - 32 * Z); ctx.lineTo(x - 10 * Z, y - 32 * Z); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    dot(ctx, x + 14 * Z, y - 40 * Z, cs, true, 12);
   }
   let hits = [];
   function draw() {
@@ -371,12 +352,12 @@ function bathScale(ctx, x, y, w, color) {
     const n = +nn.value, s = st.v, lv = burn.map((b) => b.v), cf = C('force'), cs = F.ref('sled');
     const net = n * Tt.v - ff.v, a = Math.max(0, net) / M;
     const hl = topline(ctx, WORD[n] + ' of ' + sig3(Tt.v) + ' N against ' + commas(fmt(ff.v, 0)) + ' N of friction ' + (n > 1 ? 'give' : 'gives') + ' the 2,100 kg sled ' + fmt(a, 1) + ' m/s²');
-    const lb = F.labeller(ctx, 700, { headline: hl });
+    const lb = F.labeller(ctx, 600, { headline: hl });
     const fade = 1 - clamp(s / 0.3), m = sm(clamp((s - 0.2) / 0.35)), t = sm(clamp((s - 0.5) / 0.5));
     const ox = lerp(P0[0] + O[0], DOT[0], t), oy = lerp(P0[1] + O[1], DOT[1], t);
     if (fade > 0.001) {
       ctx.save(); ctx.globalAlpha = fade;
-      strip(ctx, 40, 1360, P0[1] + RAIL + 20, 40);
+      ctx.fillStyle = PAL.soft; ctx.fillRect(40, P0[1] + RAIL, 1320, 16);
       extras(ctx, lv, cs);
       ctx.restore();
     }
@@ -390,7 +371,7 @@ function bathScale(ctx, x, y, w, color) {
     const place = (from, to) => [ox + lerp(from[0], to[0], t), oy + lerp(from[1], to[1], t)];
     const seg = (x, y, dx, dy) => ({ x1: x, y1: y, x2: x + dx, y2: y + dy });
     const pic = t < 0.5;
-    hits = fade > 0.5 ? [{ x: P0[0] + 66 * Z, y: P0[1] - 40, r: 40, name: 'the rider, part of the system' }, { x: P0[0] - 66 * Z, y: P0[1] - 110, r: 50, name: 'the four rockets' }] : [];
+    hits = fade > 0.5 ? [{ x: P0[0] + 14 * Z, y: P0[1] - 40 * Z, r: 30, name: 'the rider, part of the system' }, { x: P0[0] - 66 * Z, y: P0[1] - 50 * Z, r: 70, name: 'the four rockets' }, { x: P0[0], y: P0[1] + RAIL + 8, r: 20, name: 'the rail' }] : [];
     let chain = 0;
     lv.forEach((g, i) => {
       if (g < 0.01) return;
@@ -401,8 +382,8 @@ function bathScale(ctx, x, y, w, color) {
       chain += Lt * g;
     });
     if (!pic && chain > 0) lb.add(n > 1 ? n + 'T' : 'T', ox + chain, oy, 1, 0, cf, 26, 14);
-    const [fx, fy] = place(REAR, [0, 0]), sf = seg(fx, fy, -Lf, 0);
-    if (ff.v > 0) { arrow(ctx, sf.x1, sf.y1, sf.x2, sf.y2, cf, 6); lb.add('f', sf.x2, sf.y2, -1, 0, cf, 26, 14); }
+    const [fx, fy] = place([REAR[0] + Lf, REAR[1]], [0, 0]), sf = seg(fx, fy, -Lf, 0);
+    if (ff.v > 0) { arrow(ctx, sf.x1, sf.y1, sf.x2, sf.y2, cf, 6); lb.add('f', pic ? sf.x1 : sf.x2, sf.y2, pic ? 1 : -1, 0, cf, 26, 14); }
     const sw = seg(ox, oy, 0, Lw);
     if (pic) lb.halo(sw, 10);
     arrow(ctx, sw.x1, sw.y1, sw.x2, sw.y2, cf, 6); lb.add('w', sw.x2, sw.y2, pic ? 1 : 0, pic ? 0 : 1, cf, 26, 14);
@@ -413,15 +394,15 @@ function bathScale(ctx, x, y, w, color) {
     /* the answer the diagram gives: the net force, on its own row */
     if (t > 0.01 && net > 0) {
       ctx.save(); ctx.globalAlpha = t;
-      arrow(ctx, DOT[0], DOT[1] + 160, DOT[0] + net * K, DOT[1] + 160, cf, 7);
+      arrow(ctx, DOT[0], DOT[1] + 170, DOT[0] + net * K, DOT[1] + 170, cf, 7);
       ctx.restore();
-      if (t > 0.5) lb.add('F_net', DOT[0] + net * K, DOT[1] + 160, 1, 0, cf, 26, 14);
+      if (t > 0.5) lb.add('F_net = ' + sig3(net) + ' N', DOT[0] + net * K / 2, DOT[1] + 170, 0, 1, cf, 24, 28);
     }
     /* the acceleration against the rockets burning, beside the diagram it follows from; with one
        rocket it is not a quarter of four, since the same friction comes off every count. The axis
        is fixed at 0 to 80 m/s²: four rockets of 40,000 N against no friction give 76.2 m/s². */
     if (t > 0.01) {
-      const accOf = (k) => Math.max(0, k * Tt.v - ff.v) / M, AR = 80, gbox = { l: 1010, r: 1330, t: 170, b: 360 };
+      const accOf = (k) => Math.max(0, k * Tt.v - ff.v) / M, AR = 80, gbox = { l: 1010, r: 1330, t: 150, b: 420 };
       ctx.save(); ctx.globalAlpha = t;
       const g = axes(ctx, gbox, [0, 4], [0, AR], { xl: 'rockets burning', xc: PAL.ink, yl: 'a (m/s²)', yc: C('acceleration'), nx: 4, ny: 4, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 0) });
       inbox(ctx, gbox, () => {
@@ -437,9 +418,8 @@ function bathScale(ctx, x, y, w, color) {
     }
     const missed = lb.flush();
     d.fig.dataset.missed = missed.join(' | ');
-    const terms = [0, 1, 2, 3].slice(0, n).map((i) => `\\mk{T${i}}{${i ? '{}+' : ''}\\kTf}`).join(' ');
-    ro.set(`\\mk{Fnet}{\\kFnet} = ${terms} \\mk{f}{{}-\\kff} = \\mk{n}{${n}}\\mk{nT}{\\kTf} \\mk{f2}{{}-\\kff}`
-      + ` = \\mk{nval}{${n}}\\mk{Tval}{(${tnum(sig3(Tt.v))}\\ \\text{N})} \\mk{fval}{{}-${tnum(commas(fmt(ff.v, 0)))}\\ \\text{N}} = \\mk{Fval}{${tnum(sig3(net))}\\ \\text{N}}`);
+    ro.set(`\\mk{a}{\\ka} = \\mk{frac}{\\frac{\\kFnet}{\\km}} = \\frac{\\mk{n}{${n}}\\mk{nT}{\\kTf} \\mk{f2}{{}-\\kff}}{\\mk{m}{\\km}}`
+      + ` = \\frac{\\mk{nval}{${n}}\\mk{Tval}{(${tnum(sig3(Tt.v))}\\ \\text{N})} \\mk{fval}{{}-${tnum(commas(fmt(ff.v, 0)))}\\ \\text{N}}}{\\mk{mval}{2{,}100\\ \\text{kg}}} = \\mk{aval}{${fmt(a, 1)}\\ \\text{m/s}^2}`);
   }
   const ro = F.readout(d);
   F.hover(d.stage, () => hits);

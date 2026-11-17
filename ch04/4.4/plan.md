@@ -66,64 +66,71 @@ coverage rows mark each as used where the text uses it.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-swimmer` · Figure 4.9 · newtons-third-law, system-of-interest, external-force · flow by
-   animation: the push, the release and the glide · moving, she pushes for $\Delta\kt$ then glides ·
-   $\kF$ (force, 100 to 600 N, default 350), $\km$ (mass, 40 to 90 kg, default 60), $\Delta\kt$
-   (time, 0.20 to 0.80 s, default 0.40) · "After 0.13 s the wall still pushes back on her feet with
-   350 N, so her 60 kg accelerate at 5.83 m/s² away from it" · graph below (v against t, axis 0 to
-   15 m/s, above the 12 m/s the sliders reach), free-body diagram beside it on its own 0.1 unit/N
-   scale · 2D: the swimmer drawn with F.silhouette posed lying (legs straightening through the push,
-   streamlined in the glide, feet to the wall), the pair of forces labelled through F.labeller on the
-   pool side of the wall with the wall's own arrow inside the hatch band, the system box sized to the
-   body. No fold or split.
-   Rewritten in the review pass of 2026-10-05 (Claude Opus 5.5): the drawn ball-and-stick swimmer
-   became the library silhouette, the labels moved off the wall and off one another, and the speed
-   axis now holds every release the sliders reach.
-2. `sim-cart` · replaces Figure 4.10 (the professor, the cart and the two
-   systems) · internal-forces-cancel, action-reaction-pairs · **moves**: the
-   professor pushes the cart across the lecture room from rest, and the loop
-   ends when she reaches the far wall; the five forces the book draws
-   ($\kF_{\text{foot}}$, $\kFfloor$, $\kFprof$, $\kF_{\text{cart}}$ and $\kff$)
-   are drawn on the scene with their lengths proportional to their magnitudes,
-   and the two system boundaries the book draws are dashed around the pair and
-   around the cart alone. A professor walking a cart across a room has a time in
-   it, so it runs a finite loop with the scrubber · the force she pushes back on
-   the floor with $\kFfloor$ (100 to 250 N, default 150, force), the forces
-   opposing the motion $\kff$ (0 to 60 N, default 24.0, force), her mass (40 to
-   100 kg, default 65.0, ink), the mass of the cart and its equipment (5 to 40
-   kg, default 19.0, ink) · “t = 1.60 s · System 1 is pushed forward with 150 N
-   and held back by 24.0 N, so 84.0 kg accelerates at 1.50 m/s²” · no graph: the
-   two free-body diagrams below the scene are the second half of the picture,
-   one for System 1 with $\kFfloor$ and $\kff$ and one for System 2 with
-   $\kFprof$ and $\kff$, each with its net force and the acceleration it gives ·
-   no. The defaults are the book’s numbers, so the figure loads on Example 4.3
-   and reads $\ka = 1.50\ \text{m/s}^2$ and $\kFprof = 53\ \text{N}$. Readout:
-   $\kFnet = \kFfloor - \kff$ and $\ka = \kFnet/m$ with the numbers; the small
-   line gives $\kFprof = \kFnet + \kff$ for System 2. Draws force, acceleration.
-   Revised in the figure-audit pass of 2026-09-12: labels off by default.
-   The seven force labels ride a scene that crosses the room and two of them
-   share an origin at her hand, so they sit behind an F.choice labeled
-   Labels, off on load, and every arrow gives its name under the pointer
-   through F.hover; the two system boundaries are frame labels and stay, and
-   the free-body diagrams below carry every value. The headline is one
-   capitalized sentence.
-3. `sim-rocket` · **Sim**, replaces nothing in the book · thrust,
-   newtons-third-law · **moves**: a rocket drifts in empty space, far from any
-   ground and any air, and throws its exhaust gas backward; the force the rocket
-   exerts on the gas is drawn on the gas and the equal, opposite thrust is drawn
-   on the rocket, and the rocket picks up speed with nothing behind it to push
-   against. The idea has a time in it, since the speed accumulates while the
-   engine burns, so it loops once per burn and gets the scrubber · the force the
-   rocket exerts on the gas $\kF$ (2 to 20 kN, default 10, force), the mass of
-   the rocket $m$ (500 to 3000 kg, default 1200, ink) · “t = 2.40 s · the gas
-   pushes the rocket forward with 10.0 kN, and 1200 kg has reached 20.0 m/s”,
-   the two arrows carrying the other half of the pair · graph
-   below: the rocket’s speed against time, a straight line of slope $\ka$ · no.
-   This is the figure rule 14 asks for on an idea the section introduces:
-   `thrust` is a concept node of this section and the book gives it no figure,
-   and the picture answers the misconception the text states in words, that a
-   rocket needs the ground or the air to push against. Readout: $\ka =
-   \kFnet/m$ with the numbers. Draws force, velocity, acceleration, time.
+1. `sim-swimmer` · Figure 4.9 · newtons-third-law, action-reaction-pairs, system-of-interest,
+   external-force · value add: variation by choice (which body is the system decides which force
+   of the pair enters the free-body diagram) and flow by animation (the push, the release) ·
+   arrows: symbolic force arrows, kinematic $\ka$ and $\kv$ · moving: she pushes through the
+   0.50 m her legs straighten, then glides 1.2 m · choice system (the swimmer, the wall), $\kF$
+   (force, 100 to 600 N, default 350), $\km$ (mass, 40 to 90 kg, default 60) · headline "Of the
+   pair, only F_wall on feet acts on her, and its 350 N accelerate her away from the wall" · no
+   graph: the free-body diagram of the chosen system stands beside the scene, as the book sets it ·
+   2D.
+   works: parts: the wall on the right, the swimmer face down with her feet on it and her arms
+   ahead, the dashed system boundary round her (or round the wall), the pair of arrows meeting at
+   her feet (F_wall on feet over her legs pointing away from the wall, F_feet on wall inside the
+   wall), the free-body diagram at the right with BF up, w down and F_wall on feet · flow: her hip
+   moves away from the wall as the legs straighten, then the whole body glides · must hold: the two
+   arrows of the pair are equal at every push and share one line; scene and free-body diagram use
+   one force scale (0.2 unit/N), so BF = w = mg is to scale beside the push; only the force on the
+   chosen system is solid, the other is faint; the swimmer's diagram never shows F_feet on wall;
+   after release neither force is drawn and a = 0; v = a·t while pushing with t from 0.50 m =
+   ½at² · read off the image: labels "System of interest", "Direction of acceleration",
+   F_wall on feet, F_feet on wall, BF, w, "Free-body Diagram"; the book gives no numbers, so 350 N
+   and 60 kg are ours. The wall's diagram adds a force the book does not name, the hold of the rest
+   of the pool on the wall (F_pool on wall), which is why the wall stays put; it shows the
+   horizontal forces only and says so in its title.
+   Rebuilt in the figure pass of 2026-11-17 (Claude Fable 5.2): the earlier figure opened on a
+   small silhouette in a blank band, spent its sliders on kinematics and a v–t graph, and never let
+   the reader take the wall as the system, which is the point of the paragraph. The push-time
+   slider and the graph are gone.
+2. `sim-cart` · Figure 4.10 · internal-forces-cancel, action-reaction-pairs, system-of-interest ·
+   value add: variation by choice and slider (the same five forces, three systems, three free-body
+   diagrams, one acceleration) · arrows: symbolic · still: the lesson is which forces count, and
+   nothing in it has a clock (the earlier walk across the room kept the forces unlabelled) · choice
+   system (System 1, System 2, the professor), $\kFfloor$ (force, 100 to 250 N, default 150),
+   $\kff$ (force, 0 to 60 N, default 24.0), mass of the cart and equipment (mass, 5 to 60 kg,
+   default 19.0); her mass is the book's 65.0 kg · headline "F_prof and F_cart are inside System 1
+   and cancel, and F_foot acts on the floor: only F_floor and f are left" · no graph: the free-body
+   diagram of the chosen system beside the scene, with the net force drawn apart from the forces it
+   sums and the acceleration under it · 2D.
+   works: parts: the professor leaning into the cart's handle, the cart with two shelves of
+   equipment on wheels, the floor; F_foot (on the floor, backward) and F_floor (on her, forward)
+   from her feet; F_cart (on her, backward) and F_prof (on the cart, forward) from her hands on the
+   handle; f on the cart's wheel, backward; the dashed boundary of the chosen system · flow: none ·
+   must hold: every force 1.2 units/N on the scene and in the diagram (f too, which the book could
+   not draw to scale); each pair equal and on one line; only forces acting on the chosen system from
+   outside are solid and only those are in its diagram (System 1: F_floor, f; System 2: F_prof, f;
+   the professor: F_floor, F_cart); opening state a = 126 N / 84.0 kg = 1.50 m/s² and
+   F_prof = (19.0 kg)(1.50 m/s²) + 24.0 N = 52.5 N (the book rounds to 53 N); the acceleration is
+   the same for all three systems; N and w are drawn equal and marked not to scale · read off the
+   image: F_foot, F_floor, F_cart, F_prof, f, System 1, System 2, the diagrams' N, w, N′, w′; the
+   third system, the professor alone, is ours and follows the example's last discussion ("some of
+   it accelerates the professor"): (150 − 52.5) N / 65.0 kg = 1.50 m/s².
+   Rebuilt in the figure pass of 2026-11-17 (Claude Fable 5.2).
+3. `sim-rocket` · Sim, replaces nothing · thrust, newtons-third-law · value add: flow by animation
+   and variation by slider (gas is really thrown backward; the force on it follows from how much
+   leaves and how fast, and the thrust equals it) · arrows: symbolic pair, kinematic $\kv$ · moving:
+   a 4 s burn, the view riding with the rocket · mass of gas each second (mass, 2 to 6 kg, default
+   4), speed of the gas (velocity, 1500 to 3500 m/s, default 2500), mass of the rocket (mass, 800
+   to 3000 kg, default 1200) · headline "After 1.80 s the engine has thrown 7.2 kg of gas backward,
+   and the rocket has gained 15.0 m/s" · no graph · 2D.
+   Physics checked: the engine takes each lump (ṁ·0.2 s) from rest relative to the rocket to the
+   exhaust speed in 0.2 s, so F = mΔv/Δt = (0.80 kg)(2500 m/s)/(0.2 s) = 10 000 N, and the thrust
+   is equal; a = 10 000 N / 1200 kg = 8.33 m/s². The rocket's mass is held constant (it loses at
+   most 24 kg of 800 kg in the burn, 3%). No ground and no air are drawn, which is the text's
+   point about the misconception.
+   Rebuilt in the figure pass of 2026-11-17 (Claude Fable 5.2): the earlier Sim set the force
+   itself on a slider and plotted v against t, which 4.3 already does; the gas was three lines.
 
 No photograph in the section, so none is kept or dropped. The free-body diagram
 the book prints inside the answer to the balloon AP item (`Figure_04_04_03.jpg`,
@@ -146,16 +153,6 @@ Extra simulations (rule 15), considered and left:
 
 One built (`sim-rocket`), and it is built as a required figure for the `thrust`
 node rather than as an extra.
-   Revised in the figure-audit pass of 2026-09-12: the distance from the
-   point of release is ruled 0 to 80 m at a fixed scale with a meter scale
-   under it, the exhaust plume is drawn in ink rather than in the force hue,
-   since it is a body and not a force, and the headline is one capitalized
-   sentence.
-
-Figure pass of 2026-09-14 (Claude Fable 5.1): the swimmer was four thin sticks; she is now a
-filled torso with the head ahead, both arms stretched out in front and the legs kicking behind.
-`sim-cart` and `sim-rocket` were looked at in both themes and at their extremes and left as
-built.
 
 ## Exercises
 
@@ -210,11 +207,10 @@ built.
 
 ## Colour
 
-The page binds force, acceleration, velocity and time. Every figure carries a
-force on a slider and draws forces as arrows; the swimmer and the rocket draw
-the acceleration and the velocity they produce and state the time in their
-headlines; the cart draws the acceleration of each system. Mass, the lengths of
-the scenes and the counts stay in ink, as the chapter config decided.
+The page binds force, acceleration, velocity, time and mass. Every figure draws its forces as
+arrows in the force hue; a force that does not act on the chosen system is the same hue, faint.
+The swimmer and the rocket draw the acceleration or the velocity the force produces, the cart
+the acceleration of the chosen system. Bodies wear their referent colours.
 
 ## Wanted at chapter level
 
@@ -241,6 +237,3 @@ No symbol row is added for the four forces the book names in words. They are
 written $\kF$ with the book's own subscript, so they already wear the force
 hue, and a row apiece would add four symbols that the book never sets as
 symbols of its own. The section is unchanged.
-
-Revised in the Manim pass of 2026-09-28:
-- `sim-cart` · the Labels on/off choice is removed (rule 26.7): the scene draws no force labels, since they ride a moving scene and two pairs share origins; the free-body diagrams carry every value and the pointer names each arrow. The readout is one equation, a = (F_floor − f)/m (manim-style 12).

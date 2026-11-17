@@ -38,6 +38,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -61,7 +64,6 @@
     400
    ],
    "draws": [
-    "position",
     "velocity",
     "angle"
    ],
@@ -85,6 +87,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "moving label dropped, sliver angle unnamed"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: triangle on the river, float shows motion relative to water"
     }
    ]
   },
@@ -123,24 +129,21 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "moving label dropped, triangle kept on the canvas"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: still-air ghost and drift line on one map"
     }
    ]
   },
   {
    "id": "sim-components",
-   "kind": "sim",
+   "kind": "photo",
    "number": "3.42",
-   "originals": [
-    "/media/ch03/Figure_03_05_03a.jpg"
-   ],
-   "original_caption": "The velocity, v, of an object traveling at an angle θ to the horizontal axis is the sum of component vectors v_x and v_y.",
    "widths": [
     250
    ],
-   "draws": [
-    "velocity",
-    "angle"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -161,6 +164,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "note through the macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book image; 3.3 already teaches components"
     }
    ]
   },
@@ -199,6 +206,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "repeated panel dropped, east of north named"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: large triangle with the component subtraction table"
     }
    ]
   },
@@ -214,7 +225,6 @@
     300
    ],
    "draws": [
-    "position",
     "velocity"
    ],
    "ai": [
@@ -237,6 +247,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "moving labels dropped, binoculars named, note typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: one scene, observer choice switches the frame"
     }
    ]
   },
@@ -273,12 +287,16 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "moving label dropped, labels clear of the edge and the axis"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: Earth view to scale above the cabin"
     }
    ]
   },
   {
    "id": "fig-galaxies",
-   "kind": "figure",
+   "kind": "sim",
    "originals": [
     "/media/ch03/Figure_03_05_07-12c0.jpg"
    ],
@@ -302,6 +320,10 @@
      "model": "claude-opus-5-5",
      "effort": "low",
      "part": "built"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt as a sim: velocities relative to a chosen galaxy"
     }
    ]
   }

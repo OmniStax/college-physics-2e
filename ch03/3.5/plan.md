@@ -80,108 +80,113 @@ on `analytical-vector-addition` (3.3) and `coordinate-system` (2.2).
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-boat` · replaces Figure 3.40 (the boat that moves diagonally)
-   and carries Figure 3.43 (the same boat with Example 3.6's numbers) as
-   a further original, since the example adds no quantity the section
-   figure does not show · relative-velocity, velocity-addition · a boat
-   sets out from the near bank of a 25 m river pointed straight across
-   and is carried downstream as it crosses; the current's streaks drift
-   with the river, the three velocity arrows ride on the boat, and the
-   dashed line is its path relative to the shore · `\kvboat` (0.10 to
-   3.00 m/s, default 0.75, velocity), `\kvriver` (0 to 3.00 m/s, default
-   1.20, velocity), heading (30° to 150° from downstream, default 90°,
-   ink; 90° is straight across as the book has it), and the width of the
-   river (10 to 60 m, default 25, position hue). The example gives no
-   width, so rather than state one as a fact the figure starts at an
-   assumed 25 m and hands the width to the reader · "After 33.3 s the
-   boat reaches the far bank 40.0 m downstream, moving at 1.42 m/s, 32.0°
-   from the bank." · the velocity triangle beside the
-   scene, drawn as the book draws it, with the numbers on each arrow · 2D.
-   Moves: the crossing has a time in it (the boat drifts as it crosses),
-   finite, one crossing in about 5 real seconds, so it gets the
-   scrubber. Readout: $\kvtot = \sqrt{\kvx^2 + \kvy^2} = 1.42$ m/s and
-   $\theta = \tan^{-1}(\kvy/\kvx) = 32.0°$, with the book's small-angle
-   discussion as the small line; with the heading off 90° the readout
-   shows $\kvx = \kvriver + \kvboat\cos\phi$ and the small line says
-   where the boat lands. Draws velocity. Revised 2026-09-28: a heading of 90°, straight across, the book's case, is a special value on the heading.
-2. `sim-plane` · replaces Figure 3.41 (the plane carried west by the
-   wind) · relative-velocity · a plane pointed due north flies over a
-   map while the wind's streaks drift across it; the plane's track runs
-   along its total velocity, off its heading · `\kvp` (0 to 70 m/s,
-   default 45.0, velocity), `\kvw` (0 to 40 m/s, default 16.0,
-   velocity), the direction the wind blows toward (0° to 360°
-   counterclockwise from east, default 215.6°, ink). The defaults are
-   the wind Example 3.7 finds, so the track comes out at 38.0 m/s, 20.0°
-   west of north, and the figure agrees with 3.44 on load · "t = 6.0 s ·
-   the plane points north at 45.0 m/s but moves at 38.0 m/s, 20.0° west
-   of north, relative to the ground" · the velocity triangle beside the
-   scene, with x (east) and y (north) axes as the book labels them ·
-   no. Moves: the plane crosses the map, finite (it runs until it leaves
-   the map, about 5 real seconds), scrubber. Readout: $\kvtot =
-   \sqrt{(\kvpx + \kvwx)^2 + (\kvpy + \kvwy)^2}$ with the numbers; small
-   line names the direction in the book's compass words. Draws velocity.
-3. `sim-components` · replaces Figure 3.42 (a velocity and its
-   components) · velocity-addition · still · `\kv` (0.20 to 5.00 m/s,
-   default 1.42, velocity), θ (−180° to 180°, default 32.0°, ink); the
-   defaults are Example 3.6's total velocity, so the components come
-   back as 1.20 m/s and 0.75 m/s · "a velocity of 1.42 m/s at 32.0° has
-   components 1.20 m/s along x and 0.752 m/s along y" · none, the vector
-   diagram is the idea · no. Still: it answers its sliders and nothing
-   else, so no cycle and no transport. Readout: $\kvx = \kv\cos\theta$
-   and $\kvy = \kv\sin\theta$ with the numbers; the small line runs the
-   other two equations back from the components, and says when a
-   calculator's $\tan^{-1}$ needs 180° added. Draws velocity.
-4. `sim-wind` · replaces Figure 3.44 (Example 3.7) · velocity-addition
-   · still · `\kvp` (10 to 70 m/s, default 45.0, velocity), `\kvtot` (5
-   to 70 m/s, default 38.0, velocity), the direction of the total
-   velocity in degrees west of north (−60° to 60°, default 20.0°, ink) ·
-   "the wind blows at 16.0 m/s, 35.6° south of west; it slows the plane
-   from 45.0 to 38.0 m/s and turns its track 20.0° off its heading" ·
-   none · no. Still. The example gets a figure of its own because it is
-   the inverse problem: the total is known and the wind is found, which
-   Figure 3.41's sim cannot show. Readout: $\kvw = \sqrt{\kvwx^2 +
-   \kvwy^2} = 16.0$ m/s with the components written on the triangle,
-   small line on the components and the 110° angle. Draws velocity.
-5. `sim-binoculars` · replaces Figure 3.45 (the sailor drops the
-   binoculars) · classical-relativity · two panels: on the left, seen
-   from the ship, the mast stands still and the binoculars fall straight
-   down while the water slides past; on the right, seen from shore, the
-   ship moves forward and the binoculars trace a curve, and in both
-   panels they land at the base of the mast; the velocity arrow on the
-   binoculars is drawn every frame in each frame of reference ·
-   `\kv_{\text{ship}}` (0 to 15 m/s, default 6.0, velocity), mast height
-   h (4 to 20 m, default 12, position hue, as the heights of a drop are
-   in 3.1 and 3.4) · "The binoculars land at the base of
-   the mast after 1.56 s, having moved 9.4 m forward with the ship." ·
-   none, the two scenes are the idea · 2D. Moves: a fall, finite,
-   scrubber. Readout: the velocity at the deck in the two frames, (6.0,
-   −15.3) m/s from shore and (0, −15.3) m/s from the ship; small line:
-   the observers differ by the ship's velocity alone. Draws velocity.
-6. `sim-coin` · replaces Figure 3.46 (Example 3.8) · classical-relativity,
-   velocity-addition · on the left, relative to the plane, the coin
-   falls straight down 1.50 m in the cabin with its velocity arrow
-   growing; on the right, relative to the Earth, a graph of the coin's
-   path with the plane moving above it, the horizontal axis in the 144 m
-   the plane covers and the vertical axis in the 1.50 m of the fall,
-   and under the graph the velocity at the floor drawn to one scale, so
-   that the 5.42 m/s downward is a stub beside the 260 m/s forward ·
-   `\kv_{\text{plane}}` (50 to 300 m/s, default 260, velocity), drop
-   height h (0.5 to 3.0 m, default 1.50, position hue) · "The coin lands
-   after 0.553 s, 1.50 m below where it was dropped and 144 m along the
-   ground, at 260.06 m/s." · the ground-frame path is the graph ·
-   2D. Moves: a fall, finite, scrubber. The example gets a figure of its
-   own because it adds the velocity at the floor and its five-digit
-   magnitude, which the binoculars sim does not show. Readout: $\kv =
-   \sqrt{\kvx^2 + \kvy^2} = 260.06$ m/s and $\theta = -1.19°$; small
-   line: relative to the plane the velocity is $\kvy = -5.42$ m/s alone.
-   Draws velocity.
-7. `fig-galaxies` · a faithful copy of the five-galaxy figure of
-   problems 12 and 13, labelled Figure, no sliders, no motion · serves
-   the exercises · still · none · none (no headline; the book's numbers
-   are written on the figure as the book prints them) · none · no.
-   Draws velocity (the recession arrows).
+Re-examined 2026-11-17 (Claude Fable 5.2), with the book's images open. The earlier
+builds drew small scenes beside small triangles, ran two formulas together on one readout
+line and carried long captions; `sim-components` repeated 3.3's component figures.
 
-Photographs: none in the section.
+1. `sim-boat` · Figure 3.40 + 3.43 · relative-velocity, velocity-addition · value add:
+   the crossing in motion, and a float released with the boat that drifts with the water,
+   so the boat's motion relative to the water (float to boat) and relative to the shore
+   (start to boat) are both on the river · arrows: kinematic, the three velocities ·
+   moving, one crossing, scrubber · sliders `\kvboat` (0.20 to 2.00 m/s, default 0.75),
+   `\kvriver` (0 to 2.00 m/s, default 1.20), heading (60° downstream to 70° upstream of
+   straight across, default straight across; specials: straight across, and the heading
+   that lands straight across, which exists only when the boat is faster than the river,
+   the take-home experiment's answer) · headline "Pointed straight across, the boat
+   crosses the 30 m river in 40.0 s and lands 48.0 m downstream." · no graph · 2D.
+   Readout: $v_{tot} = \sqrt{v_x^2 + v_y^2}$ and $\theta = \tan^{-1}(v_y/v_x)$ with the
+   numbers, one line each; off straight across, $v_x$, $v_y$ and $v_{tot}$, one line each.
+   The river width (30 m) is assumed and said so; its slider is dropped, since it did not
+   change the idea.
+   works: parts: two banks, the river between; the boat at the near bank; the velocity
+   triangle with its tail where the boat sets out (v_boat across, v_river from its head
+   along the river, v_tot from the tail to the head of v_river); θ between the bank and
+   v_tot; x along the river, y across · flow: the boat moves along v_tot; the water and
+   the float move downstream at v_river · must hold: (1) v_tot closes the triangle at
+   every setting; (2) the boat stays on the dashed path and lands where the bracket says;
+   (3) the float-to-boat line is parallel to v_boat and the float is under the boat when
+   the heading is straight across; (4) 1.42 m/s and 32.0° on load; (5) the special on the
+   heading lands the boat straight across; (6) labels clear of the arrows · read off the
+   images: 3.40 has v_boat (dashed, up), v_river (dashed, right), v_tot (solid), θ, axes
+   x and y, three boats along v_tot; 3.43 adds v_boat = 0.75 m/s and v_river = 1.2 m/s.
+2. `sim-plane` · Figure 3.41 · relative-velocity · value add: the plane keeps pointing
+   north while a faint plane shows where it would be in still air and a dashed line shows
+   how far the air has carried it, so "velocity relative to the air plus velocity of the
+   air" is seen as two displacements · arrows: kinematic · moving, about 9 s of flight,
+   scrubber · sliders `\kvp` (20 to 50 m/s, default 45.0), `\kvw` (0 to 20 m/s, default
+   16.0), the direction the wind blows toward (shown in compass words, default 35.6°
+   south of west; specials tailwind, headwind, crosswind) · headline "Pointed north at
+   45.0 m/s, the plane moves over the ground at 38.0 m/s, 20.0° west of north." · no
+   graph · 2D. Readout: the two component sums and the magnitude, one line each.
+   works: parts: the map with a river across it; the plane pointed north; v_p north from
+   the start, v_w from its head, v_tot from the start; compass axes · flow: the plane
+   along v_tot, the still-air plane along v_p, the streaks with the wind · must hold:
+   (1) the triangle closes; (2) the plane stays on the track and never turns; (3) the
+   drift line is parallel to v_w; (4) 38.0 m/s, 20.0° west of north on load · read off the
+   image: v_p dashed north, v_w dashed toward the southwest with θ at the head of v_p,
+   v_tot solid, three planes along v_tot all pointed north, x (east), y (north).
+3. `sim-components` · Figure 3.42 · reverted to the book's image (2026-11-17): a vector
+   and its two components with a magnitude and an angle slider is what 3.3's Figures
+   3.24 and 3.27 already teach, and `sim-boat` shows the same triangle with velocities.
+4. `sim-wind` · Figure 3.44 · velocity-addition · value add: Example 3.7's subtraction
+   made visible: the wind's two components are drawn on the triangle and a table beside
+   it subtracts v_p from v_tot one component at a time · arrows: symbolic · still, no
+   transport · sliders `\kvp` (20 to 50 m/s, default 45.0), `\kvtot` (10 to 50 m/s,
+   default 38.0), the track (40° east to 40° west of north, default 20.0° west) ·
+   headline "The wind that carries the plane off its heading blows at 16.0 m/s, 35.6°
+   south of west." · no graph · 2D. Readout: $v_w$ and $\theta$, one line each.
+   works: read off the image: v_p = 45.0 m/s north, v_tot = 38.0 m/s, 20.0° from north,
+   110° from the x-axis (and 70° on the other side, not drawn), v_w from the head of v_p
+   to the head of v_tot with θ at the head of v_p · must hold: (1) v_w runs from the head
+   of v_p to the head of v_tot; (2) the table reads −13.0 and 35.7 for v_tot, 0 and 45.0
+   for v_p, −13.0 and −9.29 for the wind on load, and the last row is the first minus the
+   second at every setting; (3) 16.0 m/s and 35.6° on load; (4) labels clear.
+5. `sim-binoculars` · Figure 3.45 · classical-relativity · value add: one scene and a
+   choice of observer: from shore the ship sails on and the path is a curve; from the
+   ship the mast stands still, the shore slides back and the path is straight; the
+   readout's $v_x$ changes between the two and $v_y$ does not · arrows: kinematic ·
+   moving, one fall, scrubber · choice watch from (the shore, the ship), `v_ship` (0 to
+   12 m/s, default 6.0); the mast height slider is dropped and a 12.0 m mast assumed ·
+   headline "Seen from shore, the binoculars move 9.4 m forward with the ship as they
+   fall, and land at the base of the mast." · no graph · 2D.
+   works: parts: the ship (hull, mast, two sails), the binoculars at the mast top, an
+   observer on the ship and one on the shore in the foreground · flow: the binoculars
+   fall beside the mast; from shore the ship moves right · must hold: (1) the binoculars
+   stay beside the mast in both views and land at its base; (2) the path is a parabola
+   from shore and a straight line from the ship; (3) switching observer changes v_x only;
+   (4) the shore and the water slide back only in the ship's view · read off the image:
+   two ships (start and landing), a straight blue path down the first mast, a red curve
+   to the base of the second, an arrow for the ship's motion, the observer on shore in
+   the foreground. No numbers.
+6. `sim-coin` · Figure 3.46 · classical-relativity, velocity-addition · value add: the
+   flight relative to the Earth drawn to scale (the airliner covers 144 m while the coin
+   falls 1.50 m inside it), over the enlarged cabin where the coin falls straight down
+   and the velocity at the floor to one scale · arrows: kinematic · moving, one fall,
+   scrubber · sliders `v_plane` (100 to 280 m/s, default 260), h (1.00 to 1.80 m, default
+   1.50) · headline "While the coin falls 1.50 m to the floor, the plane carries it 144 m
+   over the ground." · no graph · 2D. Readout: $v$ and $\theta$, one line each.
+   works: read off the image: (a) a cabin inset, a passenger, the coin's straight path
+   down; (b) the airliner with an almost horizontal arrow, an observer on the ground ·
+   must hold: (1) the coin stays inside the airliner in the Earth view and under the hand
+   in the cabin; (2) 0.553 s, 144 m, 260.06 m/s and −1.19° on load; (3) v_y is a stub
+   beside v_x at one scale.
+7. `fig-galaxies` · Sim (was a still copy of the unnumbered figure of problems 12 and
+   13) · relative-velocity · value add: the still copy showed nothing the image does not.
+   Now a choice of the galaxy to observe from: the galaxies stay put, each velocity
+   becomes the velocity relative to the observer (the section's subtraction), and a graph
+   of velocity against position shows every observer finding the others on one line
+   through themself · arrows: symbolic · still · choice seen from (five galaxies,
+   default the Milky Way, the book's view) · headline "Seen from the Milky Way, every
+   other galaxy moves away, and the farther it is, the faster it goes." · graph below ·
+   2D. Readout: the farthest galaxy's velocity relative to the observer, one line. The
+   slope of the line is not printed, since problem 13 asks for it.
+   works: read off the image: Galaxy 1 300 Mly, −4500 km/s; Galaxy 2 150 Mly, −2200
+   km/s; Galaxy 3 MW; Galaxy 4 190 Mly, 2830 km/s; Galaxy 5 450 Mly, 6700 km/s · must
+   hold: (1) the book's numbers on load; (2) galaxies spaced to scale; (3) every relative
+   velocity is v_i − v_observer; (4) the points lie near the dashed line for every
+   observer and the observer sits at the origin.
+
+Photographs: none in the section. Figure 3.42 is kept as the book's image (above).
 
 Figures that serve exercises: the five galaxies (above), which problem
 13 takes its data from; the book's image is also attached to the problem

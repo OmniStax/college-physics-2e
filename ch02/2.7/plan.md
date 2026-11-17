@@ -83,143 +83,20 @@ chosen), `ex-find-g` uses `precision` (1.3), and `accel-gravity` uses
 
 ## Figures
 
-id · replaces · concepts · what moves · sliders · headline · graph · 3D
+id · replaces · concepts · value add · arrows · moving or still · sliders · headline · graph · 3D
 
-1. `sim-hammer-feather` · replaces Figure 2.37 · free-fall,
-   acceleration-due-to-gravity · a hammer and a feather are let go
-   together from the same height in two panels, in air and in a vacuum;
-   in the vacuum they stay side by side all the way down, and in air the
-   feather settles to a terminal speed within a few centimetres and then
-   drifts at that speed, which is taken as 0.80 m/s in Earth's air and
-   scaled as the square root of g, since that is how a terminal speed
-   goes; both panels carry a line saying what holds the feather back and
-   what does not · $\kg$ in m/s² (1.50 to 10.00, step 0.01, default 9.80,
-   acceleration hue, with soft detents at the Moon's 1.67 and Earth's
-   9.80), the drop height h in m (0.5 to 5.0,
-   step 0.1, default 2.0, ink) · "After 0.31 s the hammer and the feather
-   in the vacuum have fallen the same 0.47 m together, while in air the
-   feather has drifted only 0.25 m." At the floor, "In the vacuum both
-   reach the floor at t = 0.64 s, having fallen 2.0 m with the same
-   acceleration g = 9.80 m/s²."
-   · none · 2D, the two panels fixed to the drop height. Labels on, seven
-   of them. Moving: something falls, one finite drop per loop in
-   about 5 real seconds, so it gets the scrubber. Readout $\ky = -\tfrac{1}{2}\kg\kt^2$
-   with the live numbers; small line: the mass does not appear in the
-   equation, and on the Moon the same fall takes the time the slider
-   would give. Draws time, position, acceleration.
-2. `sim-rock-up` · Figure 2.38 + 2.39 · free-fall-kinematics,
-   free-fall-highest-point, acceleration-due-to-gravity · flow by
-   animation, variation by slider · moving: the rock leaves the thrower's
-   hand at the cliff edge, rises to its highest point and falls past the
-   edge, its velocity arrow shrinking, vanishing and growing downward
-   beside an acceleration arrow that points down throughout, while y, v
-   and a against t are drawn beside it; one finite flight per loop in
-   about 5 real seconds, with the scrubber · $\kvo$ 1.0 to 25.0 m/s
-   (velocity), $\kg$ 1.50 to 10.00 m/s² with Moon and Earth detents
-   (acceleration), $\kt$ 0.5 to 6.0 s with a 3.00 s detent and the
-   highest point, $\kvo/\kg$, as a special (time) · "After 3.00 s the rock
-   is at $\ky = -5.10$ m with $\kv = -16.40$ m/s, below the start and
-   moving down, while $\ka = -9.80$ m/s² throughout", and at the top "At
-   t = 1.33 s the rock is at its highest point, 8.62 m, where its
-   velocity is zero but its acceleration is still $\ka = -9.80$ m/s²" ·
-   graphs beside (vertical scene), stacked as the book stacks them on
-   round fixed ranges, y and v −30 to 30 in tens, a −10 to 0, t 0 to 6 s;
-   a value past a range is drawn hollow at its end and the headline says
-   the flight runs past the scales · 2D. The thrower is the library's
-   `F.silhouette` standing on the cliff clear of the rock's column, one
-   hand at the release point. Five labels through one labeller with the
-   scale, the cliff, the thrower, the rock's column, the graph column and
-   the headline band blocked: $\kyo$ and the highest point left of the
-   column, the v and a arrows' names right of it; the slope's name takes
-   the corner of the v graph the line leaves clear. Hover names for the
-   rock, the thrower, the cliff, $\kvo$ and the moving points. Readout:
-   the position and velocity equations in two aligned rows; small line:
-   the time and height of the highest point through the macros. Draws
-   time, position, velocity, acceleration. Rewritten 2026-10-05 after the
-   review.
-3. `sim-rock-down` · replaces Figure 2.41 (Figure 2.40, the strategy
-   sketch, is its second original) · free-fall-symmetry,
-   free-fall-kinematics · two rocks leave the same cliff edge at the same
-   instant, one thrown straight up at $+\kvo$ and one straight down at
-   $-\kvo$, and both fall to the same level $\ky$ below the start; the
-   rock thrown down arrives first and waits there with its arrival
-   velocity written beside it, and the rock thrown up leaves a hollow
-   mark with a velocity arrow behind it as it flies,
-   and arrives with the same velocity · $\kvo$ in m/s (1.0 to
-   25.0, step 0.1, default 13.0, velocity hue), the level reached $\ky$
-   in m (−12.0 to −1.0, step 0.1, default −5.10, position hue; the range
-   is cut at 12 m below the start so that the one height scale the scene
-   and the graph share stays readable), $\kg$ in
-   m/s² (1.50 to 10.00, step 0.01, default 9.80, acceleration hue, with
-   soft detents at 1.67 and 9.80) · "After
-   2.99 s the rock thrown up reaches −5.10 m at −16.4 m/s, which is the
-   velocity the rock thrown down had there at 0.34 s." · beside the
-   scene, on the same height scale, $\kv$ across against $\ky$ up: the
-   single parabola $\kv^2 = \kvo^2 - 2\kg(\ky - \kyo)$ that both rocks
-   ride, the rock thrown up going over its top from the right branch to
-   the left, the rock thrown down starting on the left branch, on ranges
-   fixed once at −32 m/s to 32 m/s and −12 m to 14 m, with the curve
-   clipped to the box · 2D. The marks the rock thrown up leaves are
-   spaced so that at most eight are drawn and carry no labels, since
-   they would sit on moving things; the time is the hover name of each
-   (rule 26.7). The equation written in the corner of the graph
-   names three types at once, so it is in ink rather than in any one of
-   their hues.
-   Moving: both rocks travel, one finite flight per loop in about 5 real
-   seconds, with the scrubber. Readout: the velocity-squared equation
-   with the numbers and its negative root; small line: v₀² is the same
-   either way, so at any height below the start the speeds agree, and
-   the rock thrown up passes y = 0 again at −v₀. Draws position, velocity
-   and acceleration; the times in its headline are written in ink, so the
-   chapter pass took time out of its `draws` row.
-4. `sim-drop` · replaces Figure 2.42 (Figure 2.43, the strategy sketch,
-   is its second original) · g-from-fall-time, free-fall-kinematics · a
-   metal ball is released from rest and falls the measured distance in
-   the measured time, leaving a strobe mark every 0.1 s with its position
-   and velocity written beside it, as in the book's figure; the
-   acceleration, and so $\kg$, follows from the two measurements · the
-   position at the end of the fall $\ky$ in m (−3.00 to −0.20, step 0.01,
-   default −1.00, position hue, with a soft detent at −1.00), the fall
-   time $\kt$ in s (0.20173 to 1.00173, step 0.0001, default 0.45173,
-   time hue, with a soft detent at 0.45173; the range is offset so that
-   the detent sits exactly on the step grid) · "After 0.30 s the ball has
-   fallen 0.441 m and is moving at −2.94 m/s." At the end, "The ball
-   falls 1.00 m in 0.45173 s, which gives g = 9.8000 m/s² at this
-   place." · three graphs beside the scene, $\ky$, $\kv$ and $\ka$ against
-   $\kt$, the strobe points marked on the first two, on ranges fixed at
-   0 to 1 s, 0 to −3 m, 0 to −15 m/s and 0 to −25 m/s², with a fall
-   faster than the last two scales hold drawn against their ends and
-   said to be · 2D. Labels on, six of them, and the a = −g arrow stands
-   at x = 78 so that no part of its label falls off the canvas. The
-   scene is vertical, so the graphs go beside it. Moving: the ball falls, one
-   finite drop per loop in about 4 real seconds, with the scrubber.
-   Readout: $\ka = 2(\ky - \kyo)/\kt^2$ with the numbers and $\kg$ from
-   it; small line: position grows with the square of the time, velocity
-   in proportion to it, and the acceleration is the same at every
-   instant. Draws time, position, velocity, acceleration.
-5. `sim-well` · new (the extra simulation below) · free-fall-kinematics
-   · a rock is dropped into a shaft and falls to the water; from the
-   splash a sound climbs back up at the speed of sound, and the clock
-   reads the two legs, the long fall and the short return · one slider
-   only, the depth d in m (5 to 100, step 1, default 40, ink, since it is
-   a length of the scene and not a typed position, as the drop height in
-   the hammer-and-feather figure is). The speed of sound is no longer a
-   slider: every value between 300 and 360 m/s moved the drawing by less
-   than a line's width, so it is stated as the 340 m/s the problem uses
-   (rule 24.6) · "The splash is heard 2.97 s after the drop, which is
-   2.86 s of fall and 0.12 s for the sound to climb the 40 m." · beside
-   the shaft, on the same
-   height scale, the height of the rock and then of the sound against
-   $\kt$: the parabola of the fall and the straight line of the sound
-   back up, both in the position hue, since both are heights against
-   time, with the sound's leg dashed to tell it from the fall; the axes
-   are fixed at 0 to 5 s and −100 m to 0 · 2D. Labels on, eight of them.
-   Moving: the rock falls and the sound rises, one finite
-   round trip per loop in about 5 real seconds, with the scrubber.
-   Readout: the fall time from $\sqrt{2d/\kg}$ and the sound's time from
-   $d/\kv_{\text{s}}$; small line: taking the whole time as fall time
-   would overstate the depth by the amount the numbers give. Draws time,
-   position, velocity, acceleration.
+Re-examined 2026-11-17 (Claude Fable 5.2): all five rebuilt. Each was a small drawing in a mostly blank stage with a long caption, graphs on ranges several times the example's, and a `g` slider that broke every fixed scale. The lines below are the figures as they now stand.
+
+1. `sim-hammer-feather` · Figure 2.37 · free-fall, acceleration-due-to-gravity · value add: flow by animation and the comparison the book's still only implies: its three panels (in air, in a vacuum, in a vacuum on the Moon) run on one clock from one release height, so the reader sees the pair stay side by side wherever there is no air, land together, and on the Moon do the same more slowly · arrows: the g arrow in each panel is symbolic and drawn to one scale (11 units per m/s², so the Moon's is 1.67/9.80 of Earth's) · moving: one drop per loop, ending when the last thing lands, with the scrubber · one slider, the drop height h (0.5 to 2.0 m, default 1.5 m, position hue on the control as before); g is no longer a slider, since the Moon panel is the comparison · headline: who is side by side now, and at the end the two landing times · no graph · 2D. Each panel is named under its floor with its g; the landing time appears over each freely falling thing as it lands. Hover names for the hammer and the feather. Readout: t = √(2h/g) for Earth and for the Moon, each whole on its line.
+   works: parts: three framed panels on one floor line and one height scale (0 to 2 m) at the left; in each a claw hammer (head up, banded grip, as the book draws it) and a feather · flow: both fall from the dashed release line to the floor · must hold: (1) in the two vacuum panels the hammer and the feather are at the same height at every instant and land at the same time; (2) the Moon pair lands after the Earth pair, at √(2h/1.67) against √(2h/9.80) (1.5 m: 1.34 s and 0.55 s); (3) in air the hammer falls as in the vacuum and the feather lags; (4) the g arrows are to one scale · read off the image: panels titled "In air", "In a vacuum", "In a vacuum (the hard way)" with an astronaut; hammer at the left, feather at the right; in air the feather is still near the top when the hammer is down. The book gives no number for the feather in air, so none is printed (it is drawn drifting at 0.8 m/s). The astronaut is not drawn; the panel is named "in a vacuum, on the Moon".
+2. `sim-rock-up` · Figure 2.38 + 2.39 · free-fall-kinematics, free-fall-highest-point, acceleration-due-to-gravity · value add: flow by animation, and the caption's Misconception Alert made visible: the rock moves on one vertical line and its position graph stands beside it on the same height scale, a dashed line carrying the rock's height across to its point on the curve, so the parabola is seen to be height against time and never a path · arrows: v and a on the rock are symbolic vectors drawn to scale (4.4 units per m/s, 6 per m/s²) · moving: the example's 3.00 s flight in about 6 real seconds, with the scrubber · one slider, $\kvo$ 10.0 to 15.0 m/s, detent at 13.0 (Example 2.14); the range keeps the whole flight on the fixed scales · headline: where the rock is and how it moves now; at the top, that v is zero and a is not · graphs beside (vertical scene): y against t tall on the scene's scale (−15 to 15 m), v against t (−20 to 20 m/s) and a against t (−12 to 0 m/s², the book's range), all 0 to 3 s · 2D. Hollow points at 1.00, 2.00 and 3.00 s on the y and v graphs are Table 2.1's rows, named on hover. The g and t sliders are gone: g sent every graph off its scale and the scrubber is the time.
+   works: parts: cliff with its edge, the thrower (not to scale, as in the book) with a raised hand at y₀ = 0, the rock's vertical line; three graphs · must hold: (1) on load the flight ends at 3.00 s with y = −5.10 m and v = −16.4 m/s, and passes y = 8.10 m, v = 3.20 m/s at 1.00 s and 6.40 m, −6.60 m/s at 2.00 s (Table 2.1); (2) the highest point is 8.62 m at 1.33 s, where the v arrow vanishes and the v line crosses zero; (3) the rock's dot and its graph point are always at the same height; (4) the a arrow never changes; (5) the readout's two lines are true as written · read off the image: 2.38 is v₀ = 13.0 m/s up and a = −9.8 m/s² down beside a y axis; 2.39's axes are y −6 to 10 m, v −20 to 15 m/s, a −12 to 0 m/s², t 0 to 4 s with data to 3 s.
+3. `sim-rock-down` · Figure 2.40 + 2.41 · free-fall-symmetry, free-fall-kinematics · value add: flow by animation and the comparison the book's two panels leave to the reader: the second rock is thrown down at the instant the first comes back past the hand at −v₀, so from there the two fall side by side with equal velocity arrows at every level · arrows: velocity vectors, symbolic, to scale (4 units per m/s); the marks left each whole second carry theirs, as in the book's panel (a) · moving: one flight per loop in about 6 s, with the scrubber · $\kvo$ 8.0 to 15.0 m/s (detent 13.0), the level reached $\ky$ −12.0 to −1.0 m (default −5.10) · headline: the first rock's flight, then the pass at −v₀, then the common velocity at the level · graph beside on the scene's height scale: v across, y up, the one curve v² = v₀² − 2g(y − y₀) from +v₀ over the top through −v₀ and down to the level; the first rock's point runs along it and picks up the second's ring at (−v₀, 0) · 2D. Hover names give each mark's time, position and velocity. The g slider is gone.
+   works: parts: cliff, thrower, two vertical lines (thrown up, thrown down) 62 units apart as the book offsets its up and down tracks; the level lines y₀ = 0 and y · must hold: (1) on load the first rock's marks are at 0, 8.10 and 6.40 m and the flight ends at 3.00 s at −5.10 m with −16.4 m/s (the book's y₁, y₂, y₃, v₃); (2) the second rock leaves at 2v₀/g with −13.0 m/s, exactly when the first is back at y₀ with −13.0 m/s; (3) from then on both are at one height with one velocity; (4) the readout gives 269.0 m²/s² and −16.4 m/s · read off the image: (a) v₀ = 13 m/s, y₁ = 8.10 m, y₂ = 6.40 m, y₃ = −5.10 m, v₃ = −16.4 m/s, velocity arrows at 0, 1, 2, 3 s; (b) v₀ = −13 m/s, y = −5.10 m, v = −16.4 m/s. The book draws both throws from the same instant in two panels; the delay is this figure's own.
+4. `sim-drop` · Figure 2.42 + 2.43 · g-from-fall-time, free-fall-kinematics, precision · value add: flow by animation (the strobe builds mark by mark, each carried across to the position graph on the same height scale) and variation by slider where the example's point lies: the two measurements move in their last figures and g moves along a scale that carries the 9.78 to 9.83 m/s² found on Earth, so the reader sees that a millisecond of timing decides it · arrows: velocity vectors at each mark, to scale (12 units per m/s) · moving: one drop per loop, with the scrubber · $\ky$ −1.0100 to −0.9900 m (detent −1.0000), $\kt$ 0.44173 to 0.46173 s (detent 0.45173; dashed circles where g = 9.78 and 9.83) · headline: the fall so far, and at the end the g the two measurements give · graph beside: y against t (0 to 0.5 s, 0 to −1.2 m) · 2D. The v and a graphs of the book's figure are not redrawn: 2.39 beside it shows the same straight line and flat line. Readout: a = 2(y − y₀)/t² whole on one line.
+   works: parts: a hand letting go, the ball's vertical line with a mark each 0.1 s, the timed level at y; three columns t, y, v on the level of each mark as the book sets its table; the graph; the g scale · must hold: (1) on load the readings are 0.1 s −0.049 m −0.98 m/s, 0.2 s −0.196 −1.96, 0.3 s −0.441 −2.94, 0.4 s −0.784 −3.92 (the book's table) and the end row 0.45173 s, −1.0000 m; (2) a = −9.8010 m/s² and g = 9.8010 m/s² on load, inside the Earth band; (3) each mark and its graph point are at one height; (4) the gaps between marks grow as 1 : 3 : 5 : 7 · read off the image: the book's strobe runs to 0.5 s (−1.225 m, −4.90 m/s) with g = 9.80; graph axes 0 to 0.6 s, 0 to −1.4 m. The example's fall ends at 0.45173 s, so the 0.5 s row is not reached.
+5. `sim-well` · Sim · free-fall-kinematics · value add: the right quantity on the control. What is measured is the time until the sound, so that is the slider; the shaft is as deep as that time implies, and a dashed level under its bottom is the depth ½gt² that taking the whole time as fall would give · arrows: the rock's velocity, kinematic sound fronts climbing · moving: fall then sound, one round trip per loop, with the scrubber · one slider, the time heard $\kt$ 1.0 to 5.0 s, default 3.0 s (problem 15's 2.0000 s is left for the reader) · headline: the fall, the sound, then the split of the time · graph beside on the shaft's own scale (0 to −125 m, 0 to 5 s): the fall's parabola, the sound's dashed line back up, and the parabola carried on dotted to the time heard, ending at ½gt² · 2D. Sound at 340 m/s, stated. Readout: d = ½g t_fall² and t_sound = d/v_s, one line each; note: how much too deep ½gt² comes out.
+   works: must hold: (1) fall time plus sound time equals the slider's time; (2) the dashed level is always below the bottom, and the gap grows with the time; (3) the shaft, its bracket and the graph agree on d; (4) at 2.0 s with 332 m/s the method gives problem 15's 18.5 m and 19.6 m (checked by hand; the figure uses 340 m/s).
 
 Photographs: none. Figure 2.37 is an illustration (three drawn panels, in
 air, in a vacuum and on the Moon), so it is a sketch the sim replaces and
@@ -239,12 +116,9 @@ Extra simulations (rule 15), thought through and judged:
 - The reaction-time ruler of the Take-Home Experiment: **left**. It is
   the drop sim with a ruler in place of the ball; the view is the same.
 - A jump on Earth and on the Moon side by side (conceptual questions 5
-  and 6): **left**. The rock-up sim's $\kg$ slider already shows the
-  highest point rise as $\kg$ falls, so a second figure would only
-  animate that comparison.
+  and 6): **left**. The hammer-and-feather figure's Moon panel already
+  sets the Moon's g beside Earth's on one clock.
 - The Vomit Comet: **left**. The book defers it to a later chapter.
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-hammer-feather`: the hammer read as a T and is redrawn as a claw hammer (a new sprite, drawn here); the release line moved down so an object standing on it clears a two-line headline, the hammer and the feather stand farther apart with the release label on a panel between them, and the headline wraps through `topline()`. `sim-rock-up` and `sim-rock-down`: the thrower was a five-line stick figure and is the library's `person()` with an arm raised toward the throw; the highest-point, $y_0$, velocity, acceleration, $v_0$ and slope labels go through `labeller()`, since the rock, its arrows and the start swap places in one column as the flight runs; the scene tops moved down so a rock held at the top of the scale clears the headline, which wraps. `sim-well`: the listener's head stood in the headline; the scene moved down, the listener is the library's `person()` leaning over the shaft, and the two brackets sit under the curve's start with the sound's label beside its bracket, since a shallow shaft leaves no room above. `sim-drop` unchanged.
 
 ## Tables
 

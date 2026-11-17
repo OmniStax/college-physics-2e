@@ -50,124 +50,115 @@ every later section leans on them.
 
 ## Figures
 
-id · replaces · concepts · value add · moving or still · sliders ·
+Re-examined as a set on 2026-11-17 (Claude Fable 5.2). The section had seven
+drawn figures, six of them a strip over a graph. `sim-notation` was dropped;
+the other six were rebuilt, each round one thing the book's still sketch
+cannot show. The plan lines of 2026-09-12 and the pass of 2026-09-14 are
+replaced by the lines below.
+
+id · replaces · concepts · value add · arrows · moving or still · controls ·
 headline · graph · 2D or 3D
 
-1. `sim-notation` · Sim, since the sketch the book prints under this
-   number is the jogger's, and it has been folded into `sim-jogger`
-   where the jogger lives · const-a · variation by slider: the reader
-   sets the two positions and the time and watches the simplified
-   notation follow · moving, since the point of the figure is that the
-   stopwatch is started at zero when the object leaves x₀, and that has
-   a time in it · x₀ and x in the position hue (0 to 100 m, step 1,
-   defaults 20 and 80), t in the time hue (1 to 60 s, step 0.5, default
-   12.0) · "The clock starts at zero when the object is at x₀, and after
-   12.0 s the object is at x." · none, the number line and the stopwatch
-   are the picture · 2D. The line is a fixed 0 to 100 m, the range of
-   both position sliders. Labels on, five of them, and the moving marker
-   is named "the object" so nothing on the canvas is an unnamed dot.
-   Draws position, time.
-2. `sim-avg` · Sim; the book prints no figure for this derivation ·
-   vbar-midpoint, x-from-vbar · intuition: the velocity line is straight
-   under constant acceleration, so its average is the midpoint and the
-   area under it is the displacement · moving, since the area
-   accumulates as the clock runs · $\kvo$ and $\kv$ in the velocity hue
-   (0 to 30 m/s, step 0.5, defaults 10.0 and 20.0), $\kt$ in the time
-   hue (1 to 20 s, step 0.5, default 10.0) · "The velocity line is
-   straight, so its average sits halfway between v₀ and v." · the graph
-   is the figure, on axes fixed at 0 to 20 s and 0 to 30 m/s, the two
-   slider ranges · 2D. Labels on, six of them. Draws acceleration,
-   position, time, velocity.
-3. `sim-jogger` · Figure 2.25 + 2.26 · x-from-vbar · variation by
-   slider, and a fold: 2.25 is the sketch for Example 2.8 and 2.26 is
-   the straight line of final position against average velocity, both of
-   them about the same jogger, so one live drawing carries both and the
-   eyebrow reads them both · moving, since the jogger runs the road
-   while the clock runs · $\kvb$ in the velocity hue (0 to 8.00 m/s,
-   step 0.05, default 4.00), $\kt$ in the time hue (10 to 180 s, step 1,
-   default 120), $\kxo$ in the position hue (−200 to 200 m, step 10,
-   default 0), which are the numbers of Example 2.8 · "After 60 s the
-   jogger is at x = 240 m." · the graph sits below the road, since the
-   road is a horizontal scene · 2D. The road is a fixed −200 m to
-   1700 m and the graph a fixed 0 to 8.00 m/s by −200 m to 1800 m, so
-   neither follows the sliders and the graph is read on the road's own
-   scale. Labels on, six of them. Draws position, time, velocity.
-4. `sim-plane` · Figure 2.27 + 2.28 (the sketch for Example 2.9 and the
-   landing drawn at two instants) · v-from-at · variation by slider and
-   motion: the velocity arrow changes while the acceleration arrow does
-   not · moving, one landing per set time · $\kvo$ in the velocity hue
-   (0 to 90 m/s, step 1, default 70.0), $\ka$ in the acceleration hue
-   (−4.00 to 4.00 m/s², step 0.05, default −1.50), $\kt$ in the time hue
-   (1 to 60 s, step 0.5, default 40.0) · "After 20.0 s the velocity
-   arrow shrinks by 1.50 m/s every second, while the acceleration arrow
-   never changes." The wording follows the sign of the acceleration, so
-   a positive acceleration reads "grows" and a zero acceleration reads
-   "keeps its length" · v–t below, on axes fixed at 0 to 60 s and 0 to
-   100 m/s · 2D. The runway is a fixed 0 to 3000 m. A plane that is
-   slowing stops when its velocity reaches zero and holds there, since
-   an airplane does not roll backwards down the runway: the clock that
-   drives the motion is capped at v₀/|a| whenever the acceleration
-   opposes the velocity, and the headline says the plane has come to
-   rest. A velocity past the top of the scale is drawn against it and
-   its true value written in the headline. Labels on, five of them.
-   Draws acceleration, position, time, velocity.
-5. `sim-dragster` · Figure 2.31 + 2.32 (the two sketches for Examples
-   2.10 and 2.11) · x-quadratic, v-squared · intuition: the distance
-   grows with the square of the time, which the hollow half-time mark
-   makes visible · moving, one run per set time · $\kvo$ in the velocity
-   hue (0 to 20 m/s, step 0.5, default 0.0), $\ka$ in the acceleration
-   hue (1.0 to 30.0 m/s², step 0.1, default 26.0), $\kt$ in the time hue
-   (0.50 to 8.00 s, step 0.01, default 5.56), the book's numbers ·
-   "After 2.78 s the dragster is at x = 100 m, since the distance
-   covered grows with the square of the time." · x–t below, on axes
-   fixed at 0 to 8.00 s and 0 to 1200 m · 2D, the track a fixed 1200 m,
-   the farthest the sliders can send the dragster. Labels on, six of
-   them. Small line: at half the time the dragster has gone a quarter of
-   the distance when it starts from rest, and more than a quarter with a
-   running start. Draws acceleration, position, time, velocity. Revised 2026-09-28: starting from rest is a special value on $\kvo$ (label "from rest"); on it the readout morphs by meaning into the book's $\kx = \tfrac{1}{2}\ka\kt^2$, $\kxo$ and $\kvo\kt$ leaving the equation, and away from it they come back (manim 8, 11, 14).
-6. `sim-braking` · Figure 2.33 + 2.34 (the sketch for Example 2.12 and
-   the book's diagram of braking distances) · v-squared, choose-equation
-   · variation by slider: the same speed and the same driver on two road
-   surfaces, with the reaction distance shown apart from the braking
-   distance · moving, since the two cars stop at different moments and
-   the difference is the point · $\kvo$ in the velocity hue (5.0 to
-   40.0 m/s, step 0.5, default 30.0), the reaction time in the time hue
-   (0 to 1.50 s, step 0.05, default 0.50), and the two decelerations in
-   the acceleration hue (−10.0 to −2.0 m/s², step 0.1, defaults −7.00
-   dry and −5.00 wet), all the book's numbers · "After 2.50 s the two
-   cars are this far down the road, and since the speed and the driver
-   are the same, only the road surface separates them." · none, the two
-   bars are the graph · 2D. The 3D view of two cars that once stood over
-   the bars is gone, since a pair of distance bars carries the whole
-   idea and the cars added nothing the reader could measure (rule 28.5).
-   The road is a fixed 0 to 200 m, which holds the example's 79.3 m and
-   105 m with room to spare, and a longer stop runs off the end and is
-   said to. Both bars are distances, so both take the position hue and
-   are told apart by decoration rather than by colour: the reaction
-   distance is an outlined bar with a dashed border and the braking
-   distance a filled one. The cars themselves are the library's car
-   sprite in ink, so nothing on the canvas is an unnamed dot. Labels on,
-   seven of them. Small line: the reaction distance, the two total
-   stopping distances and the difference between them. Draws
-   acceleration, position, time, velocity.
-7. `sim-merge` · Figure 2.35 (the sketch for Example 2.13) ·
-   x-quadratic, physical-solution · intuition: the quadratic has two
-   roots, and only one of them lies in the future · moving, one run up
-   the ramp · $\kx$ in the position hue (50 to 400 m, step 10, default
-   200), $\kvo$ in the velocity hue (0 to 20.0 m/s, step 0.5, default
-   10.0), $\ka$ in the acceleration hue (0.50 to 4.00 m/s², step 0.05,
-   default 2.00), the book's numbers · "After 5.0 s the car is on its
-   way, and the parabola crosses the length of the ramp twice, although
-   only the crossing at 10.0 s lies in the future." · the parabola sits
-   below the ramp, on axes fixed at −40 to 40 s and −500 to 1000 m,
-   which hold every root the sliders can produce; the curve is clipped
-   to the box rather than the box stretched round it · 2D, the ramp a
-   fixed 0 to 400 m. The root before the motion began is a filled muted
-   marker with a cross through it, since a hollow marker means an
-   initial value everywhere else on this page. Labels on, seven of them.
-   Draws acceleration, position, time, velocity.
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-avg`: the average-velocity label sat on the moving point and now sits at the left end of its dashed level. `sim-jogger`: the jogger is the library's `person()` walking, with the velocity arrow over his head, and the final-position label is held inside the canvas. `sim-plane`: the headline wraps through `topline()`, the arrows and their labels are clamped to the canvas when the plane runs to the end of the runway, the landing point's label sits above the strip clear of the tick labels, and the final velocity marker was hollow when it should have been filled. `sim-dragster`: the dragster was three rectangles and two circles and is redrawn with a long low body, a wing, big rear slicks and small front wheels (a new sprite, drawn here); the three track labels go through `labeller()`, since a short run put all three on the start. `sim-braking`: the headline wraps. `sim-merge`: the headline wraps, and the ramp's labels and the two roots' labels go through `labeller()`, since a short ramp put them on each other and on the scale.
+0. `sim-notation` · **dropped**. A number line and a stopwatch that said
+   Δt = t and Δx = x − x₀ with three sliders, none of which changed the
+   idea. It replaced no book figure and the paragraph above it says the
+   same in one line.
+1. `sim-avg` · Sim; the book prints no figure and asserts v̄ = (v₀ + v)/2
+   without deriving it · vbar-midpoint, x-from-vbar · motion the reader
+   would otherwise imagine: a car that changes velocity steadily and a car
+   that holds v̄ leave together and arrive together, which is what an
+   average velocity means · kinematic (the two cars) · moving · $\kvo$ and
+   $\kv$, 0 to 80 km/h in steps of 5, opening on the text's 30 and 60 km/h
+   · "A car holding v̄ = 45 km/h arrives level with one that speeds up
+   steadily from 30 to 60 km/h." · v against time below, time as 0, t/2, t
+   · 2D. No time or distance is given a number: the text's example has
+   none, and the argument does not need one. The graph argues by symmetry
+   (below v̄ for the first half, above it by as much for the second), not
+   by area, since the book has not taught area under a velocity graph by
+   this page. Draws position, time, velocity.
+2. `sim-jogger` · Figure 2.25 + 2.26 · x-from-vbar · the comparison the
+   caption of 2.26 states: a runner twice as fast is always twice as far ·
+   kinematic · moving · $\kvb$ 1.00 to 5.00 m/s (default 4.00), $\kt$ 30
+   to 120 s (default 120), the numbers of Example 2.8; x₀ is zero as the
+   example takes it · "After 60 s the jogger is at x = 240 m, and a runner
+   twice as fast is twice as far, at 480 m." · x against v̄ below; the line
+   swings up as the clock runs, its slope the time so far · 2D. Road fixed
+   at 0 to 1200 m, graph at 0 to 10 m/s by 0 to 1200 m.
+   works: read off the image · 2.25: a segment from x₀ to x = ?, an arrow
+   v̄ = 4.00 m/s above it, x and y axes. 2.26: "Displacement vs. Velocity
+   for a given time, t", a straight line through the origin with six
+   evenly spaced points, Δx (m) against v̄ (m/s), no numbers. The alt text
+   agrees. must hold: the fast runner is at exactly twice the jogger's
+   position at every instant; both dots lie on the one line; 480 m at
+   4.00 m/s and 120 s.
+3. `sim-plane` · Figure 2.27 + 2.28 · v-from-at · the equation as arrows:
+   v₀, then at laid back from its head, lands on the head of v; the
+   Discussion's negative final velocity can be reached · kinematic ·
+   moving · $\kvo$ 50 to 80 m/s (70.0), $\ka$ −2.00 to 0 m/s² (−1.50),
+   $\kt$ 5 to 48 s (40.0) · "After 20.0 s the airplane has lost 30.0 m/s
+   of its 70.0 m/s." · v against t below with the bracket at · 2D. Runway
+   fixed at 0 to 4000 m, graph at 0 to 48 s by −60 to 90 m/s; the slider
+   ranges were cut so the plane never backs past its touchdown point. The
+   earlier figure stopped the plane at rest and wrote a capped time into
+   the readout, so the equation shown was not the one computed.
+   works: parts · a plane at t₀ = 0 with v₀ = 70.0 m/s (long arrow, right)
+   and a = −1.5 m/s² (short arrow, left); the same plane at t = 40.0 s
+   with v = 10.0 m/s (short arrow, right) and the same a. flow: the plane
+   moves right and slows. must hold: the a arrow is the same length at
+   every instant and points against the motion; the v arrow at 40.0 s is
+   one seventh of the v₀ arrow; v₀ + at = v tip to tail at every instant;
+   readout 70.0 + (−1.50)(40.0) = 10.0 m/s. read off the image: 2.27 writes
+   v_f = ?, 2.28 writes a = −1.5 m/s² at the first plane and −1.50 m/s² at
+   the second.
+4. `sim-dragster` · Figure 2.31 + 2.32 · x-quadratic, v-squared · marks at
+   each quarter of the time, the distances between them written out: from
+   rest 25, 75, 126, 176 m, as 1 : 3 : 5 : 7, so the square of the time is
+   seen on the track · kinematic · moving · $\kvo$ 0 to 20 m/s (0, special
+   "from rest"), $\ka$ 10.0 to 30.0 m/s² (26.0), $\kt$ 3.00 to 6.00 s
+   (5.56) · "After 2.78 s the dragster has gone 100 m, and each quarter of
+   the time carries it farther than the last." · x against t below, the
+   half-time point dropped to both axes · 2D. Track fixed at 0 to 700 m
+   (the farthest run is 660 m). The readout has two lines: Example 2.10's
+   x = ½at² = 402 m (morphing to the full equation off the special) and
+   Example 2.11's v = √(v₀² + 2a(x − x₀)) = 145 m/s, which is what earns
+   the fold of 2.32.
+   works: read off the image · 2.31: segment x₀ to x = ?, arrow a =
+   26.0 m/s². 2.32: the same segment labelled v₀ and v = ?. must hold:
+   402 m and 145 m/s at the defaults; 25% of the way at t/2 from rest; the
+   four gaps add to x.
+5. `sim-braking` · Figure 2.33 + 2.34 · v-squared, choose-equation · the
+   speed against position under the two roads, on the road's own scale:
+   where the dry-road car has stopped the wet-road car is still doing
+   16.0 m/s, which the book's picture of four parked cars does not show ·
+   kinematic · moving · $\kvo$ 10 to 35 m/s (30.0, detents at 15 and 30),
+   reaction time 0 to 1.00 s (0.50); the two decelerations are the book's
+   and are fixed, since they are what "dry" and "wet" mean here · "Where
+   the car on dry concrete has stopped, the car on wet concrete is still
+   moving at 16.0 m/s." · v against x below, dry solid and wet dashed · 2D.
+   Scale fixed at 0 to 160 m (longest stop 157.5 m).
+   works: parts · a car at x = 0; lines to 64.3 m (dry) and 90.0 m (wet)
+   with no reaction time; below, a "Reaction time" band from 0 to 15 m,
+   then lines to 79.3 m (dry) and 105 m (wet), on an axis "Position x (m)"
+   ticked every 10 m. flow: each car holds 30.0 m/s across the band, then
+   slows to rest. must hold: reaction 15.0 m; braking 64.3 and 90.0 m;
+   stops at 79.3 and 105.0 m; each curve is flat across the band and meets
+   the axis where its car stops; at 15 m/s the braking distances are a
+   quarter (16.1 and 22.5 m). read off the image: 2.33 gives v₀ =
+   30.0 m/s, v_f = 0, a_dry = −7.00, a_wet = −5.00 m/s².
+6. `sim-merge` · Figure 2.35 · x-quadratic, physical-solution · what the
+   discarded root describes: the clock starts at the negative root and a
+   faint car follows the parabola back down the ramp and up again, turning
+   solid at t = 0 · kinematic · moving · $\kx$ 100 to 300 m (200), $\kvo$
+   0 to 14.0 m/s (10.0), $\ka$ 1.00 to 4.00 m/s² (2.00) · "Carried back to
+   −12.0 s, the equation puts the car at 24 m, before the motion began."
+   then "After 5.0 s the car is 75 m up the ramp, and it reaches the end at
+   10.0 s." · x against t below, the part before t = 0 shaded and faint ·
+   2D. Road and graph share −100 to 300 m; time axis −45 to 30 s.
+   works: read off the image · t = ?, a segment from x₀ = 0 to x = 200 m,
+   v₀ = 10.0 m/s, v = ?, a = 2.00 m/s², all arrows to the right. must
+   hold: roots 10.0 s and −20.0 s at the defaults; the car is at x = 0
+   with v = 10.0 m/s when t = 0; the faint car is at the ramp's end at the
+   negative root, moving backward.
 
 ## Photographs
 

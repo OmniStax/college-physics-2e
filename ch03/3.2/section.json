@@ -38,6 +38,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -47,20 +50,9 @@
  "figures": [
   {
    "id": "sim-vector-2d",
-   "kind": "sim",
+   "kind": "photo",
    "number": "3.8",
-   "folds": [
-    "3.9"
-   ],
-   "originals": [
-    "/media/ch03/Figure_03_02_01.jpg",
-    "/media/ch03/Figure_03_02_02a.jpg"
-   ],
-   "original_caption": "A person walks 9 blocks east and 5 blocks north. The displacement is 10.3 blocks at an angle 29.1º north of east.",
-   "draws": [
-    "position",
-    "angle"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -81,6 +73,22 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline shortened, repeated panel and note dropped, labels clear"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
+    }
+   ]
+  },
+  {
+   "id": "fig-ruler-protractor",
+   "kind": "photo",
+   "number": "3.9",
+   "draws": [],
+   "ai": [
+    {
+     "model": "claude-fable-5-2",
+     "part": "Figure 3.9 unfolded from the sim and kept as the book's image"
     }
    ]
   },
@@ -124,6 +132,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "map-view walker, steps kept on the stage, note trimmed"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt as a story of the book's steps on a full-size grid"
     }
    ]
   },
@@ -134,55 +146,21 @@
    "folds": [
     "3.15",
     "3.16",
-    "3.17"
+    "3.17",
+    "3.18"
    ],
    "originals": [
     "/media/ch03/Figure_03_02_08-d8f8.jpg",
     "/media/ch03/Figure_03_02_09.jpg",
     "/media/ch03/CNX_HSPhysics_05_01_result.jpg",
-    "/media/ch03/CNX_HSPhysics_05_01_measure.jpg"
+    "/media/ch03/CNX_HSPhysics_05_01_measure.jpg",
+    "/media/ch03/CNX_HSPhysics_05_01_order.jpg"
    ],
    "widths": [
     500,
     250,
     250,
-    220
-   ],
-   "draws": [
-    "position",
-    "angle"
-   ],
-   "ai": [
-    {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "scale for the ruler, labels through the labeller, map-view walker"
-    }
-   ]
-  },
-  {
-   "id": "sim-order",
-   "kind": "sim",
-   "number": "3.18",
-   "originals": [
-    "/media/ch03/CNX_HSPhysics_05_01_order.jpg"
-   ],
-   "widths": [
+    220,
     275
    ],
    "draws": [
@@ -208,7 +186,11 @@
     {
      "model": "claude-opus-5-5",
      "effort": "high",
-     "part": "legend kept inside the stage"
+     "part": "scale for the ruler, labels through the labeller, map-view walker"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "merged with the order figure: givens, measured sum, order choice"
     }
    ]
   },
@@ -254,6 +236,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "repeated panel dropped, note shortened and set through macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: B and its negative beside the two sums, A fixed"
     }
    ]
   },
@@ -284,6 +270,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "caption layout, reversed angle, repeated note dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt with the one slider c and the text's three cases marked"
     }
    ]
   },
@@ -314,6 +304,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "repeated panel and note dropped, D label clear of the numbers"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: drag the head, east or west and north parts on a wide grid"
     }
    ]
   },
@@ -345,6 +339,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline that repeated the caption dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "caption cut, key through the library"
     }
    ]
   }
@@ -967,13 +965,6 @@
    "label": "the person walking in a city",
    "figures": [
     "sim-head-to-tail"
-   ]
-  },
-  {
-   "id": "woman",
-   "label": "the woman who walks three legs in Example 3.1",
-   "figures": [
-    "sim-walk"
    ]
   },
   {

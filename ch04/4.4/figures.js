@@ -28,6 +28,22 @@ function over(ctx, x1, y1, x2, y2, color, a) {
   ctx.save(); ctx.strokeStyle = PAL.panel; ctx.lineWidth = 15; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
   ctx.globalAlpha *= a; arrow(ctx, x1, y1, x2, y2, color, 5); ctx.restore();
 }
+/* a swimmer lying face down, feet at (foot, y) against the wall on her right and her hip at hipX:
+   the legs fold at the knee while she is tucked and straighten as the hip moves away, the arms
+   reach ahead past the head. Limbs are round-ended bands, the near one drawn over the far one. */
+function swimmerBody(ctx, foot, hipX, y, c) {
+  const limb = (pts, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); };
+  const knee = (fy, hy) => { const dx = hipX - foot, dy = hy - fy, Ld = Math.hypot(dx, dy), l = 101, h = Math.sqrt(Math.max(0, l * l - (Ld * Ld) / 4)); return [foot + dx / 2 - (dy / Ld) * h, fy + dy / 2 - (-dx / Ld) * h * -1]; };
+  const far = alpha(c, 0.55), sh = hipX - 122;
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  limb([[foot - 8, y + 46], knee(y + 46, y + 8), [hipX, y + 8]], 19, far);
+  limb([[sh, y + 6], [sh - 150, y + 10]], 13, far);
+  limb([[hipX, y + 2], [sh, y - 2]], 46, c);
+  limb([[foot - 8, y + 30], knee(y + 30, y + 4), [hipX, y + 4]], 21, c);
+  ctx.fillStyle = c; ctx.beginPath(); ctx.arc(sh - 52, y - 4, 27, 0, TAU); ctx.fill();
+  limb([[sh, y - 6], [sh - 156, y - 2]], 14, c);
+  ctx.restore();
+}
 /* the key every scene of force pairs shares */
 const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system', color: cf, w: 5 }, { s: 'acts on something else, or inside it', color: alpha(cf, DIM), w: 5 }], { corner: 'tl', panel: false, row: true, size: 17 });
 
@@ -63,7 +79,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     topline(ctx, !pushing
       ? 'Her feet have left the wall at $\\kv = ' + fmt(r.ve, 2) + '\\ \\text{m/s}$, and both forces of the pair are gone'
       : onHer
-        ? 'Only $\\kFwallfeet$ acts on her, so its ' + fmt(Fp.v, 0) + ' N are the net force that accelerates her'
+        ? 'Of the pair, only $\\kFwallfeet$ acts on her, and its ' + fmt(Fp.v, 0) + ' N accelerate her away from the wall'
         : '$\\kFfeetwall$ acts on the wall, so it cannot cancel the force on her');
     pairKey(ctx, { l: 28, r: 780, t: 86, b: 200 }, cf);
     /* the pool: the water's surface, the wall she pushes off, the distance of her feet from it */
@@ -74,20 +90,18 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
     text(ctx, 'the wall', (WALL + WR) / 2, 146, F.ref('wall'), { size: 18, weight: 600, align: 'center', bg: PAL.panel });
     scale(ctx, SX, 0, 3, 1, 530, 'm', 1);
     /* the system of interest, round her or round the wall */
-    const her = [foot - (hx + 116) * S, Y0 - 66, foot + 4, Y0 + 84], B = sys.mix((u) => (u === 'swimmer' ? her : [WALL - 8, 112, WR + 8, 508]));
+    const her = [hip - 300, Y0 - 66, foot + 4, Y0 + 84], B = sys.mix((u) => (u === 'swimmer' ? her : [WALL - 8, 112, WR + 8, 508]));
     boundary(ctx, B[0], B[1], B[2], B[3]);
     text(ctx, 'the system of interest', onHer ? Math.max(B[0] + 8, 36) : B[0] - 6, B[1] - 17, PAL.muted, { size: 18, weight: 600, align: onHer ? 'left' : 'right', bg: PAL.panel });
     /* the swimmer, lying feet to the wall: her legs straighten through the push, then she glides streamlined */
-    F.silhouette(ctx, { x: foot, y: Y0, s: S, face: -1, color: F.ref('swimmer'),
-      hip: { x: hx, y: 0 }, shoulder: { x: hx + 46, y: -2 }, head: { x: hx + 68, y: -6 },
-      hands: [{ x: hx + 104, y: -6 }, { x: hx + 102, y: -1 }], feet: [{ x: 0, y: 10 }, { x: -3, y: 15 }] });
+    swimmerBody(ctx, foot, hip, Y0, F.ref('swimmer'));
     /* the pair of forces, each drawn on the body it acts on, to one scale */
     if (pushing) {
       const yF = Y0 + 13 * S, aH = sys.mix((u) => (u === 'swimmer' ? 1 : DIM)), aW = sys.mix((u) => (u === 'wall' ? 1 : DIM));
       over(ctx, WALL, yF, WALL - L, yF, cf, aH);
       over(ctx, WALL, yF, WALL + L, yF, cf, aW);
-      F.faded(ctx, Math.max(aH, 0.55), [0, 0], () => { line(ctx, WALL - 26, yF + 12, WALL - 40, Y0 + 96, alpha(cf, 0.5), 1.5, [5, 6]); sym(ctx, '$\\kFwallfeet$', WALL - 14, Y0 + 110, { align: 'right' }); });
-      F.faded(ctx, Math.max(aW, 0.55), [0, 0], () => sym(ctx, '$\\kFfeetwall$', WALL + 12, yF + 34));
+      F.faded(ctx, Math.max(aH, 0.8), [0, 0], () => { line(ctx, WALL - 26, yF + 12, WALL - 40, Y0 + 96, alpha(cf, 0.5), 1.5, [5, 6]); sym(ctx, '$\\kFwallfeet$', WALL - 14, Y0 + 110, { align: 'right' }); });
+      F.faded(ctx, Math.max(aW, 0.8), [0, 0], () => sym(ctx, '$\\kFfeetwall$', WALL + 12, yF + 34));
     }
     /* her acceleration while the wall pushes, and her velocity */
     if (pushing) { arrow(ctx, hip, 446, hip - r.a * KA, 446, C('acceleration'), 5); text(ctx, 'a = ' + fmt(r.a, 2) + ' m/s²', hip - r.a * KA - 12, 446, C('acceleration'), { size: 20, weight: 600, align: 'right' }); }
@@ -111,7 +125,7 @@ const pairKey = (ctx, box, cf) => F.legend(ctx, box, [{ s: 'acts on the system',
       } else text(ctx, 'nothing pushes on the wall now', (PL + 1384) / 2, fy + 70, PAL.muted, { size: 17, align: 'center' });
       dot(ctx, fx, fy, F.ref('wall'), true, 10);
     });
-    hits = [{ x: hip - 40 * S, y: Y0, r: 70, name: 'the swimmer' }, { x: (WALL + WR) / 2, y: 400, r: 70, name: 'the wall of the pool' }];
+    hits = [{ x: hip - 60, y: Y0, r: 70, name: 'the swimmer' }, { x: (WALL + WR) / 2, y: 400, r: 70, name: 'the wall of the pool' }];
     const Fn = pushing ? Fp.v : 0;
     ro.set(onHer
       ? `\\ka = \\frac{\\kFwallfeet}{\\km} = \\frac{${fmt(Fn, 0)}\\ \\text{N}}{${fmt(mm.v, 0)}\\ \\text{kg}} = ${fmt(Fn / mm.v, 2)}\\ \\text{m/s}^2`
