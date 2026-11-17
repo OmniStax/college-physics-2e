@@ -7,7 +7,7 @@ function readout(host, main, small) { tex(host, main); if (small) { const n = el
 
 /* ---------- small helpers shared by the figures ---------- */
 /* a signed value, with the minus sign the book prints */
-const signed = (x, d) => (x < 0 ? '−' : '+') + fmt(Math.abs(x), d);
+const signed = (x, d) => (x === 0 ? '0' : (x < 0 ? '−' : '+') + fmt(Math.abs(x), d));
 /* the same number for a readout, where TeX sets the minus sign itself */
 const tx = (s) => s.replace('−', '-');
 
@@ -115,7 +115,7 @@ function trip(u) {
     person(ctx, AX(xm), feet, F.ref('passenger'), { face, phase: done || dx === 0 ? 0 : ph });
     const ay = feet - 62, ax = AX(xm) + face * 26, len = vb * 50;
     if (Math.abs(len) > 6) { arrow(ctx, ax, ay, ax + len, ay, vc, 5); label(ctx, 'v̄ = ' + signed(vb, 2) + ' m/s', ax + len, ay, { side: len > 0 ? 'right' : 'left', gap: 12, color: vc, size: 20, leader: false }); }
-    else text(ctx, 'v̄ = 0 m/s', AX(xm), feet - 122, vc, { weight: 600, size: 20, align: 'center', bg: PAL.panel });
+    else text(ctx, 'v̄ = 0 m/s', AX(xm) + 34, ay, vc, { weight: 600, size: 20, align: 'left' });
     /* Position against time. The axes are fixed at 0 to 10 s, the time slider's maximum, and 0 to 10 m, the
        aisle's length, so a slider moves the line and never the ticks. */
     const box = { l: 170, r: 1250, t: 470, b: 650 };
@@ -257,7 +257,7 @@ function trip(u) {
     const y3 = 466;
     dot(ctx, X(0), y3, pc, false, 10);
     if (pos > 0.03) arrow(ctx, X(0) + 10, y3, X(pos), y3, pc, 5);
-    text(ctx, 'displacement', 30, 452, PAL.ink, { size: 20 }); text(ctx, 'Δx = ' + (pos > 0.03 ? signed(pos, 1) : '0') + ' km', 30, 482, pc, { weight: 600, size: 24 });
+    text(ctx, 'displacement', 30, 452, PAL.ink, { size: 20 }); text(ctx, 'Δx = ' + signed(pos > 0.03 ? pos : 0, 1) + ' km', 30, 482, pc, { weight: 600, size: 24 });
     topline(ctx, !done ? 'After ' + fmt(tau, 0) + ' min the car has driven ' + fmt(gone, 1) + ' km and is ' + fmt(pos, 1) + ' km from home.'
       : xf === 0 ? fmt(path, 1) + ' km driven in ' + fmt(T.v, 0) + ' min and the car is home again: average speed ' + fmt(sp, 1) + ' km/h, average velocity 0.'
       : fmt(path, 1) + ' km driven in ' + fmt(T.v, 0) + ' min, ending ' + fmt(xf, 1) + ' km from home: average speed ' + fmt(sp, 1) + ' km/h, average velocity ' + signed(vbar, 1) + ' km/h.');
@@ -330,7 +330,7 @@ function trip(u) {
     topline(ctx, done ? 'Home after ' + fmt(H, 2) + ' h: ' + fmt(2 * DS, 1) + ' km at an average speed of ' + fmt(avg, 1) + ' km/h, and an average velocity of 0.'
       : me.leg === 1 ? 'At ' + fmt(th, 2) + ' h the car is stopped at the store, ' + fmt(DS, 1) + ' km from home.'
       : 'At ' + fmt(th, 2) + ' h the car is ' + fmt(me.x, 1) + ' km from home, driving ' + (me.leg ? 'back' : 'out') + ' at ' + signed(me.v, 0) + ' km/h.');
-    const [dxl, dtl, v] = me.leg === 0 ? [DS, t1, vo] : me.leg === 1 ? [0, ts, 0] : [-DS, t2, -vb], sv = v === 0 ? '0' : (v < 0 ? '{-}' : '+') + Math.abs(v);
+    const [dxl, dtl, v] = me.leg === 0 ? [DS, t1, vo] : me.leg === 1 ? [0, ts, 0] : [-DS, t2, -vb], sv = v === 0 ? '0' : (v < 0 ? '{-}' : '{+}') + Math.abs(v);
     readout(d.readout, `\\kv = \\frac{\\kdx}{\\kdt} = \\frac{${dxl === 0 ? '0' : tx(signed(dxl, 1))}\\ \\text{km}}{${fmt(dtl, 2)}\\ \\text{h}} = ${sv}\\ \\text{km/h} \\\\ \\text{speed} = |\\kv| = |${sv}\\ \\text{km/h}| = ${Math.abs(v)}\\ \\text{km/h}`);
   }
   F.hover(d.stage, () => { const { H } = legs(); return [{ x: RX(at(Math.min(cy.now(), H - 1e-9)).x), y: G - 20, r: 46, name: 'the car' }, { x: 200, y: G - 50, r: 60, name: 'home' }, { x: 1240, y: G - 50, r: 80, name: 'the store' }]; });

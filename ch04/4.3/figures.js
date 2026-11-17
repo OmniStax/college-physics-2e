@@ -307,7 +307,7 @@ function suv(ctx, x, y, color, s) {
      the graph's box at x = 1010; the friction, never more than 9 units on that scale, is drawn at
      50, larger than scale as the book draws it */
   const K = 0.0045, W = M * G;
-  const Z = 2.2, P0 = [620, 330], DOT = [180, 330], R = 16;
+  const Z = 2.2, P0 = [620, 400], DOT = [180, 330], R = 16;
   /* the silhouette of the platform and its column of rockets, about its centroid, resampled by arc
      length, and the circle it bends into, point for point in the same winding */
   /* read off the book's drawing: a block of four rockets at the back, a fin above them, a canopy

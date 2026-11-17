@@ -125,9 +125,9 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     hbracket(ctx, X(half - u), X(half + u), YS + 36, wt, 'half as heavy: ' + fmt(half, 2) + ' lb ± ' + fmt(u, 1) + ' lb', { side: 'below', size: 20 });
     /* the two points */
     const hp = F.pinned(ctx, BOX, X, Y, half, 2 * p, PAL.ink, '± ' + Math.round(2 * p) + '%');
-    if (!hp.out) { dot(ctx, hp.x, hp.y, PAL.panel, true, 7); dot(ctx, hp.x, hp.y, PAL.ink, false, 9); F.label(ctx, '± ' + Math.round(2 * p) + '%', hp.x, hp.y, { side: 'right', size: 22, gap: 18 }); }
+    if (!hp.out) { dot(ctx, hp.x, hp.y, PAL.panel, true, 7); dot(ctx, hp.x, hp.y, PAL.ink, false, 9); F.label(ctx, '± ' + Math.round(2 * p) + '%', hp.x, hp.y - 22, { side: 'right', size: 22, gap: 14, leader: false }); }
     dot(ctx, X(a), Y(p), PAL.ink, true, 10);
-    F.label(ctx, '± ' + Math.round(p) + '%', X(a), Y(p) - 4, { side: 'above', size: 22, gap: 26 });
+    F.label(ctx, '± ' + Math.round(p) + '%', X(a), Y(p) - 22, { side: 'right', size: 22, gap: 14, leader: false });
     tex(d.readout, `\\%\\,\\text{unc} = \\frac{\\delta A}{A} \\times 100\\% = \\frac{${fmt(u, 1)}\\ \\text{lb}}{${fmt(a, 1)}\\ \\text{lb}} \\times 100\\% = ${Math.round(p)}\\%`);
   }
   register(d.fig, { update: () => {}, draw });
@@ -150,9 +150,9 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
   const sig = (x) => (x ? String(+x.toPrecision(3)) : '0');
   const LEN = 4, WID = 3, K = 140, BX = 240, BY = 560;
   /* the magnified corner: 0.30 m by 0.24 m about the corner, ten times the floor's scale, wide enough for 5% of each side */
-  const IN = { l: 900, r: 1320, t: 70, b: 400, k: 1400, x0: 3.94, y0: 2.93 };
+  const IN = { l: 900, r: 1320, t: 70, b: 400, k: 1400, x0: 3.97, y0: 2.96 };
   function pieces(ctx, X, Y, dl, dw, lw) {
-    const cl = F.cat(0), cw = F.cat(1);
+    const cl = F.cat(0), cw = F.cat(2);
     ctx.save();
     ctx.fillStyle = alpha(C('area'), 0.1); ctx.fillRect(X(0), Y(WID), X(LEN) - X(0), Y(0) - Y(WID));
     ctx.fillStyle = alpha(cl, 0.6); ctx.fillRect(X(LEN), Y(WID), X(LEN + dl) - X(LEN), Y(0) - Y(WID));
@@ -185,14 +185,14 @@ const rect = (ctx, x, y, w, h, fill, stroke, lw = 3, dash) => { ctx.save(); if (
     F.legend(ctx, { l: IN.l - 20, r: 1390, t: IN.b + 26, b: 680 }, [
       { s: 'floor as measured: 4.00 m × 3.00 m = 12.0 m²', kind: 'swatch', color: alpha(C('area'), 0.25) },
       { s: 'length + ' + pc(pL.v) + '%: ' + m3(dl) + ' m × 3.00 m = ' + m3(sL) + ' m²', kind: 'swatch', color: alpha(F.cat(0), 0.6) },
-      { s: 'width + ' + pc(pW.v) + '%: 4.00 m × ' + m3(dw) + ' m = ' + m3(sW) + ' m²', kind: 'swatch', color: alpha(F.cat(1), 0.6) },
+      { s: 'width + ' + pc(pW.v) + '%: 4.00 m × ' + m3(dw) + ' m = ' + m3(sW) + ' m²', kind: 'swatch', color: alpha(F.cat(2), 0.6) },
       { s: 'corner: ' + m3(dl) + ' m × ' + m3(dw) + ' m = ' + sig(sC) + ' m²', kind: 'swatch', color: alpha(PAL.ink, 0.75) },
       { s: 'largest floor the uncertainties allow', color: C('area'), w: 2.5, dash: [9, 7] },
     ], { corner: 'tl', size: 18, panel: false });
     const dA = (12 * pA) / 100;
     tex(d.readout, `\\%\\,\\text{unc in } \\karea = ${pc(pL.v)}\\% + ${pc(pW.v)}\\% = ${pc(pA)}\\% \\\\ \\delta \\karea = ${pc(pA)}\\% \\times 12.0\\ \\text{m}^2 = ${fmt(dA, 2)}\\ \\text{m}^2 \\approx ${fmt(dA, 1)}\\ \\text{m}^2`);
     const small = d.readout.querySelector('small') || d.readout.appendChild(document.createElement('small'));
-    small.textContent = 'Largest floor: 12.0 m² + ' + m3(sL) + ' m² + ' + m3(sW) + ' m² + ' + sig(sC) + ' m² = ' + fmt(12 + sL + sW + sC, 4) + ' m², which is ' + fmt((100 * (sL + sW + sC)) / 12, 2) + '% more.';
+    small.textContent = 'Largest floor: 12.0 m² + ' + m3(sL) + ' m² + ' + m3(sW) + ' m² + ' + sig(sC) + ' m² = ' + String(+(12 + sL + sW + sC).toFixed(4)) + ' m², which is ' + fmt((100 * (sL + sW + sC)) / 12, 2) + '% more.';
   }
   register(d.fig, { update: () => {}, draw });
 })();
