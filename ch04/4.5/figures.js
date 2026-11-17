@@ -35,10 +35,11 @@ const deg = (v, d) => fmt(v, d) + '°';
   function reset() { cy.reset(); }
   const unit = (x) => Math.max(0, Math.min(1, x)), smooth = (x) => x * x * (3 - 2 * x);
   const tx = (s) => s.replace(/,/g, '{,}');
-  /* the sack standing on (cx, base), 230 wide and 176 tall: a full bag with a gathered neck */
-  function bag(ctx, cx, base, color) {
+  /* the sack standing on (cx, base), 230 wide and 176 tall: a full bag with a gathered neck, its
+     base bowed by `bow` at the middle, as the table under it is */
+  function bag(ctx, cx, base, color, bow) {
     ctx.save(); ctx.fillStyle = PAL.soft; ctx.strokeStyle = color; ctx.lineWidth = 4; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(cx - 108, base); ctx.lineTo(cx + 108, base); ctx.lineTo(cx + 114, base - 130);
+    ctx.beginPath(); ctx.moveTo(cx - 108, base - bow); ctx.quadraticCurveTo(cx, base + bow, cx + 108, base - bow); ctx.lineTo(cx + 114, base - 130);
     ctx.quadraticCurveTo(cx + 54, base - 150, cx + 38, base - 176); ctx.lineTo(cx - 38, base - 176);
     ctx.quadraticCurveTo(cx - 54, base - 150, cx - 114, base - 130); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx - 114, base - 130); ctx.quadraticCurveTo(cx, base - 110, cx + 114, base - 130); ctx.stroke();
@@ -51,8 +52,8 @@ const deg = (v, d) => fmt(v, d) + '°';
     /* three stages: the bag comes down to the table, the table takes the weight from the hand, the hand leaves */
     const down = smooth(unit(p / 0.15)), share = smooth(unit((p - 0.15) / 0.6)), away = smooth(unit((p - 0.8) / 0.2));
     const w = M.v * G, N = w * share, Fh = w - N, sagEq = 100 * w / K.v, sagCm = sagEq * share;
-    /* the sag is drawn at 9 units to the centimetre; the deepest the sliders allow, 9.8 cm, is 88 units */
-    const BX = 380, TOP = 500, sag = sagCm * 9, base = TOP + sag - 46 * (1 - down);
+    /* the sag is drawn at 7 units to the centimetre; the deepest the sliders allow, 9.8 cm, is 69 units */
+    const BX = 380, TOP = 500, sag = sagCm * 7, base = TOP + sag - 46 * (1 - down);
     const rows = topline(ctx, share === 0 ? 'The hand holds up the whole ' + num(w, 1) + ' N weight of the bag'
       : share < 1 ? 'The table has sagged ' + fmt(sagCm, 2) + ' cm and pushes up with ' + num(N, 1) + ' N; the hand holds the other ' + num(Fh, 1) + ' N'
         : 'Sagged ' + fmt(sagCm, 2) + ' cm, the table alone pushes up with the bag\'s ' + num(w, 1) + ' N');
@@ -63,14 +64,15 @@ const deg = (v, d) => fmt(v, d) + '°';
     line(ctx, 60, TOP + 172, 700, TOP + 172, PAL.muted, 3);
     ctx.save(); ctx.strokeStyle = F.ref('table'); ctx.fillStyle = PAL.soft; ctx.lineWidth = 4; ctx.lineJoin = 'round';
     ctx.beginPath(); ctx.rect(BX - 252, TOP + 16, 24, 154); ctx.rect(BX + 228, TOP + 16, 24, 154); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(BX - 290, TOP); ctx.quadraticCurveTo(BX, TOP + 2 * sag, BX + 290, TOP);
-    ctx.lineTo(BX + 290, TOP + 20); ctx.quadraticCurveTo(BX, TOP + 20 + 2 * sag, BX - 290, TOP + 20); ctx.closePath(); ctx.fill(); ctx.stroke();
+    /* the top bows between its legs and lies flat where it overhangs them */
+    ctx.beginPath(); ctx.moveTo(BX - 290, TOP); ctx.lineTo(BX - 240, TOP); ctx.quadraticCurveTo(BX, TOP + 2 * sag, BX + 240, TOP); ctx.lineTo(BX + 290, TOP);
+    ctx.lineTo(BX + 290, TOP + 20); ctx.lineTo(BX + 240, TOP + 20); ctx.quadraticCurveTo(BX, TOP + 20 + 2 * sag, BX - 240, TOP + 20); ctx.lineTo(BX - 290, TOP + 20); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.restore();
     line(ctx, BX - 290, TOP, BX + 290, TOP, PAL.muted, 2, [8, 8]);
     text(ctx, 'the table', BX + 150, TOP + 132, F.ref('table'), { size: 21, weight: 600, align: 'center' });
     /* the hand grips the gathered neck from above, and lets go and rises once the table has the weight */
     const neck = base - 176, hy = neck - 62 - 70 * away;
-    bag(ctx, BX, base, F.ref('dog-food'));
+    bag(ctx, BX, base, F.ref('dog-food'), sag * 0.1);
     F.hand(ctx, BX, hy, { aim: [0, 1], view: 'back', curl: 0.85 - 0.5 * away, thumb: 'along', s: 1.15, color: PAL.muted });
     text(ctx, 'the hand', BX + 70, hy + 6, PAL.ink, { size: 21, weight: 600, align: 'left' });
     /* the sag, bracketed at the middle of the top, beside the bag */
@@ -103,7 +105,7 @@ const deg = (v, d) => fmt(v, d) + '°';
     });
     const push = (x) => K.v * x / 100, xTop = Math.min(10, 30000 / K.v);
     line(ctx, box.l, ax.Y(w), box.r, ax.Y(w), alpha(PAL.ink, 0.5), 2, [10, 10]);
-    text(ctx, 'weight ' + num(w, 1) + ' N', box.r - 6, ax.Y(w) + 18, PAL.muted, { size: 18, align: 'right', bg: PAL.panel });
+    text(ctx, 'weight ' + num(w, 1) + ' N', box.l + 10, ax.Y(w) + (ax.Y(w) - 18 < box.t + 12 ? 18 : -18), PAL.muted, { size: 18, align: 'left', bg: PAL.panel });
     line(ctx, ax.X(0), ax.Y(0), ax.X(xTop), ax.Y(push(xTop)), alpha(col, 0.35), 4);
     if (sagCm > 0) line(ctx, ax.X(0), ax.Y(0), ax.X(sagCm), ax.Y(N), col, 5);
     if (sagCm > 0.05) line(ctx, ax.X(sagCm), box.b, ax.X(sagCm), ax.Y(N), PAL.ink, 2, [4, 8]);
@@ -307,9 +309,9 @@ const deg = (v, d) => fmt(v, d) + '°';
       lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, 0.35, 0.94, col, 21, 26);
       lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, -0.35, 0.94, col, 21, 26);
     } else {
-      /* short arrows: the names stand outside the heads, clear of the walker */
-      lab.add('T_L = ' + num(T, 0) + ' N', hL[0], hL[1], -0.9, -0.44, col, 21, 20);
-      lab.add('T_R = ' + num(T, 0) + ' N', hR[0], hR[1], 0.9, -0.44, col, 21, 20);
+      /* short arrows: the names stand outside the heads, under the wire and clear of the walker */
+      lab.add('T_L = ' + num(T, 0) + ' N', hL[0], hL[1], -0.9, 0.44, col, 21, 24);
+      lab.add('T_R = ' + num(T, 0) + ' N', hR[0], hR[1], 0.9, 0.44, col, 21, 24);
       lab.add('T_{Ly} = ' + num(T * s, 0) + ' N', hL[0], sagY, -0.8, 0.6, col, 21, 22);
       lab.add('T_{Ry} = ' + num(T * s, 0) + ' N', hR[0], sagY, 0.8, 0.6, col, 21, 22);
       const wide = reach > 280;   /* room under the dashed line for its name, or else it goes below the upward part's */
