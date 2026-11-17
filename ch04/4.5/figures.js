@@ -72,7 +72,7 @@ const deg = (v, d) => fmt(v, d) + '°';
     text(ctx, 'the table', BX + 150, TOP + 132, F.ref('table'), { size: 21, weight: 600, align: 'center' });
     /* the hand grips the gathered neck from above, and lets go and rises once the table has the weight */
     const neck = base - 176, hy = neck - 62 - 70 * away;
-    bag(ctx, BX, base, F.ref('dog-food'), sag * 0.1);
+    bag(ctx, BX, base, F.ref('dog-food'), sag * 0.2);
     F.hand(ctx, BX, hy, { aim: [0, 1], view: 'back', curl: 0.85 - 0.5 * away, thumb: 'along', s: 1.15, color: PAL.muted });
     text(ctx, 'the hand', BX + 70, hy + 6, PAL.ink, { size: 21, weight: 600, align: 'left' });
     /* the sag, bracketed at the middle of the top, beside the bag */
