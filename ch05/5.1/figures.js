@@ -225,7 +225,7 @@ function crate(ctx, x, y, w, h, col) {
    and gains or loses speed as the two forces decide.
 ===================================================================== */
 (function () {
-  const d = sim('sim-skier', 780);
+  const d = sim('sim-skier', 740);
   const atanDeg = (x) => Math.atan(x) / RAD;
   const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: 0, max: 45, step: 1, value: 25, unit: '°', dec: 0, onInput: reset, aria: 'angle of the slope',
     specials: [{ at: () => atanDeg(mu.v), label: 'steady speed' }] });
@@ -245,7 +245,7 @@ function crate(ctx, x, y, w, h, col) {
   };
   const cy = cycle(Tof, 1.2);
   function reset() { cy.reset(); }
-  const SF = 0.32;                                 /* 1 N is 0.32 units for every force arrow: her weight at 90 kg is the longest, 282 */
+  const SF = 0.3;                                  /* 1 N is 0.3 units for every force arrow: her weight at 90 kg is the longest, 265 */
   let hits = [];
   function draw() {
     const { ctx } = begin(d.c);
@@ -260,13 +260,13 @@ function crate(ctx, x, y, w, h, col) {
       : a > 0
         ? 'On a ' + fmt(th.v, th.v % 1 ? 1 : 0) + '° slope, ' + fmt(wx, 0) + ' N of her weight pulls her along it against ' + fmt(f, 1) + ' N of friction, so she gains speed'
         : 'On a ' + fmt(th.v, th.v % 1 ? 1 : 0) + '° slope the ' + fmt(f, 1) + ' N of friction is more than the ' + fmt(wx, 0) + ' N of her weight along it, so she slows and stops');
-    const lb = F.labeller(ctx, 780, { headline: hl });
+    const lb = F.labeller(ctx, 740, { headline: hl });
     const cf = C('force'), c = F.ref('skier');
     /* the hill: a plateau, the slope through a fixed middle point, and the run-out; u runs down the slope, n stands out of it */
-    const M = { x: 470, y: 410 }, Lh = Math.min(400 / cs, sn > 0 ? 230 / sn : 1e9);
+    const M = { x: 470, y: 390 }, Lh = Math.min(400 / cs, sn > 0 ? 230 / sn : 1e9);
     const ux = cs, uy = sn, nx = sn, ny = -cs;
     const A = { x: M.x - Lh * ux, y: M.y - Lh * uy }, E = { x: M.x + Lh * ux, y: M.y + Lh * uy };
-    ctx.save(); ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(40, A.y); ctx.lineTo(A.x, A.y); ctx.lineTo(E.x, E.y); ctx.lineTo(930, E.y); ctx.lineTo(930, 780); ctx.lineTo(40, 780); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(40, A.y); ctx.lineTo(A.x, A.y); ctx.lineTo(E.x, E.y); ctx.lineTo(930, E.y); ctx.lineTo(930, 740); ctx.lineTo(40, 740); ctx.closePath(); ctx.fill(); ctx.restore();
     line(ctx, 40, A.y, A.x, A.y, PAL.muted, 3); line(ctx, A.x, A.y, E.x, E.y, PAL.muted, 3); line(ctx, E.x, E.y, 930, E.y, PAL.muted, 3);
     if (th.v > 0) {
       line(ctx, E.x - 230, E.y, E.x, E.y, PAL.rule, 2, [10, 10]);
@@ -288,7 +288,7 @@ function crate(ctx, x, y, w, h, col) {
     const curl = along(O, 62 * SC, 8 * SC);
     line(ctx, tip.x, tip.y, curl.x, curl.y, c, 5);
     F.silhouette(ctx, { x: O.x, y: O.y, s: SC, pose: 'crouch', color: c, feet: [{ x: 14 * cs, y: 14 * sn }, { x: -14 * cs, y: -14 * sn }] });
-    /* the forces, every one at 0.32 units to the newton. The weight is drawn from the snow under her
+    /* the forces, every one at 0.3 units to the newton. The weight is drawn from the snow under her
        boots, as the book draws it, with its two parts head to tail beside it; the normal force leaves
        the same point and the friction lies along the skis */
     const seg = (p, dx, dy) => ({ x1: p.x, y1: p.y, x2: p.x + dx, y2: p.y + dy });
@@ -330,7 +330,7 @@ function crate(ctx, x, y, w, h, col) {
     }
     /* the two forces along the slope against its angle, for her mass and this snow. Fixed axes:
        0 to 45° and 0 to 700 N, which holds the 624 N of a 90 kg skier's weight along a 45° slope */
-    const box = { l: 1050, r: 1370, t: 190, b: 600 };
+    const box = { l: 1050, r: 1370, t: 170, b: 590 };
     const ax = axes(ctx, box, [0, 45], [0, 700], { xl: 'angle of the slope (°)', xc: C('angle'), yl: 'force along the slope (N)', yc: cf, nx: 3, ny: 7, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 0) });
     const fW = (q) => w * Math.sin(q * RAD), fF = (q) => mu.v * w * Math.cos(q * RAD);
     F.plot(ctx, ax, fW, cf, { w: 5 });
@@ -343,7 +343,7 @@ function crate(ctx, x, y, w, h, col) {
     dot(ctx, gx, yW, cf, true, 9); dot(ctx, gx, yF, cf, true, 9);
     const right = th.v < 30;
     text(ctx, 'net ' + fmt(Math.abs(wx - f), 0) + ' N', gx + (right ? 16 : -16), (yW + yF) / 2, PAL.ink, { size: 19, weight: 600, align: right ? 'left' : 'right', base: 'middle', bg: PAL.panel });
-    F.legend(ctx, ax, [{ s: 'w_{∥}, her weight along the slope', color: cf, w: 5 }, { s: 'f, the friction', color: cf, w: 4, dash: [10, 10] }], { corner: 'above' });
+    F.legend(ctx, ax, [{ s: 'w_{∥} down the slope', color: cf, w: 5 }, { s: 'f up the slope', color: cf, w: 4, dash: [10, 10] }, { s: 'they balance', color: cf, kind: 'dot', hollow: true }], { corner: 'tl' });
     lb.flush();
     const an = fmt(th.v, th.v % 1 ? 1 : 0);
     tex(d.readout, `\\kfk = \\mu_{\\text{k}}\\kN = \\mu_{\\text{k}}\\km\\kg\\cos\\ktheta = (${fmt(mu.v, 4)})(${fmt(m.v, 0)}\\ \\text{kg})(9.80\\ \\text{m/s}^2)(\\cos ${an}^\\circ) = ${fmt(f, 1)}\\ \\text{N} \\\\ `

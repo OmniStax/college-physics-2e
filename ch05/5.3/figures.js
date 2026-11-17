@@ -43,7 +43,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
    elastic region it returns to its original length, past it it does not.
 ===================================================================== */
 (function () {
-  const d = sim('sim-hooke-graph', 720);
+  const d = sim('sim-hooke-graph', 750);
   /* read off the book's image as fractions of the force and the deformation at fracture: the straight
      segment ends at (0.375, 0.375), the elastic region at (0.80, 0.575), and the curve bends up to (1, 1).
      The book prints no numbers, so the spring is given k = 200 N/m and a fracture at 20 N and 10 cm. */
@@ -63,7 +63,7 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
   const set = (f) => Math.max(0, dl(f) - dl(ELAST));
   const Fa = ctl(d.controls, { label: '\\kF', cls: 'force', min: 0, max: 20, step: 0.1, value: 5, unit: 'N', dec: 1, aria: 'applied force',
     specials: [{ at: () => HOOKE, label: 'end of the straight segment' }, { at: () => ELAST, label: 'end of the elastic region' }] });
-  const hold = F.choice(d.controls, { label: 'the force is', options: [{ value: 'on', label: 'applied' }, { value: 'off', label: 'removed' }], value: 'on', aria: 'whether the force is applied or removed' });
+  const hold = F.choice(d.controls, { label: '\\text{the force is}', options: [{ value: 'on', label: 'applied' }, { value: 'off', label: 'removed' }], value: 'on', aria: 'whether the force is applied or removed' });
   const ro = F.readout(d);
   function draw() {
     const { ctx } = begin(d.c);
@@ -75,21 +75,21 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
     const ax = axes(ctx, box, [0, FFR], [0, DMAX], { xl: 'applied force F (N)', xc: C('force'), yl: 'deformation ΔL (cm)', yc: C('position'), nx: 4, ny: 5, fy: (v) => fmt(v, 0) });
     const { X, Y } = ax, cp = C('position'), cf = C('force'), csp = F.ref('spring');
     /* the limits of the regions, dropped from the curve to the axis as the book drops them */
-    [HOOKE, ELAST, FFR].forEach((v) => line(ctx, X(v), Y(dl(v)), X(v), box.b + 100, alpha(PAL.ink, 0.4), 2, [6, 6]));
+    [HOOKE, ELAST, FFR].forEach((v) => line(ctx, X(v), Y(dl(v)), X(v), box.b + 112, alpha(PAL.ink, 0.4), 2, [6, 6]));
     F.plot(ctx, ax, dl, cp, { w: 5 });
-    text(ctx, 'slope 1/k', X(3.2) - 16, Y(dl(3.2)) - 30, C('stiffness'), { size: 20, weight: 600, align: 'right' });
+    text(ctx, 'slope 1/k', X(4.6) + 14, Y(dl(4.6)) + 28, C('stiffness'), { size: 20, weight: 600 });
     const fx = X(FFR), fy = Y(DMAX);
     line(ctx, fx - 13, fy - 13, fx + 13, fy + 13, PAL.ink, 4); line(ctx, fx - 13, fy + 13, fx + 13, fy - 13, PAL.ink, 4);
     text(ctx, 'fracture', fx - 24, fy + 2, PAL.ink, { size: 19, weight: 600, align: 'right' });
     /* the regions, bracketed under the axis as in the book's figure */
-    hbracket(ctx, X(0), X(HOOKE), box.b + 84, PAL.ink, 'Hooke’s law obeyed');
-    hbracket(ctx, X(ELAST), X(FFR), box.b + 84, PAL.ink, 'permanent deformation');
-    hbracket(ctx, X(0), X(ELAST), box.b + 140, PAL.ink, 'elastic region');
+    hbracket(ctx, X(0), X(HOOKE), box.b + 112, PAL.ink, 'Hooke’s law obeyed');
+    hbracket(ctx, X(ELAST), X(FFR), box.b + 112, PAL.ink, 'permanent deformation');
+    hbracket(ctx, X(0), X(ELAST), box.b + 166, PAL.ink, 'elastic region');
     /* the spring: held to the floor below the level ΔL = 0 and pulled upward, so its free end stands at the height of the point */
-    const sx = 190, floor = box.b + 150, yEnd = Y(now);
+    const sx = 190, floor = box.b + 190, yEnd = Y(now);
     fixed(ctx, sx - 90, floor, 180, 30);
     line(ctx, sx - 110, Y(0), box.l, Y(0), PAL.muted, 2, [6, 6]);
-    text(ctx, 'original length', sx - 112, Y(0) + 22, PAL.muted, { size: 17 });
+    text(ctx, 'original length', sx + 50, Y(0) + 22, PAL.muted, { size: 17 });
     if (!broken) {
       spring(ctx, sx, floor, sx, yEnd, 12, 26, csp, 4);
       line(ctx, sx - 40, yEnd, sx + 40, yEnd, csp, 7);
@@ -111,7 +111,6 @@ const timesLarger = (unitsPerMetreDrawn, unitsPerMetreScene) => (unitsPerMetreDr
       if (on > 0.5) line(ctx, X(f), box.b, X(f), Y(x), cf, 2, [4, 8]);
       if (off) dot(ctx, X(f), Y(x), PAL.ink, false, 10);
       dot(ctx, X(f * on), Y(now), PAL.ink, true, 10);
-      if (off && on < 0.05 && left > 0.05) text(ctx, 'it stays ' + fmt(left, 2) + ' cm longer', X(0) + 20, Y(left) - 22, cp, { size: 19, weight: 600, bg: PAL.panel });
     }
     const nx = fmt(x, 2) + ' cm';
     headline(ctx, broken ? 'At ' + fmt(FFR, 0) + ' N the spring fractures.'
