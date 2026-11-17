@@ -360,7 +360,7 @@ const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { si
     line(ctx, X0, YR + 40, X0, 282, alpha(PAL.ink, 0.35), 2, [4, 8]); line(ctx, X(Rg), YR + 40, X(Rg), 282, alpha(PAL.ink, 0.35), 2, [4, 8]);
     /* relative to the plane: the cabin at 140 units to the metre, the coin let go from the passenger's hand */
     const s = 130, FLOOR = 664, top = FLOOR - h.v * s, PX = 250, CX = 312, SP = (1.72 * s) / 150;
-    title(ctx, 'relative to the plane', 40, 396);
+    title(ctx, 'relative to the plane', 40, 374);
     cabin(ctx, 60, 404, 520, FLOOR, cl);
     F.silhouette(ctx, { x: PX, y: FLOOR, s: SP, face: 1, pose: 'stand', color: F.ref('passenger'), hands: [{ x: (CX - 8 - PX) / SP, y: (top + 6 - FLOOR) / SP }, { x: -6, y: -76 }] });
     line(ctx, CX, top, CX, FLOOR, alpha(PAL.ink, 0.4), 2, [6, 8]); dot(ctx, CX, top, cc, false, 8);
