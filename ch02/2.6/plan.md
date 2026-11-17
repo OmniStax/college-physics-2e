@@ -53,41 +53,44 @@ already draws for the two nodes, plus the conversion.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-runner` · new · unreasonable-results, v-from-at · a runner on a
-   strip across the full width covers the distance $\tfrac12 a t^2$ of
-   the run while a graph of velocity against time below draws the line
-   $v = v_0 + at$ up to the present moment; a velocity arrow over the
-   runner grows with the speed and is labelled in m/s; a dashed level at
-   10 m/s marks about what a person can run, with the region above it
-   shaded, and a hollow mark on the line shows the moment the runner
-   crosses it · acceleration $\ka$ (0.10 to 1.00 m/s², step 0.05,
-   default 0.40, acceleration hue), time $\kt$ (5 to 120 s, step 5,
-   default 100, time hue) · "After 100 s at 0.40 m/s² the runner would be
-   at 40.0 m/s, about 89 mph, about four times what a person can run."
-   While the clock runs the headline gives the speed so far and whether
-   it is still reasonable · graph below (t in s against v in m/s), on
-   axes fixed at 0 to 120 s and 0 to 50 m/s, which leave the 10 m/s a
-   person can run clearly above the axis; a velocity past the top is
-   drawn against it and its true value written out · 2D, the strip a
-   fixed 0 to 7200 m, the distance 1.00 m/s² for 120 s covers. Labels
-   on, seven of them, and the note "faster than anyone runs" is drawn
-   only where there is room for it above the 10 m/s level, so the two
-   notes never overprint. **Moving**:
-   the idea has a time in it, a velocity accumulates as the clock runs,
-   and the whole point of the passage is that the acceleration is
-   reasonable each second and only the length of time is not, which the
-   reader sees when the line crosses the level at 25 s and keeps
-   climbing for another 75 s. One finite loop of the set time in about
-   5 real seconds, so it gets the scrubber. Readout:
-   $\kv = \kvo + \ka\kt = 0 + (0.40\ \text{m/s}^2)(100\ \text{s}) = 40\
-   \text{m/s}$ with the live numbers; small line: the speed in mph by
-   the book's chain of factors, and which premise fails: the
-   acceleration adds only 0.4 m/s each second, which a runner can manage,
-   so the premise that fails is the time. When the sliders give a speed a
-   person can run, the small line says both premises are reasonable.
-   Draws time, velocity and acceleration. The level of 10 m/s comes from
-   the book's own sentence: 89 mph is "about four times greater than a
-   person can run", and a fourth of 89 mph is 22 mph, or 10 m/s.
+1. `sim-runner` · Sim · unreasonable-results, v-from-at · value add: the
+   book has no image for the runner; the reader sees "about four times
+   what a person can run" as two arrow lengths, and finds by the time
+   slider that the result is reasonable only up to 25 s · arrows:
+   kinematic (the runner's velocity, and what a person can run, from one
+   tail to one scale, 16 units per m/s) · moving: the velocity builds as
+   the clock runs, one finite loop of the set time in about 5 real
+   seconds, so it gets the scrubber · sliders: acceleration $\ka$ (0.10
+   to 0.50 m/s², step 0.05, default 0.40), time $\kt$ (10 to 120 s, step
+   5, default 100), the book's numbers on load · headline: "Gaining 0.40
+   m/s each second, the runner would be at 40.0 m/s after 100 s, about
+   four times what a person can run." · graph below: $v$ against $t$ on
+   axes fixed at 0 to 120 s and 0 to 60 m/s (the slider maxima), the same
+   ticks read in mph down the right side by the book's chain of factors,
+   a dashed level at 10 m/s with the region above it shaded, a hollow
+   mark where the line passes it, labelled "reasonable until t = 25 s" ·
+   2D. Readout, two formulas on two lines: $\kv = \kvo + \ka\kt$ with
+   the numbers, and the book's conversion to mph with the same velocity.
+   The level of 10 m/s comes from the book's own sentence: 89 mph is
+   "about four times greater than a person can run", and a fourth of 89
+   mph is 22 mph, or 10 m/s.
+
+   works: read off the image (there is none; from the text): a = 0.40
+   m/s², t = 100 s, v = 40 m/s, 89 mph by (3.28 ft/m)(1 mi/5280 ft)(60
+   s/min)(60 min/h), "about four times greater than a person can run",
+   0.4 m/s gained each second · must hold: the velocity arrow is four
+   times the reference arrow at the book's numbers; the line passes 10
+   m/s at t = 10/a (25 s on load); the mph ticks are the m/s ticks times
+   2.236 (22, 45, 67, 89, 112, 134); readout and headline agree with the
+   graph at every setting; no label covers the line or another label.
+
+   Second figure pass, 2026-11-16 (Claude Fable 5.2): rebuilt. The first
+   build ran a small runner along a 7200 m strip that was mostly empty and
+   taught nothing the passage asks (the distance is not in the book), its
+   caption was six lines long, and the conversion to mph was only in the
+   headline. The strip went; the arrows to scale, the mph axis and the
+   conversion line came in; the acceleration slider now stops at 0.50
+   m/s² so nothing runs off the velocity axis.
 
 The six steps get no figure. A figure for a procedure would animate a
 checklist the reader already has in front of them, which is what rule 15
@@ -109,8 +112,6 @@ the five constant-acceleration equations light up as usable or not, would
 open a view the text does not give of step 4; but it is a quiz rather
 than a simulation of anything physical, and the section's two conceptual
 questions ask the same thing in words. Not built.
-
-Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-runner`: the headline ran past both edges at the fastest setting and now wraps through `topline()`; the runner is the library's `person()` leaning into the run, and the present-time label goes through `labeller()` so it never sits on the velocity line, the level or the crossing's label.
 
 ## Exercises
 
@@ -142,9 +143,7 @@ Figure pass, 2026-09-14 (Claude Fable 5.1). `sim-runner`: the headline ran past 
 
 The page binds time, velocity and acceleration, from the one sim, whose
 sliders carry an acceleration and a time and whose graph and readout
-state a velocity. Position is not bound: the distance the runner covers
-is a scale on the strip in ink, and no position symbol is drawn or
-written. No new hue, no new macro.
+state a velocity. Position is not bound: no distance is drawn. No new hue, no new macro.
 
 ## Wanted at chapter level
 

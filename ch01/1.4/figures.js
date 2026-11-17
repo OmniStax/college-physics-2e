@@ -19,134 +19,145 @@ function sci(x) {
   return `${String(m)} \\times 10^{${e}}`;
 }
 
-/* a standing person of height h with their feet at (x, y): the library's jointed figure, which stands 97 units tall at s = 1 */
-const PERSON_H = 97;
-function person(ctx, x, y, h, color) { F.person(ctx, x, y, color, { s: h / PERSON_H }); }
+/* a standing person h units tall with their feet at (x, y): the library's jointed figure stands 98 units tall at s = 1 */
+function person(ctx, x, y, h, color) { F.person(ctx, x, y, color, { s: h / 98 }); }
 
 /* =====================================================================
-   SIM 1: the height of a building. A person stands beside a building
-   on a common ground line, and the stories stack up one by one, a
-   staggered arrival on first view, while a bracket on the right reads
-   the running height; after that a slider redraws at once. The
-   ground story is shown magnified on the left with the persons that
-   make it up, since at 39 stories a person to scale is a few units
-   tall. An estimate has no time in it, so there is no transport.
+   SIM 1: the height of a building (Example 1.3). On the left one story
+   is magnified with the persons that make it up; its dashed guides run
+   to the ground story of the building, which is drawn to one fixed
+   scale with every story visible and every tenth numbered. On the
+   right a bar spans the lowest and highest heights the two guesses
+   (a person's height, persons per story) can give for this many
+   stories, with the present estimate marked on it. Still: an estimate
+   has no time in it. The stories stack up once, on first view.
 ===================================================================== */
 (function () {
-  const d = sim('sim-building', 620);
-  const N = ctl(d.controls, { label: '\\text{stories}', cls: '', min: 1, max: 100, step: 1, value: 39, unit: '', dec: 0, aria: 'number of stories' });
-  const P = ctl(d.controls, { label: '\\text{person}', cls: 'position', min: 1.5, max: 2, step: 0.1, value: 2, unit: 'm', dec: 1, aria: 'height of a person' });
-  const S = ctl(d.controls, { label: '\\text{persons per story}', cls: '', min: 1, max: 3, step: 0.5, value: 2, unit: '', dec: 1, aria: 'persons per story' });
+  const d = sim('sim-building', 640);
+  const N = ctl(d.controls, { label: '\\text{stories}', cls: '', min: 10, max: 45, step: 1, value: 39, unit: '', dec: 0, aria: 'number of stories' });
+  const P = ctl(d.controls, { label: '\\text{height of a person}', cls: 'position', min: 1.5, max: 2, step: 0.1, value: 2, unit: 'm', dec: 1, aria: 'height of a person' });
+  const S = ctl(d.controls, { label: '\\text{persons per story}', cls: '', min: 1.5, max: 2.5, step: 0.5, value: 2, unit: '', dec: 1, aria: 'persons per story' });
+  const P_LO = 1.5, P_HI = 2, S_LO = 1.5, S_HI = 2.5;
   function draw() {
     const { ctx } = begin(d.c);
     const kA = F.arrival(d), done = kA >= 1;
-    const story = P.v * S.v, total = N.v * story, meters = (m) => (m < 10 ? num(m) : String(Math.round(m)));
+    const story = P.v * S.v, total = N.v * story, meters = (m) => String(Math.round(m));
     let grown = 0; for (let i = 0; i < N.v; i++) grown += F.stagger(kA, i, N.v, 0.1);
-    const n = done ? N.v : Math.ceil(grown - 1e-6), up = (done ? N.v : grown) * story;
-    /* The ground line, and a scale fixed once from the tallest the sliders allow: 100 stories of
-       2.0 m per person and 3 persons per story is 600 m, drawn 440 units high. It never follows the
-       building, so one story and a hundred stories are drawn as different as they are. */
-    const G = 560, MAX_M = 100 * 2 * 3, k = 440 / MAX_M;
-    line(ctx, 60, G, 1340, G, PAL.muted, 3);
-    /* the ground story, magnified, with its persons stacked inside */
-    const ix0 = 90, ix1 = 370, it = 190, ih = G - it, ph = ih / S.v, icx = (ix0 + ix1) / 2;
-    text(ctx, 'one story holds ' + num(S.v) + (S.v === 1 ? ' person' : ' persons'), icx, 140, PAL.muted, { size: 17, align: 'center' });
-    text(ctx, 'and is ' + num(story) + ' m tall', icx, 162, PAL.muted, { size: 17, align: 'center' });
-    ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.05); ctx.fillRect(ix0, it, ix1 - ix0, ih); ctx.restore();
-    ctx.save(); ctx.beginPath(); ctx.rect(ix0, it, ix1 - ix0, ih); ctx.clip();
-    for (let i = 0; i < Math.ceil(S.v - 1e-9); i++) person(ctx, icx, G - i * ph, ph, F.ref('person'));
-    ctx.restore();
-    line(ctx, ix0, it, ix1, it, PAL.ink, 3); line(ctx, ix0, it, ix0, G, PAL.muted, 2); line(ctx, ix1, it, ix1, G, PAL.muted, 2);
-    /* the building, one story at a time */
-    const bx0 = 640, bx1 = 900, sh = story * k, top = G - up * k;
-    line(ctx, ix1, it, bx0, G - sh, PAL.rule, 2, [6, 8]); line(ctx, ix1, G, bx0, G, PAL.rule, 2, [6, 8]);
-    if (n > 0) {
-      ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.08); ctx.fillRect(bx0, top, bx1 - bx0, G - top); ctx.restore();
-      if (sh >= 7) for (let i = 1; i < n; i++) line(ctx, bx0, G - i * sh, bx1, G - i * sh, PAL.muted, 1.5);
-      if (sh >= 14) {   /* windows, a row per story, and a door on the ground story, once a story is tall enough to hold them */
-        ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.35);
-        const wh = Math.min(sh * 0.45, 22), ww = 18;
-        for (let i = 0; i < n; i++) for (let c = 0; c < 6; c++) { const wx = bx0 + 28 + c * 40, wy = G - i * sh - sh / 2 - wh / 2; if (i === 0 && c === 2) continue; ctx.fillRect(wx, wy, ww, wh); }
-        ctx.fillStyle = PAL.ink; ctx.fillRect(bx0 + 28 + 2 * 40 - 4, G - Math.min(sh * 0.8, 30), 26, Math.min(sh * 0.8, 30));
-        ctx.restore();
-      }
-      ctx.save(); ctx.strokeStyle = F.ref('building'); ctx.lineWidth = 3; ctx.strokeRect(bx0, top, bx1 - bx0, G - top); ctx.restore();
-      line(ctx, bx0 - 8, top, bx1 + 8, top, F.ref('building'), 4);
-      if (G - top >= 40) vbracket(ctx, 950, G, top, C('position'), meters(up) + ' m');
-      else { vbracket(ctx, 950, G, top, C('position')); text(ctx, meters(up) + ' m', 966, top - 22, C('position'), { weight: 600 }); }
+    const n = done ? N.v : Math.ceil(grown - 1e-6);
+    /* One fixed scale for the building: the tallest the sliders give, 45 stories of 2.0 m × 2.5
+       persons, is 225 m, drawn 440 units high. It never follows the building. */
+    const G = 580, k = 440 / 225, Y = (m) => G - m * k;
+    line(ctx, 50, G, 1350, G, PAL.muted, 3);
+    /* one story, magnified: 76 units per metre, so the tallest story (5 m) is 420 units */
+    const km = 84, rx0 = 150, rx1 = 400, rt = G - story * km, rcx = 290, ph = P.v * km;
+    ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.05); ctx.fillRect(rx0, rt, rx1 - rx0, G - rt); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(rx0, rt, rx1 - rx0, G - rt); ctx.clip();
+    for (let i = 0; i < Math.ceil(S.v - 1e-9); i++) {
+      F.faded(ctx, i === 0 ? 1 : 0.4, [0, 0], () => person(ctx, rcx, G - i * ph, ph, F.ref('person')));
+      if (i > 0) line(ctx, rcx - 70, G - i * ph, rcx + 70, G - i * ph, alpha(F.ref('person'), 0.6), 2, [4, 8]);
     }
-    text(ctx, N.v + (N.v === 1 ? ' story' : ' stories'), (bx0 + bx1) / 2, G + 30, PAL.muted, { size: 17, align: 'center' });
-    /* the person beside it, at the same scale as the building */
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle = F.ref('building'); ctx.lineWidth = 3; ctx.strokeRect(rx0, rt, rx1 - rx0, G - rt); ctx.restore();
+    vbracket(ctx, rx0 - 26, G, G - ph, C('position'), num(P.v) + ' m', -1);
+    vbracket(ctx, rx1 + 26, G, rt, C('position'), num(story) + ' m', 1);
+    F.rich(ctx, ['one story, ', [num(S.v), PAL.ink, 600], ' persons tall'], (rx0 + rx1) / 2, rt - 26, { size: 20, align: 'center' });
+    /* the building, every story drawn, every tenth numbered */
+    const bx0 = 700, bx1 = 920, sh = story * k, top = Y(n * story);
+    line(ctx, rx1, rt, bx0, G - sh, PAL.muted, 1.5, [6, 8]); line(ctx, rx1, G, bx0, G, PAL.muted, 1.5, [6, 8]);
+    if (n > 0) {
+      ctx.save(); ctx.fillStyle = alpha(PAL.ink, 0.06); ctx.fillRect(bx0, top, bx1 - bx0, G - top);
+      ctx.fillStyle = alpha(PAL.ink, 0.38); const wh = sh * 0.45;
+      for (let i = 0; i < n; i++) for (let c = 0; c < 7; c++) ctx.fillRect(bx0 + 20 + c * 28, G - i * sh - sh / 2 - wh / 2, 13, wh);
+      ctx.fillStyle = alpha(F.ref('building'), 0.35); ctx.fillRect(bx0, G - sh, bx1 - bx0, sh);
+      ctx.restore();
+      for (let i = 1; i < n; i++) line(ctx, bx0, G - i * sh, bx1, G - i * sh, alpha(PAL.ink, i % 10 ? 0.25 : 0.7), i % 10 ? 1 : 2);
+      for (let i = 10; i <= n; i += 10) { line(ctx, bx0 - 10, G - i * sh, bx0, G - i * sh, PAL.muted, 2); text(ctx, String(i), bx0 - 16, G - i * sh, PAL.muted, { size: 17, align: 'right' }); }
+      ctx.save(); ctx.strokeStyle = F.ref('building'); ctx.lineWidth = 3; ctx.strokeRect(bx0, top, bx1 - bx0, G - top); ctx.restore();
+      vbracket(ctx, 975, G, top, C('position'), meters(n * story) + ' m');
+    }
+    text(ctx, N.v + ' stories', (bx0 + bx1) / 2, G + 30, PAL.muted, { size: 20, align: 'center' });
+    /* the person beside the building, at the building's scale */
     const hp = P.v * k;
-    person(ctx, 560, G, hp, F.ref('person'));
-    text(ctx, 'a person, ' + num(P.v) + ' m', 560, G - hp - 24, F.ref('person'), { size: 17, weight: 600, align: 'center' });
-    const tot = meters(total);
-    headline(ctx, done ? (N.v === 1 ? 'One story of about ' + num(story) + ' m makes a building about ' + tot + ' m tall.' : N.v + ' stories of about ' + num(story) + ' m each make a building about ' + tot + ' m tall.')
-      : n + ' of the ' + N.v + ' stories ' + (n === 1 ? 'is' : 'are') + ' up, and the building stands ' + meters(up) + ' m tall so far.');
+    person(ctx, 655, G, hp, F.ref('person'));
+    text(ctx, 'a person', 640, G - 14, F.ref('person'), { size: 17, weight: 600, align: 'right' });
+    /* the lowest and highest heights the two guesses can give for this many stories */
+    const lo = N.v * P_LO * S_LO, hi = N.v * P_HI * S_HI, rx = 1170;
+    ctx.save(); ctx.fillStyle = alpha(C('position'), 0.18); ctx.fillRect(rx - 12, Y(hi), 24, Y(lo) - Y(hi)); ctx.restore();
+    line(ctx, rx - 20, Y(hi), rx + 20, Y(hi), C('position'), 3); line(ctx, rx - 20, Y(lo), rx + 20, Y(lo), C('position'), 3);
+    text(ctx, 'highest, ' + meters(hi) + ' m', rx + 30, Y(hi), PAL.muted, { size: 20 });
+    text(ctx, 'lowest, ' + meters(lo) + ' m', rx + 30, Y(lo), PAL.muted, { size: 20 });
+    if (done) {
+      line(ctx, 985, Y(total), rx - 12, Y(total), alpha(PAL.ink, 0.4), 2, [4, 8]);
+      F.dot(ctx, rx, Y(total), C('position'), true, 9);
+    }
+    text(ctx, 'range of the two guesses', rx + 40, Y(lo) + 34 > G - 14 ? G + 30 : Y(lo) + 34, PAL.muted, { size: 17, align: 'center' });
+    headline(ctx, N.v + ' stories of about ' + num(story) + ' m each make a building about ' + meters(total) + ' m tall.');
     const exact = Math.abs(total - Math.round(total)) < 1e-9;
-    readout(d.readout, `\\frac{${num(P.v)}\\ \\text{m}}{1\\ \\text{person}} \\times \\frac{${num(S.v)}\\ \\text{${S.v === 1 ? 'person' : 'persons'}}}{1\\ \\text{story}} \\times ${N.v}\\ \\text{${N.v === 1 ? 'story' : 'stories'}} ${exact || total < 10 ? '=' : '\\approx'} ${tot}\\ \\text{m}`);
+    readout(d.readout, `\\frac{${num(P.v)}\\ \\text{m}}{1\\ \\text{person}} \\times \\frac{${num(S.v)}\\ \\text{persons}}{1\\ \\text{story}} \\times ${N.v}\\ \\text{stories} ${exact ? '=' : '\\approx'} ${meters(total)}\\ \\text{m}`);
   }
   register(d.fig, { update: () => {}, draw });
+  F.hover(d.stage, () => [{ x: 1170, y: 350, r: 60, name: 'heights from the lowest to the highest guesses' }, { x: 810, y: 400, r: 110, name: 'the building' }, { x: 275, y: 400, r: 125, name: 'one story, magnified' }]);
 })();
 
 /* =====================================================================
-   SIM 2: a trillion dollars on a football field. A side view of the
-   field, 100 yd between the end zones, with a scale in feet on the left
-   and a person 6 ft tall in the end zone for scale; the pile of
-   100-bill stacks rises on the field to its final height, which is
-   computed from the set amount and thickness with the field's true
-   area and rounded to one significant figure as the example does.
-   The pile rises as the figure's arrival on first view; after that a
-   slider redraws at once, and there is no transport.
+   SIM 2: a trillion dollars on a football field (Example 1.4). A side
+   view of the field, 100 yd between the end zones, the pile of
+   100-bill stacks on it, a 6 ft person in the end zone and the two
+   friends' guesses, 3 in. and 10 ft, as dashed levels. Heights are
+   drawn 6 times the scale of lengths along the field (20 units per
+   foot up, 10/3 units per foot along). The pile's height is computed
+   from the set amount and thickness with the field's true area,
+   6.48 × 10⁶ in.²; the example's one-figure rounding is the note.
+   Still; the pile rises once, on first view.
 ===================================================================== */
 (function () {
-  const d = sim('sim-trillion', 670);
-  const A = ctl(d.controls, { label: '\\text{amount}', cls: '', min: 0.1, max: 30, step: 0.1, value: 1, unit: 'trillion dollars', dec: 1, specials: [{ at: 28, label: '2021 debt' }], aria: 'amount in trillions of dollars' });
-  const TH = ctl(d.controls, { label: '\\text{stack thickness}', cls: 'position', min: 0.3, max: 0.7, step: 0.05, value: 0.5, unit: 'in.', dec: 2, aria: 'thickness of a stack of 100 bills' });
+  const d = sim('sim-trillion', 660);
+  const A = ctl(d.controls, { label: '\\text{amount}', cls: '', min: 0.1, max: 1.5, step: 0.1, value: 1, unit: '', fmt: (v) => '$' + fmt(v, 1) + ' trillion', aria: 'amount in trillions of dollars' });
+  const TH = ctl(d.controls, { label: '\\text{stack thickness}', cls: 'position', min: 0.3, max: 0.6, step: 0.05, value: 0.5, unit: 'in.', dec: 2, aria: 'thickness of a stack of 100 bills' });
   const AREA = 6480000;   /* the field between the end zones, 100 yd by 50 yd, in square inches */
-  const volumeOf = (trillions) => (trillions * 1e12 / 1e4) * 6 * 3 * TH.v;   /* stacks of 10,000 dollars, each 6 in. by 3 in. by the set thickness */
   function draw() {
     const { ctx } = begin(d.c);
     const k = F.ease.out(F.arrival(d)), done = k >= 1;
-    const vol = volumeOf(A.v), Hin = vol / AREA, Hft = Hin / 12;
+    const stacks = A.v * 1e12 / 1e4, vStack = 6 * 3 * TH.v, vol = stacks * vStack, Hin = vol / AREA, Hft = Hin / 12;
     const H1 = round1(Hin), F1 = round1(H1 / 12);
     const h = Hft * k;
-    /* the field in side view: the end zones shaded, the yard line ticked every 10 yd */
-    const G = 560, fx0 = 240, fx1 = 1300, ez = (fx1 - fx0) / 12, gx0 = fx0 + ez, gx1 = fx1 - ez, Xy = (yd) => gx0 + ((gx1 - gx0) * yd) / 100;
-    ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(fx0, G, fx1 - fx0, 24); ctx.fillStyle = alpha(PAL.muted, 0.25); ctx.fillRect(fx0, G, ez, 24); ctx.fillRect(gx1, G, ez, 24); ctx.restore();
-    line(ctx, 200, G, 1340, G, PAL.muted, 3); line(ctx, gx0, G, gx1, G, F.ref('field'), 4);
-    for (let yd = 0; yd <= 100; yd += 10) line(ctx, Xy(yd), G, Xy(yd), G + 24, F.ref('field'), yd % 50 ? 1.5 : 3);
-    for (const yd of [0, 50, 100]) text(ctx, yd + ' yd', Xy(yd), G + 44, PAL.muted, { size: 17, align: 'center' });
-    /* the end zones are named a row below the yard numbers: inside the strip the words would run onto the pile's edges */
-    text(ctx, 'end zone', fx0 + ez / 2, G + 72, PAL.muted, { size: 17, align: 'center' });
-    text(ctx, 'end zone', fx1 - ez / 2, G + 72, PAL.muted, { size: 17, align: 'center' });
-    /* The scale in feet is fixed at 0 to 40 ft, which holds the example's pile of about 10 ft with
-       room to spare, and never follows the pile. A pile taller than the scale is drawn to the top of
-       it with its true height written above, so the reader is told it runs past the drawing. */
-    const ax = 200, top = 150, span = { hi: 40, n: 4 }, step = 10;
-    const Y = (ft) => G - (Math.min(ft, span.hi) / span.hi) * (G - top);
-    const over = h > span.hi;
-    line(ctx, ax, G, ax, top, PAL.muted, 2);
-    for (let i = 0; i <= span.n; i++) { const v = i * step; line(ctx, ax - 8, Y(v), ax, Y(v), PAL.muted, 2); text(ctx, fmt(v, 0) + ' ft', ax - 16, Y(v), PAL.muted, { size: 17, align: 'right' }); }
+    /* The scale in feet is fixed: the tallest pile the sliders give, $1.5 trillion in 0.60 in. stacks,
+       is 20.8 ft, and the scale runs to 22 ft at 20 units per foot. */
+    const G = 570, UF = 20, Y = (ft) => G - ft * UF, ax = 130;
+    const fx0 = 150, gx0 = 250, gx1 = 1250, fx1 = 1350, Xy = (yd) => gx0 + ((gx1 - gx0) * yd) / 100;
+    /* the field in side view: the end zones shaded, a tick every 10 yd */
+    ctx.save(); ctx.fillStyle = PAL.soft; ctx.fillRect(fx0, G, fx1 - fx0, 22); ctx.fillStyle = alpha(PAL.muted, 0.25); ctx.fillRect(fx0, G, gx0 - fx0, 22); ctx.fillRect(gx1, G, fx1 - gx1, 22); ctx.restore();
+    for (let yd = 0; yd <= 100; yd += 10) line(ctx, Xy(yd), G, Xy(yd), G + 22, F.ref('field'), yd % 50 ? 1.5 : 3);
+    for (const yd of [0, 50, 100]) text(ctx, yd + ' yd', Xy(yd), G + 40, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'end zone', (fx0 + gx0) / 2, G + 66, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'end zone', (gx1 + fx1) / 2, G + 66, PAL.muted, { size: 17, align: 'center' });
+    text(ctx, 'heights are drawn 6 times larger than lengths along the field', (gx0 + gx1) / 2, G + 66, PAL.muted, { size: 17, align: 'center' });
+    line(ctx, ax, G, ax, Y(21.5), PAL.muted, 2);
+    for (let v = 0; v <= 20; v += 5) { line(ctx, ax - 8, Y(v), ax, Y(v), PAL.muted, 2); text(ctx, v + ' ft', ax - 16, Y(v), PAL.muted, { size: 17, align: 'right' }); }
     /* the pile of stacks between the end zones */
     const py = Y(h);
-    if (h > 0) {
-      ctx.save(); ctx.fillStyle = alpha(F.ref('pile'), 0.1); ctx.fillRect(gx0, py, gx1 - gx0, G - py); ctx.restore();
-      const gap = 14; if (G - py > 2 * gap) for (let y = G - gap; y > py + 2; y -= gap) line(ctx, gx0, y, gx1, y, alpha(PAL.ink, 0.18), 1.5);
-      ctx.save(); ctx.strokeStyle = F.ref('pile'); ctx.lineWidth = 3; ctx.strokeRect(gx0, py, gx1 - gx0, G - py); ctx.restore();
-      text(ctx, dec(h * 12) + ' in., or ' + dec(h) + ' ft' + (over ? ', which runs past the top of the scale' : ''), (gx0 + gx1) / 2, py - 22, C('position'), { weight: 600, align: 'center' });
-    }
-    /* a person 6 ft tall in the end zone, at the scale of the axis */
-    const hp = (6 / span.hi) * (G - top), px = fx1 - ez / 2;
+    ctx.save(); ctx.fillStyle = alpha(F.ref('pile'), 0.14); ctx.fillRect(gx0, py, gx1 - gx0, G - py); ctx.restore();
+    for (let y = G - 10; y > py + 3; y -= 10) line(ctx, gx0, y, gx1, y, alpha(F.ref('pile'), 0.22), 1);
+    ctx.save(); ctx.strokeStyle = F.ref('pile'); ctx.lineWidth = 3; ctx.strokeRect(gx0, py, gx1 - gx0, G - py); ctx.restore();
+    line(ctx, ax, G, fx1 + 10, G, PAL.muted, 3); line(ctx, gx0, G, gx1, G, F.ref('field'), 4);
+    /* the two friends' guesses */
+    const g3 = Y(0.25), g10 = Y(10);
+    line(ctx, ax, g10, gx1 + 8, g10, PAL.ink, 2, [10, 10]); line(ctx, ax, g3, gx1 + 8, g3, PAL.ink, 2, [10, 10]);
+    text(ctx, '10 ft guess', gx1 + 14, g10, PAL.ink, { size: 17, align: 'left' });
+    text(ctx, '3 in. guess', (fx0 + gx0) / 2 - 4, g3 - 20, PAL.ink, { size: 17, align: 'center' });
+    /* the pile's height, written above its top, or below it where the 10 ft guess's line would cross the words */
+    const ly = Math.abs(py - 24 - g10) < 22 ? py - 50 : py - 24;
+    text(ctx, dec(h * 12) + ' in. = ' + fmt(h, 1) + ' ft', (gx0 + gx1) / 2, ly, C('position'), { weight: 600, align: 'center', bg: PAL.panel });
+    /* a person 6 ft tall in the end zone, at the scale of heights */
+    const hp = 6 * UF, px = 1300;
     person(ctx, px, G, hp, F.ref('fan'));
-    text(ctx, 'a person', px - 12, G - hp - 44, F.ref('fan'), { size: 17, weight: 600, align: 'left' });
-    text(ctx, '6 ft tall', px - 12, G - hp - 24, C('position'), { size: 17, weight: 600, align: 'left' });
-    const amount = A.v === 1 ? 'One trillion dollars' : fmt(A.v, 1) + ' trillion dollars';
-    topline(ctx, done ? amount + ' in $100 bills covers the field to a height of about ' + plain(H1) + ' in., ' + (F1 >= 1 ? 'or about ' + plain(F1) + ' ft' : 'which is less than a foot') + (over ? ', which is taller than the scale on the left reaches.' : '.')
-      : 'The stacks are being laid down, and the pile is ' + dec(h) + ' ft high so far.');
-    readout(d.readout, `\\text{height} = \\frac{${sci(vol)}\\ \\text{in.}^{3}}{6.48 \\times 10^{6}\\ \\text{in.}^{2}} = ${dec(Hin)}\\ \\text{in.} \\approx ${sci(H1)}\\ \\text{in.} = ${plain(F1)}\\ \\text{ft}`,
-      'The example keeps one significant figure, since its inputs are that rough.');
+    text(ctx, 'a person', px, G - hp - 42, F.ref('fan'), { size: 17, weight: 600, align: 'center' }); text(ctx, '6 ft', px, G - hp - 20, C('position'), { size: 17, weight: 600, align: 'center' });
+    const ratio = (x) => (x >= 10 ? fmt(x, 0) : x >= 1 ? fmt(x, 1) : fmt(x, 2));
+    topline(ctx, fmt(A.v, 1) + ' trillion dollars in $100 bills covers the field to about ' + dec(Hin) + ' in., which is ' + ratio(Hin / 3) + ' times the 3 in. guess and ' + ratio(Hin / 120) + ' times the 10 ft guess.');
+    readout(d.readout, `\\text{volume} = ${num(vStack)}\\ \\tfrac{\\text{in.}^{3}}{\\text{stack}} \\times ${sci(stacks)}\\ \\text{stacks} = ${sci(vol)}\\ \\text{in.}^{3} \\\\ \\text{height} = \\frac{\\text{volume}}{\\text{area}} = \\frac{${sci(vol)}\\ \\text{in.}^{3}}{6.48 \\times 10^{6}\\ \\text{in.}^{2}} = ${dec(Hin)}\\ \\text{in.} = ${fmt(Hft, 1)}\\ \\text{ft}`,
+      'Kept to one significant figure, as the example keeps it, the height is ' + plain(H1) + ' in., ' + (F1 >= 1 ? 'about ' + plain(F1) + ' ft.' : 'less than a foot.'));
   }
   register(d.fig, { update: () => {}, draw });
+  F.hover(d.stage, () => [{ x: 750, y: 480, r: 90, name: 'the pile of 100-bill stacks' }, { x: 1300, y: 510, r: 60, name: 'a person 6 ft tall' }]);
 })();
 };

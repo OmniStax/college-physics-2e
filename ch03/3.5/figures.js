@@ -1,432 +1,431 @@
 /* Figures for section 3.5 Addition of Velocities. Boots against the section's text article. */
 window.OMNISTAX_FIGURES = window.OMNISTAX_FIGURES || {};
 window.OMNISTAX_FIGURES['3.5'] = function (root, F) {
-const { el, fmt, tex, C, PAL, alpha, ctl, cycle, register, begin, line, arrow, dot, text, headline, topline, hbracket, vbracket, axes, nice, curve, plane, labeller, FONT } = F;
+const { fmt, tex, C, PAL, alpha, ctl, cycle, register, begin, line, arrow, dot, text, topline, hbracket, vbracket, axes, labeller } = F;
 const sim = (id, H) => F.sim(root, id, H);
-function readout(host, main, small) { tex(host, main); if (small) host.appendChild(el('small', null, small)); }
-/* a note line set through the macros, for a note that names symbols */
-function texNote(host, s) { const sm = el('small', null, ''); host.appendChild(sm); tex(sm, s); }
 
 /* ---------- small helpers shared by the figures ---------- */
 const DEG = Math.PI / 180, G = 9.8;
 /* three significant figures, never in exponent form, and no negative zero */
-const sf = (x, n = 3) => { if (Math.abs(x) < 1e-9) return '0'; const s = x.toPrecision(n); return s.includes('e') ? String(Number(s)) : s; };
-const cardinal = (deg) => fmt(deg, 1) + '°';
-/* a direction in the book's compass words: "20.0° west of north", "8.0° south of west" */
+const sf = (x, n = 3) => { if (Math.abs(x) < 1e-9) return '0'; const s = x.toPrecision(n); return (s.includes('e') ? String(Number(s)) : s).replace('-', '−'); };
+/* the same number for TeX, where the minus is a hyphen */
+const tf = (x, n = 3) => sf(x, n).replace('−', '-');
+const MS = '\\ \\text{m/s}';
+/* a direction in the book's compass words: "20.0° west of north", "35.6° south of west" */
 function compass(vx, vy) {
-  if (Math.hypot(vx, vy) < 1e-6) return 'in no direction at all';
   const ax = Math.abs(vx), ay = Math.abs(vy);
-  if (ay <= ax) { const off = Math.atan(ay / ax) / DEG, base = vx > 0 ? 'east' : 'west', side = vy >= 0 ? 'north' : 'south'; return off < 0.05 ? 'due ' + base : cardinal(off) + ' ' + side + ' of ' + base; }
-  const off = Math.atan(ax / ay) / DEG, base = vy > 0 ? 'north' : 'south', side = vx >= 0 ? 'east' : 'west'; return off < 0.05 ? 'due ' + base : cardinal(off) + ' ' + side + ' of ' + base;
-}
-/* what a wind is to a plane heading north: the parts of it, in words */
-function windWords(vwx, vwy) {
-  const parts = []; if (vwy < -0.05) parts.push('a headwind'); if (vwy > 0.05) parts.push('a tailwind'); if (Math.abs(vwx) > 0.05) parts.push('a crosswind');
-  return parts.length === 2 ? 'partly ' + parts[0] + ' and partly ' + parts[1] : parts[0] ?? '';
-}
-/* an arc of angle from a0 to a1 (degrees, counterclockwise from +x) about (x, y), with its label just outside */
-function angleArc(ctx, x, y, r, a0, a1, color, label, lab) {
-  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r, -a0 * DEG, -a1 * DEG, a1 > a0); ctx.stroke(); ctx.restore();
-  if (!label) return;
-  if (lab) { const m = ((a0 + a1) / 2) * DEG; lab.add(label, x + r * Math.cos(m), y - r * Math.sin(m), Math.cos(m), -Math.sin(m), color, 20, 26); return; }
-  const w = F.measure(ctx, label, { size: 20, weight: 600 });
-  const m = ((a0 + a1) / 2) * DEG, half = Math.max(0.05, Math.abs(Math.sin(((a1 - a0) / 2) * DEG))), rho = Math.max(r + 26, w / (2 * half) + 24);
-  text(ctx, label, x + rho * Math.cos(m), y - rho * Math.sin(m), color, { size: 20, weight: 600, align: 'center' });
-}
-/* a title over one panel of a figure */
-const title = (ctx, s, x, y) => text(ctx, s, x, y, PAL.ink, { size: 20, weight: 600, align: 'center' });
-/* a label beside the midpoint of an arrow, pushed off it to one side */
-function alongLabel(ctx, s, x1, y1, x2, y2, color, side = 1, size = 20, lab) {
-  const L = Math.hypot(x2 - x1, y2 - y1) || 1, nx = (-(y2 - y1) / L) * side, ny = ((x2 - x1) / L) * side;
-  if (lab) { lab.add(s, (x1 + x2) / 2, (y1 + y2) / 2, nx, ny, color, size, 22); return; }
-  const ox = nx * 16, oy = ny * 16, align = ox > 5 ? 'left' : ox < -5 ? 'right' : 'center';
-  text(ctx, s, (x1 + x2) / 2 + ox, (y1 + y2) / 2 + oy, color, { size, weight: 600, align, bg: alpha(PAL.panel, 0.75) });
-}
-
-/* ---------- sprites, in the colour they are given ---------- */
-/* a rowing boat centred on (x, y), its bow pointing along heading (degrees counterclockwise from +x) */
-function boat(ctx, x, y, heading, color, s = 1) {
-  ctx.save(); ctx.translate(x, y); ctx.rotate(-heading * DEG); ctx.scale(s, s); ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(34, 0); ctx.quadraticCurveTo(14, -14, -20, -14); ctx.quadraticCurveTo(-30, -14, -30, 0); ctx.quadraticCurveTo(-30, 14, -20, 14); ctx.quadraticCurveTo(14, 14, 34, 0); ctx.closePath(); ctx.fill();   /* the hull, bow to the right */
-  ctx.fillStyle = PAL.panel; ctx.beginPath(); ctx.moveTo(24, 0); ctx.quadraticCurveTo(10, -8, -18, -8); ctx.quadraticCurveTo(-24, -8, -24, 0); ctx.quadraticCurveTo(-24, 8, -18, 8); ctx.quadraticCurveTo(10, 8, 24, 0); ctx.closePath(); ctx.fill();   /* the well */
-  ctx.fillStyle = color; ctx.fillRect(-6, -8, 5, 16); ctx.fillRect(12, -8, 4, 16);   /* two thwarts */
-  ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(2, -10); ctx.lineTo(-14, -30); ctx.moveTo(2, 10); ctx.lineTo(-14, 30); ctx.stroke();   /* the oars */
-  ctx.beginPath(); ctx.ellipse(-16, -33, 6, 3, 0.9, 0, Math.PI * 2); ctx.ellipse(-16, 33, 6, 3, -0.9, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-}
-/* a sailing ship: the deck at (x, y), the hull below it, a mast H tall with a sail */
-function ship(ctx, x, y, H, color) {
-  ctx.save(); ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x - 78, y); ctx.lineTo(x + 84, y); ctx.lineTo(x + 62, y + 22); ctx.lineTo(x - 62, y + 22); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = PAL.soft2; ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x - 4, y - H + 14); ctx.lineTo(x - 4, y - 16); ctx.lineTo(x - Math.min(70, H * 0.42), y - 16); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
-  line(ctx, x, y, x, y - H, color, 5);
-}
-/* a person standing on (x, y): the library's figure, facing the way `face` says */
-const person = (ctx, x, y, color, face = 1, s = 0.9) => F.person(ctx, x, y, color, { face, s });
-/* a galaxy centred on (x, y): a tilted disc with a bright core */
-function galaxy(ctx, x, y, color) {
-  ctx.save(); ctx.fillStyle = alpha(color, 0.18); ctx.beginPath(); ctx.ellipse(x, y, 54, 20, -0.35, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = alpha(color, 0.35); ctx.beginPath(); ctx.ellipse(x, y, 30, 11, -0.35, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  if (ay <= ax) { const off = Math.atan(ay / ax) / DEG, base = vx > 0 ? 'east' : 'west', side = vy >= 0 ? 'north' : 'south'; return off < 0.05 ? 'due ' + base : fmt(off, 1) + '° ' + side + ' of ' + base; }
+  const off = Math.atan(ax / ay) / DEG, base = vy > 0 ? 'north' : 'south', side = vx >= 0 ? 'east' : 'west'; return off < 0.05 ? 'due ' + base : fmt(off, 1) + '° ' + side + ' of ' + base;
 }
 /* a short streak, for water or air moving past */
 const streak = (ctx, x, y, dx, dy, color) => line(ctx, x, y, x + dx, y + dy, color, 2.5);
+const wrap = (x, span) => ((x % span) + span) % span;
+/* a title over one part of a figure */
+const title = (ctx, s, x, y, align = 'left') => text(ctx, s, x, y, PAL.ink, { size: 22, weight: 600, align });
 
 /* =====================================================================
-   FIGURE 3.40: the boat on the river. Pointed straight across, it is
-   carried downstream as it crosses; the triangle beside the river adds
-   its velocity relative to the water to the velocity of the water.
-   Finite motion (one crossing), so it gets the scrubber.
+   FIGURE 3.40 + 3.43: the boat on the river, with Example 3.6's speeds.
+   The velocity triangle stands where the boat sets out, as the book
+   draws it. A float released with the boat drifts with the water, so the
+   line from the float to the boat is the boat's motion relative to the
+   water and the line from the start to the boat its motion relative to
+   the shore. Finite motion (one crossing), so it gets the scrubber.
 ===================================================================== */
 (function () {
-  const d = sim('sim-boat', 640);
-  const vb = ctl(d.controls, { label: '\\kvboat', cls: 'velocity', min: 0.1, max: 3, step: 0.01, value: 0.75, unit: 'm/s', dec: 2, onInput: reset, aria: 'speed of the boat relative to the water' });
-  const vr = ctl(d.controls, { label: '\\kvriver', cls: 'velocity', min: 0, max: 3, step: 0.01, value: 1.2, unit: 'm/s', dec: 2, onInput: reset, aria: 'speed of the river relative to the shore' });
-  const ph = ctl(d.controls, { label: '\\text{heading}', cls: 'angle', min: 30, max: 150, step: 1, value: 90, unit: '°', dec: 0, specials: [{ at: 90, label: 'straight across' }], onInput: reset, aria: 'heading of the boat, degrees from downstream' });
-  /* The example gives no width for the river, so one is assumed here and the reader may set it. */
-  const WC = ctl(d.controls, { label: '\\text{river width}', cls: 'position', min: 10, max: 30, step: 1, value: 25, unit: 'm', dec: 0, onInput: reset, aria: 'width of the river' });
-  const vx = () => vr.v + vb.v * Math.cos(ph.v * DEG), vy = () => vb.v * Math.sin(ph.v * DEG), T = () => WC.v / vy();
+  const d = sim('sim-boat', 700);
+  const vb = ctl(d.controls, { label: '\\kvboat', cls: 'velocity', min: 0.2, max: 2, step: 0.01, value: 0.75, unit: 'm/s', dec: 2, onInput: reset, aria: 'speed of the boat relative to the water' });
+  const vr = ctl(d.controls, { label: '\\kvriver', cls: 'velocity', min: 0, max: 2, step: 0.01, value: 1.2, unit: 'm/s', dec: 2, onInput: reset, aria: 'speed of the river relative to the shore' });
+  const across = () => (vb.v > vr.v + 1e-9 ? Math.asin(vr.v / vb.v) / DEG : null);
+  const hd = ctl(d.controls, { label: '\\text{heading}', cls: 'angle', min: -60, max: 70, step: 1, value: 0, unit: '°', dec: 0, onInput: reset, aria: 'heading of the boat, degrees upstream of straight across',
+    fmt: (v) => (Math.abs(v) < 0.05 ? 'straight across' : fmt(Math.abs(v), Number.isInteger(v) ? 0 : 1) + '° ' + (v > 0 ? 'upstream' : 'downstream')),
+    specials: [{ at: 0, label: 'pointed straight across' }, { at: across, label: 'lands straight across' }] });
+  /* the book gives the river no width; 30 m is assumed, at a fixed 14 units to the metre, and the velocity
+     arrows at a fixed 200 units per m/s, which keeps the fastest boat's arrow (2 m/s) inside the river */
+  const W = 30, S = 14, K = 200, X0 = 300, YN = 600, YF = YN - W * S, L = 30, R = 1370, PT = 112, PB = 684;
+  const ux = () => vr.v - vb.v * Math.sin(hd.v * DEG), uy = () => vb.v * Math.cos(hd.v * DEG), T = () => W / uy();
   const cy = cycle(T, 1.2);
   function reset() { cy.reset(); }
-  const L = 70, R = 770, PT = 100, PB = 580;
+  let hits = [];
+  F.hover(d.stage, () => hits);
   function draw() {
     const { ctx } = begin(d.c);
-    const tau = cy.now(), Tc = T(), done = tau >= Tc - 1e-9, ux = vx(), uy = vy(), drift = ux * Tc, vt = Math.hypot(ux, uy), th = Math.atan2(uy, ux) / DEG;
-    const straight = ph.v === 90;
-    /* the scene at one fixed scale, 14 units to the metre, which holds the widest river the slider allows
-       (30 m) in the panel; the boat sets out 100 units in from the panel's upstream end, or from its downstream
-       end when it is headed upstream, and a landing beyond the panel is pinned at its edge and named */
-    const W = WC.v, s = 14, X0 = ux >= 0 ? L + 100 : R - 100;
-    const X = (m) => X0 + m * s, Y = (m) => 340 + (W / 2 - m) * s;
-    const lab = labeller(ctx, 640); lab.block(0, 0, 1400, 96);
+    const tau = cy.now(), Tc = T(), vx = ux(), vy = uy(), drift = vx * Tc, vt = Math.hypot(vx, vy), th = Math.atan2(vy, vx);
+    const a = hd.v, straight = Math.abs(a) < 0.05, cr = F.ref('river'), cb = F.ref('boat'), cv = C('velocity');
+    const X = (m) => X0 + m * S, Y = (m) => YN - m * S;
+    const lab = labeller(ctx, 700); lab.block(0, 0, 1400, 100);
     ctx.save(); ctx.beginPath(); ctx.rect(L, PT, R - L, PB - PT); ctx.clip();
     ctx.fillStyle = PAL.soft2; ctx.fillRect(L, PT, R - L, PB - PT);
-    ctx.fillStyle = PAL.soft; ctx.fillRect(L, Y(W), R - L, W * s);
-    const cr = F.ref('river');
-    line(ctx, L, Y(W), R, Y(W), cr, 2); line(ctx, L, Y(0), R, Y(0), cr, 2);
-    /* the current, as streaks drifting downstream at the river's speed */
-    for (let i = 0; i < 18; i++) { const yy = Y(W * ((i % 6) + 0.5) / 6), base = (i * 173) % 700, xx = L + ((base + vr.v * tau * s) % 700 + 700) % 700; streak(ctx, xx, yy, 34, 0, alpha(cr, 0.6)); }
-    /* the path relative to the shore, from where the boat set out to where it lands */
-    line(ctx, X(0), Y(0), X(drift), Y(W), PAL.muted, 3, [10, 10]);
-    const bx = X(ux * tau), by = Y(uy * tau), lx = X(drift), off = lx < L + 10 || lx > R - 10;
-    line(ctx, X(0), Y(0), bx, by, PAL.ink, 2.5);
-    dot(ctx, X(0), Y(0), PAL.ink, false, 9); if (!off) dot(ctx, lx, Y(W), PAL.ink, true, 9);
-    /* the boat, rowed along its heading, and the three velocities riding on it: its own, the river's from
-       the head of that, and their sum */
-    boat(ctx, bx, by, ph.v, F.ref('boat'), 1.4);
-    const k = 70, hx = bx + vb.v * Math.cos(ph.v * DEG) * k, hy = by - vb.v * Math.sin(ph.v * DEG) * k;
-    arrow(ctx, bx, by, hx, hy, alpha(C('velocity'), 0.55), 3);
-    if (vr.v > 0.02) arrow(ctx, hx, hy, hx + vr.v * k, hy, alpha(C('velocity'), 0.55), 3);
-    arrow(ctx, bx, by, bx + ux * k, by - uy * k, C('velocity'), 5);
+    ctx.fillStyle = PAL.soft; ctx.fillRect(L, YF, R - L, YN - YF);
+    line(ctx, L, YF, R, YF, cr, 2.5); line(ctx, L, YN, R, YN, cr, 2.5);
+    /* the current, as streaks that drift downstream at the river's speed */
+    for (let i = 0; i < 20; i++) { const yy = YF + 40 + (i % 5) * 85, xx = L + wrap(((i * 277) % 1340) + vr.v * tau * S, R - L); streak(ctx, xx, yy, 40, 0, alpha(cr, 0.45)); }
+    /* the path relative to the shore: dashed to where the boat lands, solid where it has been */
+    const bx = X(vx * tau), by = Y(vy * tau), lx = X(drift), off = lx < L + 24 || lx > R - 24;
+    line(ctx, X0, YN, lx, YF, alpha(PAL.ink, 0.45), 2.5, [10, 10]);
+    line(ctx, X0, YN, bx, by, PAL.ink, 3);
+    /* the float released with the boat, and the boat's path relative to it */
+    const fx = X(vr.v * tau);
+    line(ctx, fx, YN, bx, by, cr, 2.5, [5, 8]);
+    /* the velocity triangle where the boat sets out: the boat's velocity relative to the water, the river's
+       from its head, and their sum */
+    const hx = X0 - vb.v * Math.sin(a * DEG) * K, hy = YN - vb.v * Math.cos(a * DEG) * K, tx = X0 + vx * K, ty = YN - vy * K;
+    arrow(ctx, X0, YN, hx, hy, alpha(cv, 0.55), 4);
+    if (vr.v > 0.02) arrow(ctx, hx, hy, tx, ty, alpha(cv, 0.55), 4);
+    arrow(ctx, X0, YN, tx, ty, cv, 6);
+    dot(ctx, fx, YN, PAL.panel, true, 10); dot(ctx, fx, YN, cr, false, 10);
+    F.rowboat(ctx, bx, by, 1.5, 90 + a, cb);
+    if (!off) dot(ctx, lx, YF, PAL.ink, true, 9);
     ctx.restore();
-    if (off) { const ex = lx > R ? R - 12 : L + 12, dir = lx > R ? 1 : -1; arrow(ctx, ex - dir * 30, Y(W), ex, Y(W), PAL.ink, 3); lab.add('lands ' + fmt(Math.abs(drift), 0) + ' m ' + (drift > 0 ? 'downstream' : 'upstream') + ', off the picture', ex, Y(W), -dir, 0.6, PAL.ink, 17, 26); }
-    text(ctx, 'downstream →', R - 8, PB + 22, PAL.muted, { size: 17, align: 'right' });
-    text(ctx, 'far bank', L + 8, Y(W) - 20, F.ref('river'), { size: 17 }); text(ctx, 'near bank', L + 8, Y(0) + 22, F.ref('river'), { size: 17 });
-    /* the velocity triangle, drawn as the book draws it: the boat's velocity, then the river's head to tail, then the sum */
-    const cx = vb.v * Math.cos(ph.v * DEG), sy = vb.v * Math.sin(ph.v * DEG);
-    const xs = [0, cx, cx + vr.v], ys = [0, sy], xspan = Math.max(0.6, Math.max(...xs) - Math.min(...xs)), yspan = Math.max(0.6, sy);
-    const K = Math.min(400 / xspan, 380 / yspan, 320), Ox = 880 - Math.min(...xs) * K + (460 - xspan * K) / 2, Oy = 540;
-    line(ctx, Ox - 40, Oy, Ox + 60, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 30, Ox, Oy - 60, PAL.muted, 2);
-    text(ctx, 'x', Ox + 72, Oy, PAL.muted, { size: 18 }); lab.add('y', Ox, Oy - 60, 0, -1, PAL.muted, 18, 14);
-    const Hx = Ox + cx * K, Hy = Oy - sy * K, Tx = Ox + ux * K, Ty = Oy - uy * K;
-    arrow(ctx, Ox, Oy, Hx, Hy, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (boat) = ' + sf(vb.v) + ' m/s', Ox, Oy, Hx, Hy, C('velocity'), -1, 18, lab);
-    if (vr.v > 0.02) { arrow(ctx, Hx, Hy, Hx + vr.v * K, Hy, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (river) = ' + sf(vr.v) + ' m/s', Hx, Hy, Hx + vr.v * K, Hy, C('velocity'), -1, 18, lab); }
-    arrow(ctx, Ox, Oy, Tx, Ty, C('velocity'), 5); alongLabel(ctx, 'v (total) = ' + sf(vt) + ' m/s', Ox, Oy, Tx, Ty, C('velocity'), 1, 20, lab);
-    if (vt > 0.05) angleArc(ctx, Ox, Oy, 48, 0, th, C('angle'), th > 8 && th < 172 ? 'θ = ' + fmt(th, 1) + '°' : '', lab);   /* a sliver of an angle is named in the readout only */
-    dot(ctx, Ox, Oy, PAL.ink, true, 5);
+    text(ctx, 'far bank', L + 20, YF - 34, cr, { size: 20 }); text(ctx, 'near bank', L + 20, YN + 42, cr, { size: 20 });
+    /* how far downstream of straight across the boat lands */
+    const dist = fmt(Math.abs(drift), 1) + ' m ' + (drift > 0 ? 'downstream' : 'upstream');
+    if (off) { const ex = lx > R ? R - 16 : L + 16, dir = lx > R ? 1 : -1; arrow(ctx, ex - dir * 60, YF - 30, ex, YF - 30, PAL.ink, 3); text(ctx, 'lands ' + dist, ex - dir * 72, YF - 30, PAL.ink, { size: 22, weight: 600, align: dir > 0 ? 'right' : 'left' }); }
+    else if (Math.abs(drift) >= 0.3) hbracket(ctx, Math.min(X0, lx), Math.max(X0, lx), YF - 22, PAL.ink, dist, { H: 700 });
+    else text(ctx, 'lands straight across', X0, YF - 34, PAL.ink, { size: 22, weight: 600, align: 'center' });
+    if (Math.abs(drift) >= 0.3) dot(ctx, X0, YF, PAL.ink, false, 8);
+    /* names on the triangle, which stands still while the boat moves */
+    const up = { x1: X0, y1: YN, x2: hx, y2: hy }, rv = { x1: hx, y1: hy, x2: tx, y2: ty }, tot = { x1: X0, y1: YN, x2: tx, y2: ty };
+    const right = vx >= 0 ? 1 : -1;
+    lab.beside(up, right > 0 ? 'left' : 'right', 'v_{boat} = ' + sf(vb.v) + ' m/s', cv, 22);
+    if (vr.v > 0.02) lab.beside(rv, 'left', 'v_{river} = ' + sf(vr.v) + ' m/s', cv, 22);
+    lab.beside(tot, right > 0 ? 'right' : 'left', 'v_{tot} = ' + sf(vt) + ' m/s', cv, 24, { offset: 0.62 });
+    if (th / DEG > 6 && th / DEG < 174) F.angleArc(ctx, { x: X0, y: YN }, 86, 0, th, 'θ = ' + fmt(th / DEG, 1) + '°', lab, C('angle'));
     lab.flush();
+    F.legend(ctx, { l: 560, r: R - 10, t: YN + 12, b: PB - 4 }, [{ s: 'float drifting with the water', kind: 'dot', color: cr, hollow: true }, { s: 'the boat seen from the float', color: cr, dash: [5, 8], w: 2.5 }, { s: 'the boat seen from the shore', color: PAL.ink, w: 3 }], { corner: 'br', row: true, panel: false, size: 19 });
+    hits = [{ x: bx, y: by, r: 50, name: 'the boat, pointed ' + (straight ? 'straight across' : fmt(Math.abs(a), 0) + '° ' + (a > 0 ? 'upstream' : 'downstream') + ' of straight across') },
+      { x: fx, y: YN, r: 18, name: 'a float released with the boat; it drifts with the water' }];
+    if (!off) hits.push({ x: lx, y: YF, r: 16, name: 'where the boat lands' });
     /* what the numbers say */
-    const where = Math.abs(drift) < 0.3 ? 'straight across from where it set out' : fmt(Math.abs(drift), 1) + ' m ' + (drift > 0 ? 'downstream' : 'upstream');
-    topline(ctx, done ? 'After ' + fmt(Tc, 1) + ' s the boat reaches the far bank ' + where + ', moving at ' + sf(vt) + ' m/s, ' + fmt(th, 1) + '° from the bank.'
-      : 'After ' + fmt(tau, 1) + ' s the boat has crossed ' + fmt(uy * tau, 1) + ' m of the ' + WC.v + ' m river and is ' + fmt(Math.abs(ux * tau), 1) + ' m ' + (ux >= 0 ? 'downstream' : 'upstream') + ' of where it set out.');
-    const main = straight
-      ? `\\kvtot = \\sqrt{\\kvx^2 + \\kvy^2} = \\sqrt{(${sf(vr.v)})^2 + (${sf(vb.v)})^2} = ${sf(vt)}\\ \\text{m/s}\\qquad \\ktheta = \\tan^{-1}(\\kvy/\\kvx) = \\tan^{-1}(${sf(vb.v)}/${sf(vr.v)}) = ${fmt(th, 1)}^\\circ`
-      : `\\kvx = \\kvriver + \\kvboat\\cos ${ph.v}^\\circ = ${sf(ux)}\\ \\text{m/s},\\quad \\kvy = \\kvboat\\sin ${ph.v}^\\circ = ${sf(uy)}\\ \\text{m/s},\\quad \\kvtot = ${sf(vt)}\\ \\text{m/s at } ${fmt(th, 1)}^\\circ`;
-    const small = straight
-      ? (vr.v > vb.v ? 'Because the river is fast compared with the boat, the boat is swept rapidly downstream, and the total velocity makes only a small angle with the bank.'
-        : 'Because the boat is fast compared with the river, it is carried only a little downstream, and the total velocity makes a large angle with the bank.')
-      : 'Pointed ' + Math.abs(ph.v - 90) + '° ' + (ph.v > 90 ? 'upstream' : 'downstream') + ' of straight across, the boat ' + (Math.abs(drift) < 0.3 ? 'cancels the current and lands straight across, which is what the take-home experiment asks you to find.' : 'lands ' + where + ' of where it set out.');
-    readout(d.readout, main, small);
+    const how = straight ? 'Pointed straight across' : 'Pointed ' + fmt(Math.abs(a), Number.isInteger(a) ? 0 : 1) + '° ' + (a > 0 ? 'upstream' : 'downstream');
+    topline(ctx, how + ', the boat crosses the ' + W + ' m river in ' + fmt(Tc, 1) + ' s and lands ' + (Math.abs(drift) < 0.3 ? 'straight across from where it set out.' : dist + '.'));
+    const tot2 = `\\kvtot = \\sqrt{\\kvx^2 + \\kvy^2} = \\sqrt{(${tf(vx)}${MS})^2 + (${tf(vy)}${MS})^2} = ${tf(vt)}${MS}`;
+    tex(d.readout, straight
+      ? tot2 + ' \\\\ ' + (vr.v > 0.005 ? `\\ktheta = \\tan^{-1}(\\kvy/\\kvx) = \\tan^{-1}(${tf(vy)}/${tf(vx)}) = ${fmt(th / DEG, 1)}^\\circ` : `\\ktheta = 90.0^\\circ`)
+      : `\\kvx = \\kvriver ${a > 0 ? '-' : '+'} \\kvboat\\sin ${fmt(Math.abs(a), Number.isInteger(a) ? 0 : 1)}^\\circ = ${tf(vr.v)}${MS} ${a > 0 ? '-' : '+'} ${tf(vb.v * Math.sin(Math.abs(a) * DEG))}${MS} = ${tf(vx)}${MS} \\\\ `
+        + `\\kvy = \\kvboat\\cos ${fmt(Math.abs(a), Number.isInteger(a) ? 0 : 1)}^\\circ = ${tf(vy)}${MS} \\\\ ` + tot2);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => T() / 5), draw });
 })();
 
 /* =====================================================================
-   FIGURE 3.41: the plane in a wind. Pointed north, it moves along its
-   total velocity relative to the ground; the triangle beside the map
-   adds its velocity relative to the air to the velocity of the air.
-   Finite motion (the plane crosses the map), so it gets the scrubber.
+   FIGURE 3.41: the plane in a wind. It points north the whole way; the
+   faint plane is where it would be in still air, and the dashed line
+   from that to the plane is how far the air has carried it. The velocity
+   triangle stands where the flight begins, as the book draws it, and
+   opens on the wind Example 3.7 finds. Finite motion, so the scrubber.
 ===================================================================== */
 (function () {
-  const d = sim('sim-plane', 640);
-  const vp = ctl(d.controls, { label: '\\kvp', cls: 'velocity', min: 0, max: 70, step: 0.5, value: 45, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the plane relative to the air' });
-  const vw = ctl(d.controls, { label: '\\kvw', cls: 'velocity', min: 0, max: 40, step: 0.1, value: 16, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the wind' });
-  const dir = ctl(d.controls, { label: '\\text{wind toward}', cls: 'angle', min: 0, max: 360, step: 0.1, value: 215.6, unit: '°', dec: 1, onInput: reset, aria: 'direction the wind blows toward, degrees counterclockwise from east' });
-  const wx = () => vw.v * Math.cos(dir.v * DEG), wy = () => vw.v * Math.sin(dir.v * DEG), tx = () => wx(), ty = () => vp.v + wy();
-  const L = 70, R = 770, PT = 100, PB = 600, x0 = 420;
-  const y0 = () => (ty() >= 0 ? 540 : 160);
-  function T() { const ax = Math.abs(tx()), ay = Math.abs(ty()); const t = Math.min(ax > 0.05 ? 310 / ax : Infinity, ay > 0.05 ? 400 / ay : Infinity); return isFinite(t) ? t : 5; }
+  const d = sim('sim-plane', 720);
+  const vp = ctl(d.controls, { label: '\\kvp', cls: 'velocity', min: 20, max: 50, step: 0.5, value: 45, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the plane relative to the air' });
+  const vw = ctl(d.controls, { label: '\\kvw', cls: 'velocity', min: 0, max: 20, step: 0.1, value: 16, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the wind' });
+  const dir = ctl(d.controls, { label: '\\text{wind toward}', cls: 'angle', min: 0, max: 360, step: 0.2, value: 215.6, unit: '°', dec: 1, onInput: reset, aria: 'direction the wind blows toward, degrees counterclockwise from east',
+    fmt: (v) => compass(Math.cos(v * DEG), Math.sin(v * DEG)), specials: [{ at: 90, label: 'a tailwind' }, { at: 180, label: 'a crosswind, toward the west' }, { at: 270, label: 'a headwind' }] });
+  const wx = () => vw.v * Math.cos(dir.v * DEG), wy = () => vw.v * Math.sin(dir.v * DEG);
+  /* the ground at one unit to the metre and the arrows at 7.5 units per m/s, so an arrow is as long as the
+     ground covered in 7.5 s; the tallest triangle the sliders allow (50 m/s and a 20 m/s tailwind) stays on the map */
+  const L = 30, R = 1370, PT = 112, PB = 704, SX = 800, SY = 650, K = 7.5;
+  function T() { const ux = wx(), uy = vp.v + wy(); let t = 9; if (ux > 0.01) t = Math.min(t, (R - 70 - SX) / ux); if (ux < -0.01) t = Math.min(t, (SX - L - 70) / -ux); if (uy > 0.01) t = Math.min(t, (SY - PT - 70) / uy); return t; }
   const cy = cycle(T, 1.2);
   function reset() { cy.reset(); }
+  let hits = [];
+  F.hover(d.stage, () => hits);
+  function flyer(ctx, x, y, color) { ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.PI / 2); F.plane(ctx, 0, 0, color, 0.95); ctx.restore(); }
   function draw() {
     const { ctx } = begin(d.c);
-    const tau = cy.now(), Tc = T(), done = tau >= Tc - 1e-9, ux = tx(), uy = ty(), vt = Math.hypot(ux, uy), vwx = wx(), vwy = wy();
-    const lab = labeller(ctx, 640); lab.block(0, 0, 1400, 96);
-    /* the map, one unit one meter, with the wind's streaks drifting across it */
+    const tau = cy.now(), vwx = wx(), vwy = wy(), ux = vwx, uy = vp.v + vwy, vt = Math.hypot(ux, uy), cv = C('velocity'), ca = F.ref('air'), cp = F.ref('plane');
+    const lab = labeller(ctx, 720); lab.block(0, 0, 1400, 100);
     ctx.save(); ctx.beginPath(); ctx.rect(L, PT, R - L, PB - PT); ctx.clip();
     ctx.fillStyle = PAL.soft2; ctx.fillRect(L, PT, R - L, PB - PT);
-    ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(L, 300); for (let x = L; x <= R; x += 35) ctx.lineTo(x, 300 + 10 * Math.sin(x / 40)); ctx.lineTo(R, 348); for (let x = R; x >= L; x -= 35) ctx.lineTo(x, 348 + 10 * Math.sin(x / 40 + 1)); ctx.closePath(); ctx.fill();
-    const pw = R - L, phh = PB - PT, sl = Math.min(36, 4 + vw.v * 1.6), ux0 = vw.v > 0.02 ? vwx / vw.v : 1, uy0 = vw.v > 0.02 ? -vwy / vw.v : 0;
-    for (let i = 0; i < 22; i++) { const bx = (i * 211) % pw, by = (i * 137) % phh, xx = L + (((bx + vwx * tau) % pw) + pw) % pw, yy = PT + (((by - vwy * tau) % phh) + phh) % phh; streak(ctx, xx, yy, sl * ux0, sl * uy0, alpha(F.ref('air'), 0.55)); }
-    /* the track over the ground, and the plane on it, still pointed north */
-    const sx = x0, sy = y0(), ex = sx + ux * Tc, ey = sy - uy * Tc, px = sx + ux * tau, py = sy - uy * tau;
-    line(ctx, sx, sy, ex, ey, PAL.muted, 3, [10, 10]);
-    line(ctx, sx, sy, px, py, PAL.ink, 2.5); dot(ctx, sx, sy, PAL.ink, false, 8);
-    ctx.save(); ctx.translate(px, py); ctx.rotate(-Math.PI / 2); plane(ctx, 0, 0, F.ref('plane'), 0.9); ctx.restore();
-    const k = 4, hx = px, hy = py - vp.v * k;
-    arrow(ctx, px, py, hx, hy, alpha(C('velocity'), 0.55), 3);
-    if (vw.v > 0.02) arrow(ctx, hx, hy, hx + vwx * k, hy - vwy * k, alpha(C('velocity'), 0.55), 3);
-    arrow(ctx, px, py, px + ux * k, py - uy * k, C('velocity'), 5);
+    /* a river across the map, as the book has it, for the ground to be seen by */
+    ctx.fillStyle = PAL.soft; ctx.beginPath(); ctx.moveTo(L, 392); for (let x = L; x <= R; x += 30) ctx.lineTo(x, 392 + 12 * Math.sin(x / 70)); for (let x = R; x >= L; x -= 30) ctx.lineTo(x, 446 + 12 * Math.sin(x / 70 + 0.8)); ctx.closePath(); ctx.fill();
+    /* the air, as streaks that drift with the wind */
+    const pw = R - L, ph = PB - PT, sl = 6 + vw.v * 1.6, e = vw.v > 0.02 ? [vwx / vw.v, -vwy / vw.v] : [1, 0];
+    if (vw.v > 0.02) for (let i = 0; i < 26; i++) streak(ctx, L + wrap(((i * 211) % pw) + vwx * tau, pw), PT + wrap(((i * 137) % ph) - vwy * tau, ph), sl * e[0], sl * e[1], alpha(ca, 0.5));
+    /* the track over the ground, the plane in still air, and how far the air has carried the plane */
+    const px = SX + ux * tau, py = SY - uy * tau, gx = SX, gy = SY - vp.v * tau;
+    line(ctx, SX, SY, SX + ux * 40, SY - uy * 40, alpha(PAL.ink, 0.4), 2.5, [10, 10]);
+    line(ctx, SX, SY, px, py, PAL.ink, 3);
+    if (vw.v > 0.02) { line(ctx, gx, gy, px, py, ca, 3, [6, 8]); ctx.save(); ctx.globalAlpha = 0.3; flyer(ctx, gx, gy, cp); ctx.restore(); }
+    /* the velocity triangle where the flight begins */
+    const hx = SX, hy = SY - vp.v * K, tx = SX + ux * K, ty = SY - uy * K;
+    arrow(ctx, SX, SY, hx, hy, alpha(cv, 0.55), 4);
+    if (vw.v > 0.02) arrow(ctx, hx, hy, tx, ty, alpha(cv, 0.55), 4);
+    if (vt > 0.3) arrow(ctx, SX, SY, tx, ty, cv, 6);
+    flyer(ctx, px, py, cp);
     ctx.restore();
-    arrow(ctx, L + 30, PB - 30, L + 100, PB - 30, PAL.muted, 3); text(ctx, 'x (east)', L + 110, PB - 30, PAL.muted, { size: 17 });
-    arrow(ctx, L + 30, PB - 30, L + 30, PB - 100, PAL.muted, 3); text(ctx, 'y (north)', L + 30, PB - 114, PAL.muted, { size: 17, align: 'center' });
-    /* the velocity triangle: the plane's velocity, the wind's from its head, and the sum, at a fixed
-       4.2 units per m/s, which holds the tallest triangle the sliders allow (70 m/s of plane and 40 of
-       tailwind) in the box beside the map */
-    const K = 4.2, Ox = 1090, Oy = Math.min(580, 630 + Math.min(0, uy) * K);   /* a southward total lifts the origin so the triangle stays on the canvas */
-    line(ctx, Ox - 180, Oy, Ox + 180, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 40, Ox, Oy - 60, PAL.muted, 2);
-    text(ctx, 'x (east)', Ox + 190, Oy, PAL.muted, { size: 17 }); lab.add('y (north)', Ox, Oy - 60, 0, -1, PAL.muted, 17, 14);
-    const Hx = Ox, Hy = Oy - vp.v * K, Tx = Ox + ux * K, Ty = Oy - uy * K;
-    if (vp.v > 0.02) { arrow(ctx, Ox, Oy, Hx, Hy, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (plane) = ' + sf(vp.v) + ' m/s', Ox, Oy, Hx, Hy, C('velocity'), ux <= 0 ? 1 : -1, 18, lab); }
-    if (vw.v > 0.02) { arrow(ctx, Hx, Hy, Hx + vwx * K, Hy - vwy * K, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (wind) = ' + sf(vw.v) + ' m/s', Hx, Hy, Hx + vwx * K, Hy - vwy * K, C('velocity'), vwy <= 0 ? -1 : 1, 18, lab); }
-    arrow(ctx, Ox, Oy, Tx, Ty, C('velocity'), 5); alongLabel(ctx, 'v (total) = ' + sf(vt) + ' m/s', Ox, Oy, Tx, Ty, C('velocity'), ux <= 0 ? -1 : 1, 20, lab);
-    if (vt > 0.05) angleArc(ctx, Ox, Oy, 44, 0, Math.atan2(uy, ux) / DEG, C('angle'), fmt(Math.atan2(uy, ux) / DEG, 1) + '°', lab);
-    dot(ctx, Ox, Oy, PAL.ink, true, 5);
+    arrow(ctx, L + 40, PB - 36, L + 120, PB - 36, PAL.muted, 3); text(ctx, 'x (east)', L + 130, PB - 36, PAL.muted, { size: 19 });
+    arrow(ctx, L + 40, PB - 36, L + 40, PB - 116, PAL.muted, 3); text(ctx, 'y (north)', L + 28, PB - 134, PAL.muted, { size: 19 });
+    const west = ux <= 0;
+    lab.beside({ x1: SX, y1: SY, x2: hx, y2: hy }, west ? 'right' : 'left', 'v_p = ' + sf(vp.v) + ' m/s', cv, 22, { offset: 0.4 });
+    if (vw.v > 0.02) lab.beside({ x1: hx, y1: hy, x2: tx, y2: ty }, west ? 'right' : 'left', 'v_w = ' + sf(vw.v) + ' m/s', cv, 22);
+    if (vt > 0.3) lab.beside({ x1: SX, y1: SY, x2: tx, y2: ty }, west ? 'left' : 'right', 'v_{tot} = ' + sf(vt) + ' m/s', cv, 24, { offset: 0.55 });
+    const off = Math.atan2(ux, uy) / DEG;   /* east of north */
+    if (vt > 0.3 && Math.abs(off) > 3 && Math.abs(off) < 177) F.angleArc(ctx, { x: SX, y: SY }, 150, 90 * DEG, (90 - off) * DEG, fmt(Math.abs(off), 1) + '°', lab, C('angle'));
     lab.flush();
+    if (vw.v > 0.02) F.legend(ctx, { l: 820, r: R - 10, t: PB - 60, b: PB - 6 }, [{ s: 'the plane in still air', draw: (c, x, y) => { c.save(); c.globalAlpha = 0.3; c.translate(x + 22, y + 11); c.rotate(-Math.PI / 2); F.plane(c, 0, 0, cp, 0.32); c.restore(); } }, { s: 'how far the air has carried it', color: ca, dash: [6, 8], w: 3 }], { corner: 'br', row: true, panel: true, size: 19 });
+    hits = [{ x: px, y: py, r: 50, name: 'the plane, pointed north' }];
+    if (vw.v > 0.02) hits.push({ x: gx, y: gy, r: 40, name: 'where the plane would be in still air' });
     /* what the numbers say */
-    topline(ctx, done ? 'The plane points north at ' + sf(vp.v) + ' m/s but moves at ' + sf(vt) + ' m/s, ' + compass(ux, uy) + ', relative to the ground.'
-      : 'After ' + fmt(tau, 1) + ' s the plane still points north, but its track over the ground runs ' + compass(ux, uy) + '.');
-    const words = windWords(vwx, vwy);
-    readout(d.readout, `\\kvtotx = \\kvpx + \\kvwx = 0 + (${sf(vwx)}) = ${sf(ux)}\\ \\text{m/s},\\quad \\kvtoty = \\kvpy + \\kvwy = ${sf(vp.v)} + (${sf(vwy)}) = ${sf(uy)}\\ \\text{m/s},\\quad \\kvtot = ${sf(vt)}\\ \\text{m/s}`,
-      vw.v < 0.02 ? 'With no wind, the plane moves over the ground exactly as it moves through the air, due north at ' + sf(vp.v) + ' m/s.'
-        : 'The wind is ' + words + ', so the plane’s speed over the ground, ' + sf(vt) + ' m/s, is ' + (Math.abs(vt - vp.v) < 0.05 ? 'the same as' : vt < vp.v ? 'less than' : 'greater than') + ' its ' + sf(vp.v) + ' m/s relative to the air, and its track runs ' + compass(ux, uy) + '.');
+    topline(ctx, vw.v < 0.02 ? 'With no wind the plane moves over the ground as it moves through the air, ' + sf(vp.v) + ' m/s due north.'
+      : vt < 0.3 ? 'The headwind is as fast as the plane, so the plane stays over one spot on the ground.'
+        : 'Pointed north at ' + sf(vp.v) + ' m/s, the plane moves over the ground at ' + sf(vt) + ' m/s, ' + compass(ux, uy) + '.');
+    tex(d.readout, `\\kvtotx = \\kvpx + \\kvwx = 0 + (${tf(vwx)}${MS}) = ${tf(ux)}${MS} \\\\ \\kvtoty = \\kvpy + \\kvwy = ${tf(vp.v)}${MS} + (${tf(vwy)}${MS}) = ${tf(uy)}${MS} \\\\ `
+      + `\\kvtot = \\sqrt{\\kvtotx^2 + \\kvtoty^2} = ${tf(vt)}${MS}`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => T() / 5), draw });
-})();
-
-/* =====================================================================
-   FIGURE 3.42: a velocity and its components. Set the magnitude and the
-   angle and the components follow; run back the other way, they return
-   what was set. A still picture: no cycle, no transport.
-===================================================================== */
-(function () {
-  const d = sim('sim-components', 760);
-  const v = ctl(d.controls, { label: '\\kv', cls: 'velocity', min: 0.2, max: 3, step: 0.01, value: 1.42, unit: 'm/s', dec: 2, aria: 'magnitude of the velocity' });
-  const th = ctl(d.controls, { label: '\\ktheta', cls: 'angle', min: -180, max: 180, step: 0.5, value: 32, unit: '°', dec: 1, aria: 'direction of the velocity, degrees from the x-axis' });
-  const Ox = 640, Oy = 420;
-  function draw() {
-    const { ctx } = begin(d.c);
-    /* a fixed 110 units per m/s: the longest velocity the slider allows, 3 m/s, is 330 units in any direction */
-    const vx = v.v * Math.cos(th.v * DEG), vy = v.v * Math.sin(th.v * DEG), K = 110;
-    const lab = labeller(ctx, 760); lab.block(0, 0, 1400, 96);
-    /* the axes */
-    arrow(ctx, 160, Oy, 1230, Oy, PAL.muted, 2); arrow(ctx, Ox, 740, Ox, 80, PAL.muted, 2);
-    text(ctx, 'x', 1246, Oy, PAL.ink, { size: 22, weight: 600 }); text(ctx, 'y', Ox + 22, 86, PAL.ink, { size: 22, weight: 600 });
-    /* the components along the axes, then the velocity itself */
-    const Hx = Ox + vx * K, Hy = Oy - vy * K;
-    if (Math.abs(vx) > 0.01) { arrow(ctx, Ox, Oy, Hx, Oy, alpha(C('velocity'), 0.6), 3.5); text(ctx, 'vx = ' + sf(vx) + ' m/s', (Ox + Hx) / 2, Oy + (vy >= 0 ? 30 : -30), C('velocity'), { size: 20, weight: 600, align: 'center', bg: alpha(PAL.panel, 0.75) }); }
-    if (Math.abs(vy) > 0.01) { arrow(ctx, Hx, Oy, Hx, Hy, alpha(C('velocity'), 0.6), 3.5); text(ctx, 'vy = ' + sf(vy) + ' m/s', Hx + (vx >= 0 ? 18 : -18), (Oy + Hy) / 2, C('velocity'), { size: 20, weight: 600, align: vx >= 0 ? 'left' : 'right', bg: alpha(PAL.panel, 0.75) }); }
-    arrow(ctx, Ox, Oy, Hx, Hy, C('velocity'), 5);
-    alongLabel(ctx, 'v = ' + sf(v.v) + ' m/s', Ox, Oy, Hx, Hy, C('velocity'), vy >= 0 ? -1 : 1, 22, lab);
-    if (Math.abs(th.v) > 2) angleArc(ctx, Ox, Oy, 58, 0, th.v, C('angle'), 'θ = ' + fmt(th.v, 1) + '°', lab);
-    dot(ctx, Ox, Oy, PAL.ink, true, 5); dot(ctx, Hx, Hy, C('velocity'), true, 7);
-    lab.flush();
-    /* what the numbers say */
-    topline(ctx, 'A velocity of ' + sf(v.v) + ' m/s at ' + fmt(th.v, 1) + '° has components ' + sf(vx) + ' m/s along x and ' + sf(vy) + ' m/s along y.');
-    const back = Math.hypot(vx, vy), calc = Math.abs(vx) < 1e-9 ? null : Math.atan(vy / vx) / DEG;
-    readout(d.readout, `\\kvx = \\kv\\cos\\ktheta = (${sf(v.v)})\\cos ${fmt(th.v, 1)}^\\circ = ${sf(vx)}\\ \\text{m/s}\\qquad \\kvy = \\kv\\sin\\ktheta = (${sf(v.v)})\\sin ${fmt(th.v, 1)}^\\circ = ${sf(vy)}\\ \\text{m/s}`);
-    texNote(d.readout, `\\text{Back again: } \\kv = \\sqrt{\\kvx^2 + \\kvy^2} = ${sf(back)}\\ \\text{m/s}` + (calc === null ? `\\text{, and with } \\kvx = 0 \\text{ the angle is } ${vy > 0 ? '+' : '-'}90^\\circ.`
-      : vx < 0 ? `\\text{, and } \\tan^{-1}(\\kvy/\\kvx) = ${fmt(calc, 1)}^\\circ \\text{ is 180° from } \\ktheta \\text{ because } \\kvx < 0.` : `\\text{, and } \\tan^{-1}(\\kvy/\\kvx) = ${fmt(th.v, 1)}^\\circ.`));
-  }
-  register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
    FIGURE 3.44: the wind found from the total velocity, Example 3.7. The
-   plane's velocity and its velocity over the ground are known; the wind
-   is what has to be added to one to give the other. A still picture.
+   plane's velocity and its velocity over the ground are given; the wind
+   is their difference, taken component by component in the table beside
+   the triangle. A still picture.
 ===================================================================== */
 (function () {
-  const d = sim('sim-wind', 600);
-  const vp = ctl(d.controls, { label: '\\kvp', cls: 'velocity', min: 10, max: 70, step: 0.5, value: 45, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the air' });
-  const vt = ctl(d.controls, { label: '\\kvtot', cls: 'velocity', min: 5, max: 70, step: 0.5, value: 38, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the ground' });
-  const b = ctl(d.controls, { label: '\\text{west of north}', cls: 'angle', min: -60, max: 60, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'direction of the total velocity, degrees west of north' });
+  const d = sim('sim-wind', 760);
+  const vp = ctl(d.controls, { label: '\\kvp', cls: 'velocity', min: 20, max: 50, step: 0.5, value: 45, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the air' });
+  const vt = ctl(d.controls, { label: '\\kvtot', cls: 'velocity', min: 10, max: 50, step: 0.5, value: 38, unit: 'm/s', dec: 1, aria: 'speed of the plane relative to the ground' });
+  const b = ctl(d.controls, { label: '\\text{track}', cls: 'angle', min: -40, max: 40, step: 0.5, value: 20, unit: '°', dec: 1, aria: 'direction of the total velocity, degrees west of north',
+    fmt: (v) => (Math.abs(v) < 0.05 ? 'due north' : fmt(Math.abs(v), 1) + '° ' + (v > 0 ? 'west' : 'east') + ' of north') });
   function draw() {
     const { ctx } = begin(d.c);
-    const a = 90 + b.v, ux = vt.v * Math.cos(a * DEG), uy = vt.v * Math.sin(a * DEG), vwx = ux, vwy = uy - vp.v, vw = Math.hypot(vwx, vwy);
-    /* the triangle at a fixed 6 units per m/s, which holds the tallest the sliders allow, 70 m/s straight
-       north, above the origin; the plane sits at the origin, headed north, as the book draws it */
-    const K = 6, Ox = 460, Oy = 540;
-    const lab = labeller(ctx, 600); lab.block(0, 0, 1400, 96);
-    line(ctx, Ox - 340, Oy, Ox + 340, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 40, Ox, Oy - 60, PAL.muted, 2);
-    text(ctx, 'x (east)', Ox + 350, Oy, PAL.muted, { size: 17 }); lab.add('y (north)', Ox, Oy - 60, 0, -1, PAL.muted, 17, 14);
-    ctx.save(); ctx.translate(Ox, Oy + 34); ctx.rotate(-Math.PI / 2); plane(ctx, 0, 0, PAL.muted, 0.6); ctx.restore();
-    const Hx = Ox, Hy = Oy - vp.v * K, Tx = Ox + ux * K, Ty = Oy - uy * K;
-    arrow(ctx, Ox, Oy, Hx, Hy, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (plane) = ' + sf(vp.v) + ' m/s', Ox, Oy, Hx, Hy, C('velocity'), b.v >= 0 ? 1 : -1, 18, lab);
-    if (vw > 0.05) { arrow(ctx, Hx, Hy, Tx, Ty, alpha(C('velocity'), 0.55), 3); alongLabel(ctx, 'v (wind) = ' + sf(vw) + ' m/s', Hx, Hy, Tx, Ty, C('velocity'), vwy <= 0 ? -1 : 1, 18, lab); }
-    arrow(ctx, Ox, Oy, Tx, Ty, C('velocity'), 5); alongLabel(ctx, 'v (total) = ' + sf(vt.v) + ' m/s', Ox, Oy, Tx, Ty, C('velocity'), b.v >= 0 ? -1 : 1, 20, lab);
-    angleArc(ctx, Ox, Oy, 48, 0, a, C('angle'), fmt(a, 1) + '°', lab);
-    if (Math.abs(b.v) > 2) angleArc(ctx, Ox, Oy, 110, 90, a, C('angle'), fmt(Math.abs(b.v), 1) + (b.v >= 0 ? '° west of north' : '° east of north'), lab);
-    dot(ctx, Ox, Oy, PAL.ink, true, 5);
+    const a = 90 + b.v, ux = vt.v * Math.cos(a * DEG), uy = vt.v * Math.sin(a * DEG), vwx = ux, vwy = uy - vp.v, vw = Math.hypot(vwx, vwy), cv = C('velocity'), ca = C('angle');
+    /* a fixed 11 units per m/s: the fastest plane the slider allows, 50 m/s north, is 550 units above the
+       origin, and the widest track, 50 m/s at 40° from north, 354 units to either side of it */
+    const K = 11, Ox = 440, Oy = 696;
+    const lab = labeller(ctx, 760); lab.block(0, 0, 1400, 100);
+    line(ctx, Ox - 380, Oy, Ox + 380, Oy, PAL.muted, 2); line(ctx, Ox, Oy + 44, Ox, 116, PAL.muted, 2);
+    text(ctx, 'x (east)', Ox + 388, Oy, PAL.muted, { size: 19 }); text(ctx, 'y (north)', Ox + 14, 124, PAL.muted, { size: 19 });
+    const hx = Ox, hy = Oy - vp.v * K, tx = Ox + ux * K, ty = Oy - uy * K, west = ux <= 0, calm = vw < 0.05;
+    /* the wind's two components, from the head of the plane's velocity: across first, then down or up */
+    if (!calm) { line(ctx, hx, hy, tx, hy, alpha(cv, 0.7), 3, [8, 8]); line(ctx, tx, hy, tx, ty, alpha(cv, 0.7), 3, [8, 8]); }
+    arrow(ctx, Ox, Oy, hx, hy, alpha(cv, 0.6), 4);
+    arrow(ctx, Ox, Oy, tx, ty, alpha(cv, 0.6), 4);
+    if (!calm) arrow(ctx, hx, hy, tx, ty, cv, 6);
+    dot(ctx, Ox, Oy, PAL.ink, true, 6);
+    lab.beside({ x1: Ox, y1: Oy, x2: hx, y2: hy }, west ? 'right' : 'left', 'v_p = ' + sf(vp.v) + ' m/s', cv, 22, { offset: 0.45 });
+    lab.beside({ x1: Ox, y1: Oy, x2: tx, y2: ty }, west ? 'left' : 'right', 'v_{tot} = ' + sf(vt.v) + ' m/s', cv, 22, { offset: 0.45 });
+    if (!calm) {
+      if (Math.abs(vwx) * K > 30) lab.add('v_{wx} = ' + sf(vwx) + ' m/s', (hx + tx) / 2, hy, 0, vwy <= 0 ? -1 : 1, cv, 22, 26);
+      if (Math.abs(vwy) * K > 30) lab.add('v_{wy} = ' + sf(vwy) + ' m/s', tx, (hy + ty) / 2, west ? -1 : 1, 0, cv, 22, 22);
+      lab.add('v_w = ' + sf(vw) + ' m/s', (hx + tx) / 2, (hy + ty) / 2, west ? 0.5 : -0.5, vwy <= 0 ? 0.87 : -0.87, cv, 24, 44);
+    }
+    F.angleArc(ctx, { x: Ox, y: Oy }, 60, 0, a * DEG, fmt(a, 1) + '°', lab, ca);
+    if (Math.abs(b.v) > 4) F.angleArc(ctx, { x: Ox, y: Oy }, 190, 90 * DEG, a * DEG, fmt(Math.abs(b.v), 1) + '°', lab, ca);
     lab.flush();
+    /* the subtraction, component by component, as the example does it */
+    const TX = 880, TY = 250, cols = [TX + 250, TX + 420], rowH = 62;
+    title(ctx, 'components (m/s)', TX, TY - 56);
+    text(ctx, 'x (east)', cols[0], TY, PAL.muted, { size: 20, align: 'right' }); text(ctx, 'y (north)', cols[1], TY, PAL.muted, { size: 20, align: 'right' });
+    const rows = [['v_{tot}', sf(vt.v) + ' m/s at ' + fmt(a, 1) + '°', ux, uy], ['− v_p', sf(vp.v) + ' m/s north', 0, vp.v], ['= v_w', 'the wind', vwx, vwy]];
+    rows.forEach(([name, what, x, y], i) => {
+      const yy = TY + rowH * (i + 1) + (i === 2 ? 14 : 0);
+      if (i === 2) line(ctx, TX, yy - rowH / 2 - 6, cols[1] + 10, yy - rowH / 2 - 6, PAL.ink, 2);
+      text(ctx, name, TX + 76, yy - 8, cv, { size: 24, weight: 600, align: 'right' });
+      text(ctx, what, TX + 76, yy + 20, PAL.muted, { size: 17, align: 'right' });
+      [x, y].forEach((q, j) => text(ctx, sf(q), cols[j], yy, cv, { size: i === 2 ? 26 : 24, weight: i === 2 ? 600 : 400, align: 'right' }));
+    });
     /* what the numbers say */
-    topline(ctx, vw < 0.05 ? 'With the two velocities equal, no wind is needed to account for the plane’s track.'
-      : 'The wind that accounts for the plane’s track is ' + sf(vw) + ' m/s toward ' + compass(vwx, vwy) + '.');
-    const calc = Math.abs(vwx) < 1e-9 ? null : Math.atan(vwy / vwx) / DEG;
-    readout(d.readout, `\\kvwx = \\kvtot\\cos ${fmt(a, 1)}^\\circ = ${sf(vwx)}\\ \\text{m/s},\\quad \\kvwy = \\kvtot\\sin ${fmt(a, 1)}^\\circ - \\kvp = ${sf(vwy)}\\ \\text{m/s},\\quad \\kvw = \\sqrt{\\kvwx^2 + \\kvwy^2} = ${sf(vw)}\\ \\text{m/s}`,
-      vw < 0.05 ? 'The plane moves over the ground exactly as it moves through the air, so the air is not moving.'
-        : (calc === null ? 'The wind has no east–west part, so it blows due ' + (vwy < 0 ? 'south' : 'north') : 'The direction is tan⁻¹(' + sf(vwy) + '/' + sf(vwx) + ') = ' + fmt(calc, 1) + '°, measured from the ' + (vwx < 0 ? 'negative' : 'positive') + ' x-axis, so the wind blows ' + compass(vwx, vwy)) + '; it is ' + windWords(vwx, vwy) + '.');
+    topline(ctx, calm ? 'The plane moves over the ground as it moves through the air, so the air is still.'
+      : 'The wind that carries the plane off its heading blows at ' + sf(vw) + ' m/s, ' + compass(vwx, vwy) + '.');
+    const th = Math.abs(vwx) < 1e-9 ? null : Math.atan(vwy / vwx) / DEG;
+    tex(d.readout, calm ? `\\kvw = 0`
+      : `\\kvw = \\sqrt{\\kvwx^2 + \\kvwy^2} = \\sqrt{(${tf(vwx)}${MS})^2 + (${tf(vwy)}${MS})^2} = ${tf(vw)}${MS} \\\\ `
+        + (th === null ? `\\kvwx = 0` : `\\ktheta = \\tan^{-1}(\\kvwy/\\kvwx) = \\tan^{-1}\\left(\\frac{${tf(vwy)}}{${tf(vwx)}}\\right) = ${fmt(th, 1).replace('−', '-')}^\\circ`));
   }
   register(d.fig, { update: () => {}, draw });
 })();
 
 /* =====================================================================
-   FIGURE 3.45: the binoculars dropped from the mast, seen from the ship
-   and from the shore. Finite motion (one fall), so it gets the scrubber.
+   FIGURE 3.45: the binoculars dropped from the mast. One scene and two
+   observers: seen from shore the ship sails on and the binoculars trace
+   a curve; seen from the ship the mast stands still, the shore slides
+   back and the binoculars fall straight. Finite motion (one fall).
 ===================================================================== */
 (function () {
-  const d = sim('sim-binoculars', 600);
-  const vs = ctl(d.controls, { label: '\\kv_{\\text{ship}}', cls: 'velocity', min: 0, max: 15, step: 0.5, value: 6, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the ship' });
-  const h = ctl(d.controls, { label: 'h', cls: 'position', min: 4, max: 20, step: 0.5, value: 12, unit: 'm', dec: 1, onInput: reset, aria: 'height of the mast' });
-  const T = () => Math.sqrt(2 * h.v / G);
-  const cy = cycle(T, 1.4);
+  const d = sim('sim-binoculars', 690);
+  const ob = F.choice(d.controls, { label: 'watch from', options: [{ value: 'shore', label: 'the shore' }, { value: 'ship', label: 'the ship' }], value: 'shore', aria: 'which observer', onInput: () => {} });
+  const vs = ctl(d.controls, { label: '\\kv_{\\text{ship}}', cls: 'velocity', min: 0, max: 12, step: 0.5, value: 6, unit: 'm/s', dec: 1, onInput: reset, aria: 'speed of the ship' });
+  /* the book gives no numbers: a 12.0 m mast is assumed, drawn at a fixed 27 units to the metre, which keeps
+     the fastest ship (18.8 m of travel in the 1.56 s fall) on the stage; velocity arrows at 6 units per m/s */
+  const HM = 12, S = 27, KV = 6, Tf = Math.sqrt(2 * HM / G), DECK = 486, WATER = 510, TOP = DECK - HM * S, XS = 330, LANE = 20;
+  const cy = cycle(() => Tf, 1.4);
   function reset() { cy.reset(); }
-  const DECK = 452, WATER = 474, PT = 90, PB = 560;
-  function draw() {
-    const { ctx } = begin(d.c);
-    const tau = cy.now(), Tc = T(), done = tau >= Tc - 1e-9, drop = 0.5 * G * tau * tau, vyNow = -G * tau, vyLand = -G * Tc, dShip = vs.v * Tc;
-    /* a fixed 13 units to the metre: the tallest mast the slider allows, 20 m, is 260 units, and the
-       farthest the ship moves in that fall, 30 m at 15 m/s, keeps it inside the shore panel */
-    const s = 13, H = h.v * s, k = 4;
-    const panels = [[60, 660, 'seen from the ship'], [740, 1340, 'seen from shore']];
-    panels.forEach(([L, R, name], i) => {
-      const shore = i === 1;
-      title(ctx, name, (L + R) / 2, PT + 22);
-      ctx.save(); ctx.beginPath(); ctx.rect(L, PT + 44, R - L, PB - PT - 44); ctx.clip();
-      ctx.fillStyle = PAL.soft; ctx.fillRect(L, WATER, R - L, PB - WATER);
-      /* the water: still for the observer on shore, sliding past for the one on the ship */
-      for (let j = 0; j < 9; j++) { const base = (j * 151) % 600, xx = L + ((((base - (shore ? 0 : vs.v * tau * s)) % 600) + 600) % 600), yy = WATER + 18 + (j % 3) * 26; streak(ctx, xx, yy, 28, 0, alpha(PAL.muted, 0.7)); }
-      /* the ship: fixed in its own frame, moving in the shore's */
-      const mx = shore ? L + 170 + vs.v * tau * s : (L + R) / 2;
-      if (shore) { ctx.save(); ctx.globalAlpha = 0.22; ship(ctx, L + 170, DECK, H, F.ref('ship')); ctx.restore(); }
-      ship(ctx, mx, DECK, H, F.ref('ship'));
-      /* the observer: on the deck beside the mast, or on a strip of shore */
-      if (shore) { ctx.save(); ctx.fillStyle = PAL.soft2; ctx.fillRect(L, WATER - 2, 70, PB - WATER + 2); ctx.restore(); person(ctx, L + 35, WATER - 2, F.ref('shore-observer'), 1); }
-      else person(ctx, mx + 44, DECK, F.ref('ship-observer'), -1);
-      /* the path so far, and the binoculars on it with their velocity in this frame */
-      ctx.save(); ctx.strokeStyle = PAL.muted; ctx.lineWidth = 3; ctx.setLineDash([8, 8]); ctx.beginPath();
-      for (let j = 0; j <= 40; j++) { const t = (tau * j) / 40, x = shore ? L + 170 + vs.v * t * s : mx, y = DECK - H + 0.5 * G * t * t * s; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
-      ctx.stroke(); ctx.restore();
-      const bx = mx, by = DECK - H + drop * s;
-      dot(ctx, bx, by, F.ref('binoculars'), true, 9);
-      const ax = shore ? vs.v * k : 0, ay = -vyNow * k;
-      if (Math.hypot(ax, ay) > 4) arrow(ctx, bx, by, bx + ax, by + ay, C('velocity'), 4);
-      if (!shore) text(ctx, 'binoculars', mx - 14, DECK - H, F.ref('binoculars'), { size: 17, align: 'right' });   /* named where they start; the readout carries the velocities */
-      ctx.restore();
-    });
-    /* what the numbers say */
-    topline(ctx, done
-      ? (vs.v < 0.05 ? 'The ship is at rest, so both observers see the same straight fall, ' + fmt(Tc, 2) + ' s to the deck at the base of the mast.'
-        : 'The binoculars land at the base of the mast after ' + fmt(Tc, 2) + ' s, having moved ' + fmt(dShip, 1) + ' m forward with the ship.')
-      : 'After ' + fmt(tau, 2) + ' s the binoculars have fallen ' + fmt(drop, 1) + ' m and, seen from shore, moved ' + fmt(vs.v * tau, 1) + ' m forward with the ship.');
-    readout(d.readout, `\\text{from shore: } \\kv = (${fmt(vs.v, 1)},\\ ${sf(vyLand)})\\ \\text{m/s}\\qquad \\text{from the ship: } \\kv = (0,\\ ${sf(vyLand)})\\ \\text{m/s}`);
-    texNote(d.readout, `\\text{Both find } \\kvy = -\\sqrt{2\\kg h} = ${sf(vyLand)}\\ \\text{m/s at the deck and differ only by the ship's ${fmt(vs.v, 1)} m/s across it.}`);
-  }
-  register(d.fig, { update: (dt) => cy.step(dt, () => T() / 5), draw });
-})();
-
-/* =====================================================================
-   FIGURE 3.46: the coin dropped in the airliner, Example 3.8. Relative
-   to the plane it falls straight down; relative to the Earth it keeps
-   the plane's velocity and moves 144 m while it falls. Finite motion.
-===================================================================== */
-(function () {
-  const d = sim('sim-coin', 620);
-  const vp = ctl(d.controls, { label: '\\kv_{\\text{plane}}', cls: 'velocity', min: 50, max: 300, step: 1, value: 260, unit: 'm/s', dec: 0, onInput: reset, aria: 'speed of the plane' });
-  const h = ctl(d.controls, { label: 'h', cls: 'position', min: 0.5, max: 2, step: 0.05, value: 1.5, unit: 'm', dec: 2, onInput: reset, aria: 'height of the drop' });
-  const T = () => Math.sqrt(2 * h.v / G);
-  const cy = cycle(T, 1.4);
-  function reset() { cy.reset(); }
-  /* the cabin of an airliner seen from the aisle: the floor, a wall curving in to the ceiling, two windows
-     and the overhead bins; (l, t, r, b) is the box it fills and `floor` the height of the floor line */
-  function cabin(ctx, l, t, r, b, floor, color) {
-    ctx.save(); ctx.fillStyle = PAL.soft; ctx.strokeStyle = color; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(l, b); ctx.lineTo(l, t + 90); ctx.quadraticCurveTo(l, t, l + 90, t); ctx.lineTo(r - 90, t); ctx.quadraticCurveTo(r, t, r, t + 90); ctx.lineTo(r, b); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = PAL.soft2; ctx.fillRect(l + 30, t + 26, r - l - 60, 44); ctx.strokeRect(l + 30, t + 26, r - l - 60, 44);   /* the overhead bins */
-    ctx.fillStyle = PAL.panel; for (const wx of [l + 80, r - 80]) { ctx.beginPath(); ctx.roundRect(wx - 26, t + 120, 52, 70, 22); ctx.fill(); ctx.stroke(); }   /* the windows */
+  let hits = [];
+  F.hover(d.stage, () => hits);
+  /* a sailing ship, bow to the right: the mast stands on (x, DECK) */
+  function ship(ctx, x, color) {
+    ctx.save(); ctx.lineJoin = 'round';
+    ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x - 176, DECK); ctx.lineTo(x + 196, DECK - 6); ctx.quadraticCurveTo(x + 176, DECK + 30, x + 120, DECK + 36); ctx.lineTo(x - 150, DECK + 36); ctx.quadraticCurveTo(x - 172, DECK + 26, x - 176, DECK); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, TOP); ctx.lineTo(x + 190, DECK - 8); ctx.moveTo(x, TOP); ctx.lineTo(x - 170, DECK - 2); ctx.stroke();   /* the stays */
+    ctx.fillStyle = PAL.panel; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x - 8, TOP + 24); ctx.quadraticCurveTo(x - 60, DECK - 150, x - 150, DECK - 40); ctx.lineTo(x - 8, DECK - 40); ctx.closePath(); ctx.fill(); ctx.stroke();   /* the mainsail */
+    ctx.beginPath(); ctx.moveTo(x + 34, TOP + 62); ctx.lineTo(x + 172, DECK - 30); ctx.quadraticCurveTo(x + 96, DECK - 44, x + 46, DECK - 34); ctx.closePath(); ctx.fill(); ctx.stroke();   /* the jib, on the forestay */
     ctx.restore();
-    line(ctx, l, floor, r, floor, color, 3);
+    line(ctx, x, DECK, x, TOP, color, 6);
+  }
+  function binoculars(ctx, x, y, color) {
+    ctx.save(); ctx.fillStyle = color;
+    for (const dx of [-8, 8]) { ctx.beginPath(); ctx.roundRect(x + dx - 6, y - 12, 12, 24, 4); ctx.fill(); }
+    ctx.fillRect(x - 3, y - 6, 6, 7); ctx.restore();
   }
   function draw() {
     const { ctx } = begin(d.c);
-    const tau = cy.now(), Tc = T(), done = tau >= Tc - 1e-9, drop = 0.5 * G * tau * tau, vy = -G * Tc, R = vp.v * Tc, v = Math.hypot(vp.v, vy), th = Math.atan2(vy, vp.v) / DEG;
-    /* left: the cabin, where the coin falls straight down from the passenger's hand, at a fixed 150 units
-       to the metre (the highest drop the slider allows, 2 m, is 300 units) */
-    title(ctx, 'relative to the plane', 290, 112);
-    const s = 150, FLOOR = 520, top = FLOOR - h.v * s, CX = 330;
-    cabin(ctx, 100, 140, 480, FLOOR, FLOOR, F.ref('airliner')); text(ctx, 'floor', 470, FLOOR + 20, F.ref('airliner'), { size: 17, align: 'right' });
-    F.person(ctx, CX - 70, FLOOR, F.ref('passenger'), { face: 1, s: 3, reach: { x: CX - 6, y: top } });
-    line(ctx, CX, top, CX, FLOOR, PAL.muted, 2, [6, 8]); dot(ctx, CX, top, F.ref('coin'), false, 7);
-    vbracket(ctx, CX + 100, top, FLOOR, PAL.ink, fmt(h.v, 2) + ' m', 1);
-    const cyy = top + drop * s, k = 8;
-    dot(ctx, CX, cyy, F.ref('coin'), true, 9);
-    if (tau > 0.02) arrow(ctx, CX, cyy, CX, cyy + G * tau * k, C('velocity'), 4);
-    /* right: the ground's view, a graph of the path with the plane above it */
-    title(ctx, 'relative to the Earth', 990, 100);
-    /* fixed axes: the farthest the coin can travel is 192 m (300 m/s for the 0.64 s fall from 2 m) */
-    const box = { l: 700, r: 1320, t: 190, b: 380 }, xr = { lo: 0, hi: 200, n: 4 }, yr = { lo: 0, hi: 2, n: 4 };
-    const { X, Y } = axes(ctx, box, [0, xr.hi], [-yr.hi, 0], { xl: 'x (m)', xc: PAL.ink, yl: 'y (m)', yc: PAL.ink, nx: xr.n, ny: yr.n, fx: (q) => fmt(q, 0), fy: (q) => fmt(q, 1) });
-    curve(ctx, (x) => -0.5 * G * (x / vp.v) * (x / vp.v), 0, R, X, Y, PAL.muted, 3, 60);
-    const px = X(vp.v * tau);
-    plane(ctx, px, 124, F.ref('airliner'), 0.55);
-    line(ctx, px, 146, px, Y(-drop) - 12, PAL.muted, 1.5, [4, 8]);
-    dot(ctx, X(0), Y(0), PAL.ink, false, 7); dot(ctx, X(R), Y(-h.v), PAL.ink, true, 7);
-    dot(ctx, px, Y(-drop), F.ref('coin'), true, 9);
-    /* the velocity at the floor, to one scale: the fall is a stub beside the plane's speed */
-    text(ctx, 'the coin’s velocity at the floor, relative to the Earth', 700, 448, PAL.muted, { size: 17 });
-    const kx = 540 / 300, ox = 700, oy = 500, tipx = ox + vp.v * kx, tipy = oy - vy * kx;
-    arrow(ctx, ox, oy, tipx, oy, alpha(C('velocity'), 0.6), 3.5); text(ctx, 'vx = ' + sf(vp.v) + ' m/s', (ox + tipx) / 2, oy - 22, C('velocity'), { size: 18, weight: 600, align: 'center' });
-    arrow(ctx, tipx, oy, tipx, tipy, alpha(C('velocity'), 0.6), 3.5); const far = tipx > 1100; text(ctx, 'vy = ' + sf(vy) + ' m/s', far ? tipx : tipx + 16, far ? oy + 30 : tipy, C('velocity'), { size: 18, weight: 600, align: far ? 'right' : 'left' });   /* under the tip where the stage edge is near */
-    arrow(ctx, ox, oy, tipx, tipy, C('velocity'), 5);
-    text(ctx, 'v = ' + sf(v, 5) + ' m/s at ' + fmt(th, 2) + '°', ox, oy + 48, C('velocity'), { size: 20, weight: 600 });
+    const tau = cy.now(), v = vs.v, m = ob.mix((q) => (q === 'ship' ? 1 : 0)), vS = v * S;
+    const slide = m * vS * (Tf - tau);                       /* how far the shore's things are shifted on the screen */
+    const mast = XS + vS * tau + slide, drop = 0.5 * G * tau * tau, cs = F.ref('ship'), cb = F.ref('binoculars'), cv = C('velocity');
+    /* the sea, still for the observer on shore and sliding back for the one on the ship */
+    ctx.fillStyle = PAL.soft; ctx.fillRect(0, WATER, 1400, 80);
+    for (let j = 0; j < 14; j++) streak(ctx, wrap(((j * 251) % 1400) + slide, 1460) - 40, WATER + 16 + (j % 3) * 22, 40, 0, alpha(PAL.muted, 0.6));
+    /* the ship where it was when the binoculars were let go, seen from shore only */
+    if (m < 0.98 && v > 0.05) { ctx.save(); ctx.globalAlpha = 0.22 * (1 - m); ship(ctx, XS + slide, cs); ctx.restore(); }
+    ship(ctx, mast, cs);
+    F.silhouette(ctx, { x: mast - 120, y: DECK - 2, s: 0.32, face: 1, pose: 'stand', color: F.ref('ship-observer') });
+    /* the shore in the foreground, with its observer, a post and tufts of grass that mark it */
+    ctx.fillStyle = PAL.soft2; ctx.fillRect(0, 590, 1400, 100); line(ctx, 0, 590, 1400, 590, PAL.rule, 2);
+    for (let j = 0; j < 12; j++) { const gx = wrap(j * 173 + 60 + slide, 1500) - 50, gy = 620 + (j % 3) * 22; line(ctx, gx, gy, gx - 6, gy - 14, PAL.muted, 2); line(ctx, gx, gy, gx + 1, gy - 18, PAL.muted, 2); line(ctx, gx, gy, gx + 8, gy - 13, PAL.muted, 2); }
+    const ox = 150 + slide;
+    F.silhouette(ctx, { x: ox, y: 672, s: 0.9, face: 1, pose: 'stand', color: F.ref('shore-observer') });
+    /* the path so far in this observer's frame, and the binoculars on it with their velocity */
+    const bx = mast + LANE, by = TOP + drop * S;
+    ctx.save(); ctx.strokeStyle = cb; ctx.lineWidth = 4; ctx.setLineDash([9, 7]); ctx.beginPath();
+    for (let j = 0; j <= 40; j++) { const t = (tau * j) / 40, x = XS + LANE + vS * t + m * vS * (Tf - t), y = TOP + 0.5 * G * t * t * S; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+    ctx.stroke(); ctx.restore();
+    dot(ctx, XS + LANE + m * vS * Tf, TOP, cb, false, 7);
+    const ax = v * (1 - m) * KV, ay = G * tau * KV;
+    if (ax > 2 && ay > 2) { arrow(ctx, bx, by, bx + ax, by, alpha(cv, 0.55), 3.5); arrow(ctx, bx + ax, by, bx + ax, by + ay, alpha(cv, 0.55), 3.5); }
+    if (Math.hypot(ax, ay) > 6) arrow(ctx, bx, by, bx + ax, by + ay, cv, 5);
+    binoculars(ctx, bx, by, cb);
+    text(ctx, 'observer on shore', ox + 44, 650, F.ref('shore-observer'), { size: 20 });
+    hits = [{ x: bx, y: by, r: 22, name: 'the binoculars' }, { x: mast - 120, y: DECK - 26, r: 28, name: 'the observer on the ship' }, { x: ox, y: 610, r: 60, name: 'the observer on shore' }, { x: mast, y: (TOP + DECK) / 2, r: 30, name: 'the mast, ' + fmt(HM, 1) + ' m tall' }];
     /* what the numbers say */
-    topline(ctx, done ? 'The coin lands after ' + fmt(Tc, 3) + ' s, ' + fmt(h.v, 2) + ' m below where it was dropped and ' + fmt(R, 0) + ' m along the ground, at ' + sf(v, 5) + ' m/s.'
-      : 'After ' + fmt(tau, 2) + ' s the coin has fallen ' + fmt(drop, 2) + ' m and moved ' + fmt(vp.v * tau, 0) + ' m along the ground, staying directly below the passenger.');
-    readout(d.readout, `\\kv = \\sqrt{\\kvx^2 + \\kvy^2} = \\sqrt{(${sf(vp.v)})^2 + (${sf(vy)})^2} = ${sf(v, 5)}\\ \\text{m/s}\\qquad \\ktheta = \\tan^{-1}(\\kvy/\\kvx) = \\tan^{-1}(${sf(vy)}/${sf(vp.v)}) = ${fmt(th, 2)}^\\circ`,
-      'Relative to the plane the coin’s velocity at the floor is ' + sf(vy) + ' m/s alone, straight down, the same as if it had been dropped from rest on the ground.');
+    const ship1 = ob.value === 'ship';
+    topline(ctx, v < 0.05 ? 'The ship is at rest, so both observers see the binoculars fall straight down the ' + fmt(HM, 1) + ' m mast.'
+      : ship1 ? 'Seen from the ship, the binoculars fall straight down the ' + fmt(HM, 1) + ' m mast and land at its base.'
+        : 'Seen from shore, the binoculars move ' + fmt(v * Tf, 1) + ' m forward with the ship as they fall, and land at the base of the mast.');
+    tex(d.readout, (ship1 ? `\\kvx = 0` : `\\kvx = \\kv_{\\text{ship}} = ${fmt(v, 1)}${MS}`)
+      + ` \\\\ \\kvy = -\\kg t = -(9.80\\ \\text{m/s}^2)(${fmt(tau, 2)}\\ \\text{s}) = ${tf(-G * tau)}${MS}`);
+  }
+  register(d.fig, { update: (dt) => cy.step(dt, () => Tf / 5), draw });
+})();
+
+/* =====================================================================
+   FIGURE 3.46: the coin dropped in the airliner, Example 3.8. Above, the
+   flight relative to the Earth drawn to scale: the airliner covers 144 m
+   while the coin falls 1.50 m inside it. Below, the cabin enlarged, where
+   the coin falls straight down, and the coin's velocity at the floor
+   relative to the Earth, to one scale. Finite motion.
+===================================================================== */
+(function () {
+  const d = sim('sim-coin', 730);
+  const vp = ctl(d.controls, { label: '\\kv_{\\text{plane}}', cls: 'velocity', min: 100, max: 280, step: 1, value: 260, unit: 'm/s', dec: 0, onInput: reset, aria: 'speed of the plane' });
+  const h = ctl(d.controls, { label: 'h', cls: 'position', min: 1, max: 1.8, step: 0.05, value: 1.5, unit: 'm', dec: 2, onInput: reset, aria: 'height of the drop' });
+  const T = () => Math.sqrt(2 * h.v / G);
+  const cy = cycle(T, 1.4);
+  function reset() { cy.reset(); }
+  let hits = [];
+  F.hover(d.stage, () => hits);
+  /* an airliner seen from the side, nose to the right, centred on (x, y) and 240 long: 40 m at the strip's scale */
+  function airliner(ctx, x, y, color) {
+    ctx.save(); ctx.translate(x, y); ctx.fillStyle = PAL.panel; ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(-96, -12); ctx.lineTo(-132, -46); ctx.lineTo(-112, -46); ctx.lineTo(-70, -12); ctx.closePath(); ctx.fill(); ctx.stroke();   /* the fin */
+    ctx.beginPath(); ctx.moveTo(-120, -8); ctx.quadraticCurveTo(-116, -12, -96, -12); ctx.lineTo(84, -12); ctx.quadraticCurveTo(116, -10, 120, 2); ctx.quadraticCurveTo(112, 12, 84, 12); ctx.lineTo(-84, 12); ctx.quadraticCurveTo(-110, 4, -120, -8); ctx.closePath(); ctx.fill(); ctx.stroke();   /* the fuselage */
+    ctx.beginPath(); ctx.moveTo(24, 8); ctx.lineTo(-26, 34); ctx.lineTo(-44, 34); ctx.lineTo(-12, 8); ctx.closePath(); ctx.fill(); ctx.stroke();   /* the near wing */
+    ctx.restore();
+  }
+  /* the cabin seen across the aisle: floor, a wall curving to the ceiling, a window and an overhead bin */
+  function cabin(ctx, l, t, r, b, color) {
+    ctx.save(); ctx.fillStyle = PAL.soft; ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(l, b); ctx.lineTo(l, t + 80); ctx.quadraticCurveTo(l, t, l + 80, t); ctx.lineTo(r - 80, t); ctx.quadraticCurveTo(r, t, r, t + 80); ctx.lineTo(r, b); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = PAL.soft2; ctx.beginPath(); ctx.roundRect(l + 26, t + 22, 150, 40, 8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = PAL.panel; ctx.beginPath(); ctx.roundRect(l + 56, t + 104, 50, 68, 22); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    line(ctx, l, b, r, b, color, 4);
+  }
+  function draw() {
+    const { ctx } = begin(d.c);
+    const tau = cy.now(), Tc = T(), drop = 0.5 * G * tau * tau, vy = -G * Tc, Rg = vp.v * Tc, v = Math.hypot(vp.v, vy), th = Math.atan2(vy, vp.v) / DEG;
+    const cl = F.ref('airliner'), cc = F.ref('coin'), cv = C('velocity'), cx = C('position');
+    /* relative to the Earth, to scale: 6 units to the metre, which holds the farthest the sliders reach, 179 m */
+    const g = 6, X0 = 190, YR = 218, X = (mm) => X0 + mm * g;
+    title(ctx, 'relative to the Earth, to scale', 40, 132);
+    ctx.save(); ctx.globalAlpha = 0.25; airliner(ctx, X0, YR + 4, cl); ctx.restore();
+    const px = X(vp.v * tau);
+    airliner(ctx, px, YR + 4, cl);
+    ctx.save(); ctx.strokeStyle = cc; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X0, YR - 4);
+    for (let j = 1; j <= 30; j++) { const t = (tau * j) / 30; ctx.lineTo(X(vp.v * t), YR - 4 + 0.5 * G * t * t * g); } ctx.stroke(); ctx.restore();
+    dot(ctx, X0, YR - 4, cc, false, 5); dot(ctx, px, YR - 4 + drop * g, cc, true, 5);
+    hbracket(ctx, X0, X(Rg), 292, cx, fmt(Rg, 0) + ' m along the ground in ' + fmt(Tc, 3) + ' s', { side: 'below', H: 730 });
+    line(ctx, X0, YR + 40, X0, 282, alpha(PAL.ink, 0.35), 2, [4, 8]); line(ctx, X(Rg), YR + 40, X(Rg), 282, alpha(PAL.ink, 0.35), 2, [4, 8]);
+    /* relative to the plane: the cabin at 140 units to the metre, the coin let go from the passenger's hand */
+    const s = 140, FLOOR = 700, top = FLOOR - h.v * s, PX = 250, CX = 312, SP = (1.72 * s) / 150;
+    title(ctx, 'relative to the plane', 40, 396);
+    cabin(ctx, 60, 420, 520, FLOOR, cl);
+    F.silhouette(ctx, { x: PX, y: FLOOR, s: SP, face: 1, pose: 'stand', color: F.ref('passenger'), hands: [{ x: (CX - 8 - PX) / SP, y: (top + 6 - FLOOR) / SP }, { x: -6, y: -76 }] });
+    line(ctx, CX, top, CX, FLOOR, alpha(PAL.ink, 0.4), 2, [6, 8]); dot(ctx, CX, top, cc, false, 8);
+    vbracket(ctx, CX + 96, top, FLOOR, cx, fmt(h.v, 2) + ' m', 1, { H: 730 });
+    const cyy = top + drop * s;
+    if (tau > 0.01) arrow(ctx, CX, cyy, CX, cyy + G * tau * 11, cv, 5);
+    dot(ctx, CX, cyy, cc, true, 10);
+    /* the coin's velocity at the floor relative to the Earth, to one scale: the fall is a stub beside the plane's speed */
+    const kx = 2.3, ox = 650, oy = 560, tipx = ox + vp.v * kx, tipy = oy - vy * kx;
+    title(ctx, 'the coin’s velocity at the floor, relative to the Earth', 650, 440);
+    arrow(ctx, ox, oy, tipx, tipy, cv, 6);
+    line(ctx, ox, oy, tipx, oy, alpha(cv, 0.6), 2.5, [8, 8]);
+    text(ctx, 'v_x = ' + sf(vp.v) + ' m/s', (ox + tipx) / 2, oy - 30, cv, { size: 22, weight: 600, align: 'center' });
+    text(ctx, 'v_y = ' + sf(vy) + ' m/s', tipx + 14, oy + 34, cv, { size: 22, weight: 600, align: 'right' });
+    text(ctx, 'v = ' + sf(v, 5) + ' m/s, ' + fmt(Math.abs(th), 2) + '° below the horizontal', ox, oy + 84, cv, { size: 22, weight: 600 });
+    hits = [{ x: px, y: YR + 4, r: 60, name: 'the airliner' }, { x: X0, y: YR + 4, r: 60, name: 'the airliner when the coin was let go' }, { x: CX, y: cyy, r: 20, name: 'the coin' }, { x: PX, y: FLOOR - 130, r: 60, name: 'the passenger' }];
+    /* what the numbers say */
+    topline(ctx, 'While the coin falls ' + fmt(h.v, 2) + ' m to the floor, the plane carries it ' + fmt(Rg, 0) + ' m over the ground.');
+    tex(d.readout, `\\kv = \\sqrt{\\kvx^2 + \\kvy^2} = \\sqrt{(${tf(vp.v)}${MS})^2 + (${tf(vy)}${MS})^2} = ${tf(v, 5)}${MS} \\\\ \\ktheta = \\tan^{-1}(\\kvy/\\kvx) = \\tan^{-1}(${tf(vy)}/${tf(vp.v)}) = ${fmt(th, 2).replace('−', '-')}^\\circ`);
   }
   register(d.fig, { update: (dt) => cy.step(dt, () => T() / 5), draw });
 })();
 
 /* =====================================================================
-   FIGURE: the five galaxies of problems 12 and 13, copied faithfully
-   with the book's numbers. No sliders, no motion.
+   SIM: the five galaxies of problems 12 and 13, with the book's numbers.
+   The galaxies stay where they are; the choice names the galaxy they are
+   seen from, and each velocity becomes the velocity relative to it. In
+   the graph below every observer finds the others on one line through
+   themself. Opens on the book's view, from the Milky Way.
 ===================================================================== */
 (function () {
-  const d = sim('fig-galaxies', 320);
-  const ROWS = [[1, '300 Mly', -4500, 190], [2, '150 Mly', -2200, 470], [3, '', 0, 700], [4, '190 Mly', 2830, 930], [5, '450 Mly', 6700, 1200]];
+  const d = sim('fig-galaxies', 740);
+  const POS = [-300, -150, 0, 190, 450], VEL = [-4500, -2200, 0, 2830, 6700], NAME = ['Galaxy 1', 'Galaxy 2', 'the Milky Way', 'Galaxy 4', 'Galaxy 5'], SHORT = ['Galaxy 1', 'Galaxy 2', 'MW', 'Galaxy 4', 'Galaxy 5'];
+  const ob = F.choice(d.controls, { label: 'seen from', options: SHORT.map((s, i) => ({ value: String(i), label: i === 2 ? 'Milky Way' : s })), value: '2', aria: 'the galaxy the others are seen from', onInput: () => {} });
+  /* the least-squares line through the origin of the book's four pairs, 14.9 km/s for each Mly */
+  const HUB = POS.reduce((a, p, i) => a + p * VEL[i], 0) / POS.reduce((a, p) => a + p * p, 0);
+  function galaxy(ctx, x, y, color) {
+    ctx.save(); ctx.fillStyle = alpha(color, 0.16); ctx.beginPath(); ctx.ellipse(x, y, 58, 22, -0.35, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = alpha(color, 0.32); ctx.beginPath(); ctx.ellipse(x, y, 32, 12, -0.35, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  }
   function draw() {
     const { ctx } = begin(d.c);
-    line(ctx, 60, 165, 1340, 165, PAL.rule, 1.5);
-    ROWS.forEach(([n, dist, vel, x]) => {
-      const cg = n === 3 ? F.ref('milky-way') : PAL.ink;
-      text(ctx, n === 3 ? 'Galaxy 3' : 'Galaxy ' + n, x, 62, cg, { size: 22, weight: 600, align: 'center' });
-      text(ctx, n === 3 ? 'MW' : dist, x, 92, n === 3 ? cg : C('position'), { size: 20, align: 'center' });
-      galaxy(ctx, x, 165, cg);
-      if (vel) {
-        const len = vel * 0.026; arrow(ctx, x, 235, x + len, 235, C('velocity'), 4);
-        text(ctx, 'v' + '₁₂₃₄₅'[n - 1] + ' = ' + (vel < 0 ? '−' : '') + Math.abs(vel) + ' km/s', x, 278, C('velocity'), { size: 20, weight: 600, align: 'center' });
-      }
+    const o = +ob.value, po = ob.mix((q) => POS[+q]), vo = ob.mix((q) => VEL[+q]), cv = C('velocity'), cx = C('position'), cm = F.ref('milky-way');
+    const XG = (p) => 240 + (p + 300) * 1.2, YG = 232, KA = 0.018;
+    line(ctx, 40, YG, 1360, YG, PAL.rule, 1.5);
+    POS.forEach((p, i) => {
+      const x = XG(p), col = i === 2 ? cm : PAL.ink, me = i === o, rel = VEL[i] - vo, dist = Math.abs(p - po);
+      text(ctx, SHORT[i], x, 122, col, { size: 22, weight: 600, align: 'center' });
+      text(ctx, me ? 'the observer' : fmt(dist, 0) + ' Mly', x, 154, me ? PAL.ink : cx, { size: 20, weight: me ? 600 : 400, align: 'center' });
+      galaxy(ctx, x, YG, col);
+      if (me) { ctx.save(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.ellipse(x, YG, 70, 34, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+      if (Math.abs(rel) * KA > 14) arrow(ctx, x, YG + 62, x + rel * KA, YG + 62, cv, 5);
+      if (!me) text(ctx, sf(Math.round(rel / 10) * 10, 4) + ' km/s', x, YG + 100, cv, { size: 20, weight: 600, align: 'center' });
     });
+    /* the same galaxies as points: velocity against position, both relative to the observer */
+    const box = { l: 190, r: 1300, t: 400, b: 660 };
+    const ax = axes(ctx, box, [-800, 800], [-12000, 12000], { xl: 'position relative to the observer (Mly)', xc: cx, yl: 'velocity (km/s)', yc: cv, nx: 8, ny: 4, fx: (q) => sf(q, 4), fy: (q) => sf(q, 5) });
+    F.plot(ctx, ax, (q) => HUB * q, alpha(PAL.ink, 0.5), { w: 2.5, dash: [10, 10] });
+    POS.forEach((p, i) => { const col = i === 2 ? cm : PAL.ink; dot(ctx, ax.X(p - po), ax.Y(VEL[i] - vo), col, i !== o, i === o ? 11 : 9); });
+    F.legend(ctx, ax, [{ s: 'velocity in proportion to distance', color: alpha(PAL.ink, 0.5), dash: [10, 10], w: 2.5 }, { s: 'the observer', kind: 'dot', color: PAL.ink, hollow: true }], { corner: 'tl', size: 19 });
+    /* what the numbers say */
+    topline(ctx, 'Seen from ' + NAME[o] + ', every other galaxy moves away, and the farther it is, the faster it goes.');
+    const j = o <= 2 ? 4 : 0, sub = (i) => (i === 2 ? '\\text{MW}' : String(i + 1));
+    tex(d.readout, `\\text{${NAME[j]} relative to ${NAME[o]}: }\\ \\kv_{${sub(j)}} - \\kv_{${sub(o)}} = ${VEL[j]}\\ \\text{km/s} - ${VEL[o] < 0 ? '(' + VEL[o] + '\\ \\text{km/s})' : VEL[o] + '\\ \\text{km/s}'} = ${VEL[j] - VEL[o]}\\ \\text{km/s}`);
   }
   register(d.fig, { update: () => {}, draw });
 })();

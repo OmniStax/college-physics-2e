@@ -37,6 +37,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -67,6 +70,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "height rounding and note"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: every story drawn, magnified story, range of the guesses"
     }
    ]
   },
@@ -103,6 +110,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "end zone and person labels, note"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: larger scale, the two guesses marked, volume and height readout"
     }
    ]
   }

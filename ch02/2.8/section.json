@@ -41,6 +41,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -50,36 +53,16 @@
  "figures": [
   {
    "id": "sim-line",
-   "kind": "sim",
+   "kind": "photo",
    "number": "2.44",
-   "originals": [
-    "/media/ch02/Figure_02_07_01.jpg"
-   ],
-   "original_caption": "A straight-line graph. The equation for a straight line is y = mx + b.",
    "widths": [
     300
    ],
    "draws": [],
    "ai": [
     {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "points clipped to the graph, note dropped"
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   },
@@ -119,6 +102,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "round ticks, times split at 4 s, labels, note macros"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "points dragged on the line, book's ticks, readout, caption cut"
     }
    ]
   },
@@ -159,6 +146,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "v0 label clear of the axis below"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: graphs fill the stage, tangents leave points, P and Q"
     }
    ]
   },
@@ -207,6 +198,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "tangent reaches Q, labels off Q, note cut"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "Q and ends dragged, velocity column fills in, labels fixed"
     }
    ]
   },
@@ -246,6 +241,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "notes that repeated headline and caption dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "curve fitted to the book's graph, ends kept on the graph, drag"
     }
    ]
   }

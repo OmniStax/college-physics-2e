@@ -39,6 +39,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -126,42 +129,16 @@
   },
   {
    "id": "sim-mower",
-   "kind": "sim",
+   "kind": "photo",
    "number": "4.7",
-   "originals": [
-    "/media/ch04/Figure_04_03_03.jpg"
-   ],
-   "original_caption": "The net force on a lawn mower is 51 N to the right. At what rate does the lawn mower accelerate to the right?",
    "widths": [
     350
    ],
-   "draws": [
-    "force",
-    "acceleration",
-    "velocity",
-    "position",
-    "mass"
-   ],
+   "draws": [],
    "ai": [
     {
-     "model": "claude-opus-5",
-     "effort": "high",
-     "part": "built"
-    },
-    {
-     "model": "claude-fable-5-1",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "low",
-     "part": "built"
-    },
-    {
-     "model": "claude-opus-5-5",
-     "effort": "high",
-     "part": "scene scale so arrows stay on the stage, note dropped"
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   },
@@ -1000,20 +977,6 @@
    "label": "the player",
    "figures": [
     "sim-mass"
-   ]
-  },
-  {
-   "id": "mower",
-   "label": "the lawn mower",
-   "figures": [
-    "sim-mower"
-   ]
-  },
-  {
-   "id": "pusher",
-   "label": "the person pushing the mower",
-   "figures": [
-    "sim-mower"
    ]
   },
   {

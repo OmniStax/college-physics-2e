@@ -93,6 +93,59 @@ id · replaces · concepts · what moves · sliders · headline · graph · 3D
    example mentions) comes to at the set thickness. On reduced motion
    the finished pile is drawn. Revised 2026-09-28: still, no transport. The pile rises as the figure's arrival on first view, and a slider redraws at once; 28 trillion, the 2021 debt the example names, is a special value on the amount.
 
+Figure re-examination, 2026-11-16 (Claude Fable 5.2). Both sims replace no
+book image (Example 1.3 has none; Example 1.4 has only the photograph of a
+bank stack, kept as Figure 1.25). Both were small drawings on scales fixed
+for ranges the examples never reach, and both are rebuilt. The lines above
+are superseded by these:
+
+1. `sim-building` · Sim · approximation, unit-conversion · value add: the
+   scaling step (person to story to building) drawn, every story visible,
+   and how far the answer moves when the two guesses move · arrows: none ·
+   still (an estimate has no time in it; the stories stack once on first
+   view) · stories (10 to 45, default 39, ink), height of a person (1.5 to
+   2.0 m, default 2.0, position), persons per story (1.5 to 2.5, step 0.5,
+   default 2, ink) · "39 stories of about 4 m each make a building about
+   156 m tall." · none · 2D.
+   works: parts: one story magnified (84 units per metre) holding the
+   persons that make it up, the first solid and the rest faint, a bracket
+   for the person and one for the story; dashed guides from that story to
+   the building's ground story; the building at one fixed scale (225 m in
+   440 units), every story a floor line, every tenth numbered; a person at
+   the building's scale beside it; the height bracket; a bar from the lowest
+   to the highest height the two guesses give for this many stories (N × 1.5
+   × 1.5 to N × 2.0 × 2.5 m) with the present estimate dotted on it · flow:
+   none · must hold: opens on the book's numbers, 2 m × 2 persons × 39
+   stories = 156 m; the building's drawn height, the bracket and the dot
+   agree; 39 floor lines countable in tens; the bar reads 88 m to 195 m at
+   39 stories; nothing leaves the stage at 45 stories of 5 m · read off the
+   image: no image; the numbers are Example 1.3's.
+2. `sim-trillion` · Sim · approximation, order-of-magnitude,
+   unit-conversion, sig-figs-multiplication · value add: the pile seen
+   against a person and against the two friends' guesses, 3 in. and 10 ft,
+   which is the question the example asks · arrows: none · still (the pile
+   rises once on first view) · amount (0.1 to 1.5 trillion dollars, default
+   1.0, ink), stack thickness (0.30 to 0.60 in., default 0.50, position) ·
+   "1.0 trillion dollars in $100 bills covers the field to about 139 in.,
+   which is 46 times the 3 in. guess and 1.2 times the 10 ft guess." · none
+   · 2D.
+   works: parts: the field in side view, 100 yd between shaded end zones,
+   ticked every 10 yd; a scale in feet, 0 to 22 ft, fixed (the tallest pile
+   the sliders give is 20.8 ft); the pile between the end zones; two dashed
+   levels at 3 in. and 10 ft; a person 6 ft tall in the end zone; a line
+   saying heights are drawn 6 times larger than lengths (20 units per foot
+   up, 10/3 along) · flow: none · must hold: height = stacks × 6 in. × 3 in.
+   × thickness / 6,480,000 in.² (139 in., 11.6 ft at the example's numbers);
+   the pile top sits just above the 10 ft level and far above the 3 in.
+   one; the person is 6 ft on the same scale; the readout gives volume and
+   height each on one line; the note gives the example's one-figure answer,
+   100 in. and 8 ft · read off the image: none (the photograph shows one
+   stack); numbers are Example 1.4's. The example divides by the area
+   rounded to 6 × 10⁶ in.² and prints 1.33 × 10² in. before rounding to
+   1 × 10² in.; the figure divides by 6.48 × 10⁶ in.² and prints the
+   one-figure value in its note. The 28 trillion mark went: on a scale that
+   shows a person it is 324 ft, off the stage.
+
 Both sims draw in ink: nothing in the section is a typed quantity, so
 `draws` is `[]` for every figure and the page binds no colour.
 

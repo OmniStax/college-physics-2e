@@ -52,51 +52,56 @@ acceleration is a vector and so tags `acceleration` (2.4) as well.
 
 id · replaces · concepts · what moves · sliders · headline · graph · 3D
 
-1. `sim-vector-scalar` · new · vector, scalar · still: the figure answers
-   its sliders and nothing else. Left half, a vector: the jet of Figure
-   2.6 on a strip with a velocity arrow drawn from its nose whose length
-   is proportional to the speed and which points east or west by the sign;
-   the speed, the length of the arrow alone, is written beside it in ink.
-   Right half, a scalar: a thermometer scale from −40 ºC to 40 ºC with a
-   dot at the reading and the reading written beside it; a negative value
-   sits below the zero mark, a point on a scale and not a direction, and
-   nothing is drawn as an arrow · $\kv$ in km/h (−120 to 120, step 5,
-   default 90, velocity hue, east positive); temperature in ºC (−40 to 40,
-   step 1, default 20, ink) · "a velocity of 90 km/h east is an arrow 90
-   km/h long pointing east, and a temperature of 20 ºC is a point on a
-   scale with no direction" · none · no. Readout: $\kv = +90\ \text{km/h}$
-   (east) beside $\text{temperature} = 20\ \text{ºC}$; small line: the
-   length of the arrow alone, 90 km/h, is the speed, which is a scalar.
-   Draws velocity.
-2. `sim-axes` · replaces Figure 2.7 (the axes with right and up positive)
-   · coordinate-system, vector · still: which direction is called
-   positive is a choice and has no time in it, so a drawing that answers
-   the two sliders is all the idea needs, and the figure carries no
-   transport. The jet stands on a strip at the end of a flight to the
-   left. Above the strip is the coordinate line with the usual choice,
-   right positive, and below it the same line with left positive, as is
-   convenient for this jet, and the origin is the same point on both.
-   Each line carries the jet's starting position as a hollow mark, the
-   position it reached as a filled mark and its displacement as an arrow,
-   with the numbers under each convention written in the position hue.
-   Beneath the two lines stands the pair of axes the book draws under
-   this number, with +x to the right, −x to the left, +y up and −y down,
-   so the figure carries the vertical convention the book states as well
-   as the horizontal one · distance flown in km (0.5 to 8.0, step 0.5,
-   default 5.0, ink); origin, where the zero of the coordinate line is
-   placed, in km from the left edge of the strip (0 to 10, step 0.5,
-   default 9.0, so that on load the zero is at the jet's starting point,
-   ink). The strip is a fixed 0 to 10 km and never rescales · "Flying 5.0
-   km to the left gives Δx = −5.0 km with right positive and +5.0 km with
-   left positive." · none · 2D. Labels on: the axis titles, the four
-   direction marks and the two positions, none of them colliding at any
-   slider value. Readout: $\kdx = \kx - \kxo = -5.0\ \text{km}$ with right
-   positive and $+5.0\ \text{km}$ with left positive; small line: moving
-   the origin changes the positions but not the displacement, and
-   choosing the other direction as positive turns each of the three
-   numbers into its opposite, which is said that way because at the
-   default origin the starting position is zero and zero has no sign to
-   change. Draws position.
+1. `sim-vector-scalar` · Sim · vector, scalar · value add: the same
+   minus sign seen on a vector and on a scalar, and a scalar (speed) that
+   the vector's direction never touches · arrows: symbolic (the velocity
+   vector) · still: it answers its sliders · $\kv$ in km/h (−120 to 120,
+   step 5, default 90, velocity, east positive); temperature in °C (−40 to
+   40, step 1, default −20, temperature). Opens on the book's own numbers,
+   a velocity of 90 km/h east and a −20 °C temperature · headline "A
+   velocity of +90 km/h is an arrow pointing east; a temperature of −20 °C
+   is a level below zero, with no direction." · none · 2D. Readout, one
+   formula: speed = |v| = |+90 km/h| = 90 km/h. Draws velocity,
+   temperature.
+   works: parts (the jet on a strip with west and east named; its velocity
+   arrow from the nose, 3.2 units per km/h, with a bracket under it giving
+   its length; a speed dial 0 to 120 km/h under the jet whose needle reads
+   |v|; a thermometer with bulb, liquid column and a scale −40 to 40 °C,
+   the zero mark dashed across the tube) · flow (nothing moves by itself)
+   · must hold (arrow length proportional to |v| and on the strip at ±120;
+   arrow turns with the sign while the dial does not change; no arrow at
+   0; the temperature is never an arrow; the liquid top sits at the
+   reading, below the zero mark when negative; labels clear at every
+   setting) · read off the image (no book image; the text's numbers: 90
+   km/h east, 20 °C and −20 °C, a 90 km/h speed limit).
+2. `sim-axes` · replaces Figure 2.7 (the axes with +x right, −x left, +y
+   up, −y down) · coordinate-system, vector · value add: the book's axes
+   only name the usual choice; here one motion is read under the usual
+   choice and under the opposite one at once, for the two cases the text
+   names (the jet flying left, a falling object), and the zero can be
+   moved · arrows: symbolic (the displacement) · still: a choice of sign
+   and of zero has no time in it · motion (choice: jet flying left, ball
+   falling); distance (0.5 to 8.0, step 0.5, default 5.0, km or m, ink);
+   zero, where the zero sits measured from the start along the motion (−1
+   to 9, step 0.5, default 0 = at the start, ink) · headline "Flying 5.0
+   km to the left is Δx = −5.0 km with right positive and +5.0 km with
+   left positive." · none · 2D. Readout: the two substitutions of Δx = x −
+   x₀ (Δy = y − y₀ for the ball), one line each. Draws position.
+   works: parts (jet: a strip with the jet, a coordinate line above with
+   right positive and one below with left positive, each with its
+   arrowhead at the positive end and the book's +x and −x at its ends,
+   ticks in its own coordinate, the start hollow, the position filled, the
+   displacement arrow between, and x₀, x and Δx written with their signs;
+   a dashed line joins the two zeros. ball: the ball and its start above a
+   ground line, a vertical line with up positive and one with down
+   positive, ends +y and −y, the same marks) · flow (none) · must hold
+   (the two lines share the zero; the displacement arrow points the way
+   the thing moved on both lines whatever its sign; the two Δ are equal
+   and opposite; moving the zero changes x₀ and x and not Δ; ticks fall on
+   whole numbers of each line's coordinate at every zero; labels clear at
+   distance 0.5 and 8 and zero −1 and 9) · read off the image (a cross of
+   two axes, arrowheads on the right and upper ends only, labelled +x
+   right, −x left, +y up, −y down; no numbers).
 
 Photographs, one:
 
@@ -110,8 +115,7 @@ Sketch, one:
 - Figure 2.7, the axes with +x to the right and +y up: **replaced** by
   `sim-axes`, which keeps the number 2.7, the book's image
   (`media/ch02/Figure_02_02_00b.jpg`) as its original and the book's
-  caption. The sim shows the horizontal line only; the vertical
-  convention of the book's figure is stated in its caption.
+  caption. The jet shows the book's ±x and the falling ball its ±y.
 
 Figures that serve exercises: none.
 
@@ -123,6 +127,16 @@ direction does to a position and a displacement, and the feather's
 velocity and acceleration are ideas of 2.3 and 2.4. None built.
 
 Figure pass, 2026-09-14 (Claude Fable 5.1). Both figures stood up to their screenshots at every slider extreme in both themes; the only change is the degree sign, which the thermometer wrote with the ordinal mark and now writes as °C.
+
+Figure re-examination, 2026-11-16 (Claude Fable 5.2). Both rebuilt.
+`sim-vector-scalar` was a small drawing under sentences of canvas text
+with a readout joining two statements; it now fills its stage, opens on
+the book's 90 km/h east and −20 °C, and adds the speed dial, the scalar
+that stays put when the arrow turns. `sim-axes` had the book's cross
+bolted under the lines with two sentences of text and an origin slider in
+kilometres from the strip's edge; the cross is gone, the line ends carry
+its +x, −x, +y, −y, the falling object of the text is a second motion,
+and the zero is set from the start of the motion.
 
 ## Exercises
 
@@ -159,10 +173,10 @@ Figure pass, 2026-09-14 (Claude Fable 5.1). Both figures stood up to their scree
 
 ## Colour
 
-The page binds velocity, from the arrow of the vector sim and its
-slider, and position, from the coordinate sim's positions and
-displacement. The distance flown, the place of the origin and the
-temperature are untyped and in ink. No new hue, no new macro.
+The page binds velocity, from the arrow, the dial and the slider of the
+vector sim, temperature, from its thermometer, and position, from the
+coordinate sim's positions and displacement. The distance moved and the
+place of the zero are untyped and in ink. No new hue, no new macro.
 
 ## Wanted at chapter level
 

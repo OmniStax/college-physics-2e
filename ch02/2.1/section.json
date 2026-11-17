@@ -31,6 +31,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -38,19 +41,29 @@
  "exercise_notes": "Bloom levels and concept tags are AI-generated. Answers come from the book's answer key; problems 2 (path B) and 4 (path D) have no keyed answer and are left out. Suggested approaches for open questions are AI-written and marked. Numeric answers accept 2% tolerance.",
  "figures": [
   {
+   "id": "fig-professor",
+   "kind": "photo",
+   "number": "2.3",
+   "widths": [
+    300
+   ],
+   "draws": [],
+   "ai": [
+    {
+     "model": "claude-fable-5-2",
+     "part": "Figure 2.3 unfolded from the sim and kept as the book's image"
+    }
+   ]
+  },
+  {
    "id": "sim-displacement",
    "kind": "sim",
-   "number": "2.3",
-   "folds": [
-    "2.4"
-   ],
+   "number": "2.4",
    "originals": [
-    "/media/ch02/Figure_02_01_01.jpg",
     "/media/ch02/Figure_02_01_02.jpg"
    ],
-   "original_caption": "(Figure 2.3) A professor paces left and right while lecturing. Her position relative to Earth is given by x. The +2.0 m displacement of the professor relative to Earth is represented by an arrow pointing to the right. (Figure 2.4) A passenger moves from his seat to the back of the plane. His location relative to the airplane is given by x. The -4.0-m displacement of the passenger relative to the plane is represented by an arrow toward the rear of the plane. Notice that the arrow representing his displacement is twice as long as the arrow representing the displacement of the professor (he moves twice as far) in Figure 2.3.",
+   "original_caption": "A passenger moves from his seat to the back of the plane. His location relative to the airplane is given by $x$. The $-4.0\\text{-m}$ displacement of the passenger relative to the plane is represented by an arrow toward the rear of the plane. Notice that the arrow representing his displacement is twice as long as the arrow representing the displacement of the professor (he moves twice as far) in Figure 2.3.",
    "widths": [
-    300,
     455
    ],
    "draws": [
@@ -66,6 +79,10 @@
      "model": "claude-opus-5-5",
      "effort": "low",
      "part": "built"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: one walk read in two frames, the airplane's and the ground's"
     }
    ]
   },
@@ -102,6 +119,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "rewritten: bicycle sprite with F.silhouette rider on a road, zero-ride headline"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: rides on the axis, live count and displacement, legs named"
     }
    ]
   },
@@ -132,6 +153,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline that repeated the caption dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "a tick each metre, every start, turn and finish dropped to the axis"
     }
    ]
   }
@@ -446,13 +471,6 @@
   }
  ],
  "referents": [
-  {
-   "id": "professor",
-   "label": "the professor",
-   "figures": [
-    "sim-displacement"
-   ]
-  },
   {
    "id": "passenger",
    "label": "the airplane passenger",

@@ -38,6 +38,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -80,6 +83,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "note that repeated the scene and caption dropped"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: larger arrow, speed dial, real thermometer, opens at -20 C"
     }
    ]
   },
@@ -117,6 +124,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline typeset"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "rebuilt: jet or falling ball, both sign choices, zero from the start"
     }
    ]
   }
