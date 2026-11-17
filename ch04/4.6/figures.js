@@ -23,11 +23,11 @@ const RAD = Math.PI / 180;
   const A = ctl(d.controls, { label: '\\ka', cls: 'acceleration', min: -2.5, max: 2.5, step: 0.25, value: 0, unit: 'm/s²', dec: 2, aria: 'vertical acceleration',
     specials: [{ at: 0, label: 'stationary' }] });
   const ro = F.readout(d);
-  const K = 0.15, K2 = 0.24;          /* units per newton: on the man (1230 N draws 185) and in the two diagrams (295) */
+  const K = 0.15, K2 = 0.21;          /* units per newton: on the man (1230 N draws 185) and in the two diagrams (258) */
   const S = 3.4, FEET = 616, CX = 300;  /* the man's scale, the height of his feet and the line of the vine */
   const GRIP = FEET - 104 * S, STOM = FEET - 55 * S;
-  const FX = 800, FY = 372;           /* the dot of the free-body diagram */
-  const SX = 1160, BASE = 560;        /* the head-to-tail sum and the level it starts from */
+  const FX = 800, FY = 380;           /* the dot of the free-body diagram */
+  const SX = 1120, BASE = 570;        /* the head-to-tail sum and the level it starts from */
   const num = (v) => fmt(v, 0);
   const lead = (ctx, x1, y, x2) => line(ctx, x1, y, x2, y, alpha(C('force'), 0.5), 2, [4, 5]);
   function draw() {
@@ -78,11 +78,11 @@ const RAD = Math.PI / 180;
     dot(ctx, x0, BASE, PAL.ink, false, 10); dot(ctx, x1, end, PAL.ink, true, 10);
     text(ctx, 'T', x0 - 22, (BASE + top) / 2, force, { size: 26, weight: 600, align: 'right', base: 'middle' });
     text(ctx, 'w', x1 + 20, top + 60, force, { size: 26, weight: 600, align: 'left', base: 'middle' });
-    if (still) text(ctx, 'F_{net} = 0', x2 + 4, BASE - 30, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
+    if (still) text(ctx, 'F_{net} = 0', x2 + 22, BASE - 30, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
     else {
       if (Math.abs(end - BASE) >= 16) arrow(ctx, x2, BASE, x2, end, force, 7);
       else line(ctx, x2, BASE, x2, end, force, 7);
-      F.rich(ctx, [['F_{net} = ma = ' + num(Math.abs(gap)) + ' N', force], ' ' + way], x2 + 22, (BASE + end) / 2 + (gap > 0 ? -18 : 18), { size: 22, align: 'left' });
+      text(ctx, 'F_{net} = ma = ' + num(Math.abs(gap)) + ' N ' + way, x2 + 22, (BASE + end) / 2, force, { size: 22, weight: 600, align: 'left', base: 'middle' });
     }
 
     [[CX, '(a) to (c)', 'the sketch, the forces and the system of interest'], [FX, '(c)', 'the free-body diagram'], [SX, '(d)', still ? 'head to tail, the sum closes' : 'head to tail, the sum stays open']].forEach(([x, a1, a2]) => {

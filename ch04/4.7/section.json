@@ -34,6 +34,9 @@
    {
     "model": "claude-opus-5-5",
     "effort": "low"
+   },
+   {
+    "model": "claude-fable-5-2"
    }
   ]
  },
@@ -203,15 +206,7 @@
   {
    "id": "fig-rescue",
    "kind": "figure",
-   "originals": [
-    "/media/ch04/Figure_04_07_08a.jpg"
-   ],
-   "original_caption": "The force T_2 needed to hold steady the person being rescued from the fire is less than her weight and less than the force T_1 in the other rope, since the more vertical rope supports a greater part of her weight (a vertical force).",
-   "draws": [
-    "force",
-    "angle",
-    "mass"
-   ],
+   "draws": [],
    "ai": [
     {
      "model": "claude-opus-5",
@@ -232,6 +227,10 @@
      "model": "claude-opus-5-5",
      "effort": "high",
      "part": "headline dropped, rope note moved clear"
+    },
+    {
+     "model": "claude-fable-5-2",
+     "part": "reverted to the book's image"
     }
    ]
   }
@@ -852,20 +851,6 @@
    ]
   },
   {
-   "id": "rope-left",
-   "label": "the rope on the left",
-   "figures": [
-    "fig-rescue"
-   ]
-  },
-  {
-   "id": "rope-right",
-   "label": "the rope on the right",
-   "figures": [
-    "fig-rescue"
-   ]
-  },
-  {
    "id": "wire-1",
    "label": "the wire on the left",
    "figures": [
@@ -884,13 +869,6 @@
    "label": "the traffic light",
    "figures": [
     "sim-traffic-light"
-   ]
-  },
-  {
-   "id": "rescued",
-   "label": "the person being rescued",
-   "figures": [
-    "fig-rescue"
    ]
   }
  ],
